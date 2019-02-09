@@ -1,8 +1,8 @@
 package classes.classes;
 
-import classes.interfaces.ICategoryFactory;
+import classes.interfaces.ICategoryManager;
 
-public class CategoryFactory implements ICategoryFactory{
+public class CategoryManager implements ICategoryManager {
    @Override
    public Category create(String name) {
       Category category = new Category(name);

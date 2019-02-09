@@ -1,8 +1,8 @@
 package classes.classes;
 
-import classes.interfaces.ITicketFactory;
+import classes.interfaces.ITicketManager;
 
-public class TicketFactory implements ITicketFactory{
+public class TicketManager implements ITicketManager {
    @Override
    public Ticket create(String summary,String description,TicketPriority priority,Category category) {
       Ticket ticket = new Ticket(summary,description,priority,category);

@@ -1,9 +1,8 @@
 package classes.classes;
 
-import classes.interfaces.IUserFactory;
-import classes.classes.User;
+import classes.interfaces.IUserManager;
 
-public class UserFactory implements IUserFactory{
+public class UserManager implements IUserManager {
    @Override
    public User create(String username,String firstName,String lastName,String password,UserRole role) {
       User user = new User(username,firstName,lastName,password,role);

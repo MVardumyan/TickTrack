@@ -5,6 +5,6 @@ import classes.classes.User;
 
 import java.util.List;
 
-public interface IGroupFactory {
+public interface IGroupManager {
    Group create(String name, List<User> members);
 }

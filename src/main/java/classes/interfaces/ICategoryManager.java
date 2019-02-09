@@ -3,6 +3,6 @@ package classes.interfaces;
 import classes.classes.Category;
 
 
-public interface ICategoryFactory {
+public interface ICategoryManager {
    Category create(String name);
 }
