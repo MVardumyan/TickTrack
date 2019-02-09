@@ -50,4 +50,20 @@ public class Ticket {
    public void setDeadline(Timestamp deadline) {
       this.deadline = deadline;
    }
+
+   public void setPriority(TicketPriority priority) {
+      this.priority = priority;
+   }
+
+   public void setCategory(Category category) {
+      this.category = category;
+   }
+
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
+   public void setSummary(String summary) {
+      this.summary = summary;
+   }
 }

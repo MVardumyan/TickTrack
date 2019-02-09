@@ -1,13 +1,11 @@
 package classes.interfaces;
 
-import classes.classes.Category;
-import classes.classes.Ticket;
-import classes.classes.TicketPriority;
-import classes.classes.User;
+import classes.classes.*;
+
+import java.sql.Timestamp;
 
 public interface ITicketManager {
    Ticket create(String summary, String description, TicketPriority priority, Category category);
-   Ticket open(String summary,String description,TicketPriority priority,Category category, User asignee);
-   void update(Ticket ticket);
-   void cancel();
+   Ticket update(Ticket ticket,TicketPriority priority,User asignee,Category category,Comment comment,String summary,String description,
+                 TicketStatus status,Timestamp openDate,User creator,String resolution,Timestamp deadline);
 }
