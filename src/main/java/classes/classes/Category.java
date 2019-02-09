@@ -1,7 +1,10 @@
 package classes.classes;
 
-import classes.interfaces.ICategoryFactory;
 
 public class Category {
    String name;
+
+   Category(String name){
+      this.name = name;
+   }
 }

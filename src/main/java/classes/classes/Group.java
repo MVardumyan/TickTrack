@@ -1,10 +1,14 @@
 package classes.classes;
 
-import classes.interfaces.IGroupFactory;
 
 import java.util.List;
 
 public class Group{
    String name;
    List<User> members;
+
+   Group(String name,List<User> members){
+      this.name = name;
+      this.members = members;
+   }
 }

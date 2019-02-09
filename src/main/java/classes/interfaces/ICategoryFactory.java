@@ -1,5 +1,8 @@
 package classes.interfaces;
 
+import classes.classes.Category;
+
+
 public interface ICategoryFactory {
-   void create();
+   Category create(String name);
 }

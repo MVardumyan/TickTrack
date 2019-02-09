@@ -4,7 +4,8 @@ import classes.interfaces.ICategoryFactory;
 
 public class CategoryFactory implements ICategoryFactory{
    @Override
-   public void create() {
-
+   public Category create(String name) {
+      Category category = new Category(name);
+      return category;
    }
 }
