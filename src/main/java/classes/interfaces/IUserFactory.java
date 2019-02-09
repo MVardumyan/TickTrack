@@ -1,5 +1,7 @@
 package classes.interfaces;
 
+import classes.classes.User;
+
 public interface IUserFactory {
-   void create();
+   User create();
 }
