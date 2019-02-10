@@ -1,15 +1,13 @@
 package classes.classes;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table
-@Embeddable
-public class User implements Serializable{
+public class User{
    @Column(nullable = false)
-   @EmbeddedId String username;
+   @Id String username;
    @Column(nullable = false)
    String firstName;
    @Column(nullable = false)
@@ -36,4 +34,6 @@ public class User implements Serializable{
       this.activeStatus = true;
    }
 
+   public User() {
+   }
 }

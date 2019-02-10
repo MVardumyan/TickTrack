@@ -7,10 +7,9 @@ import java.util.List;
 
 @Entity
 @Table
-@Embeddable
-public class Group implements Serializable{
+public class Group{
    @Column
-   @EmbeddedId String name;
+   @Id String name;
 
    @OneToMany
    List<User> members;
@@ -18,5 +17,8 @@ public class Group implements Serializable{
    Group(String name,List<User> members){
       this.name = name;
       this.members = members;
+   }
+
+   public Group() {
    }
 }

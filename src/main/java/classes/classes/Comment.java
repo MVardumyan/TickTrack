@@ -6,10 +6,9 @@ import java.sql.Timestamp;
 
 @Entity
 @Table
-@Embeddable
-public class Comment implements Serializable{
+public class Comment{
    @Column(nullable =  false)
-   @EmbeddedId String username;
+   @Id String username;
    @Column(nullable = false)
    Timestamp timestamp;
    @Column(nullable = false)
@@ -22,5 +21,8 @@ public class Comment implements Serializable{
       this.username = username;
       this.timestamp = timestamp;
       this.text = text;
+   }
+
+   public Comment() {
    }
 }

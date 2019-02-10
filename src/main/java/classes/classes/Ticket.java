@@ -1,23 +1,19 @@
 package classes.classes;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 
 @Entity
 @Table
-public class Ticket implements Serializable{
+public class Ticket{
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE)
    int ID;
    @Column(nullable = false)
    TicketPriority priority;
-   @Column
+   @ManyToOne
    User asignee;
-   @Column
-   Comment comment;
    @Column(nullable = false)
    String summary;
    @Column(nullable = false)
@@ -26,7 +22,7 @@ public class Ticket implements Serializable{
    TicketStatus status;
    @Column
    Timestamp openDate;
-   @Column
+   @ManyToOne
    User creator;
    @Column
    String resolution;
@@ -37,19 +33,19 @@ public class Ticket implements Serializable{
    Group group;
 
    @ManyToOne
-   User user;
-
-   @ManyToOne
    Category category;
 
    @OneToMany
    List<Comment> commentList;
 
-   Ticket(String summary,String description,TicketPriority priority,Category category){
+   public Ticket(String summary,String description,TicketPriority priority,Category category){
       this.summary = summary;
       this.description = description;
       this.priority = priority;
       this.category = category;
+   }
+
+   public Ticket() {
    }
 
    public void setAsignee(User asignee) {
@@ -57,7 +53,7 @@ public class Ticket implements Serializable{
    }
 
    public void setComment(Comment comment) {
-      this.comment = comment;
+      this.commentList.add(comment);
    }
 
    public void setStatus(TicketStatus status) {

@@ -6,15 +6,17 @@ import java.util.List;
 
 @Entity
 @Table
-@Embeddable
-public class Category implements Serializable{
+public class Category{
    @Column(nullable = false)
-   @EmbeddedId String name;
+   @Id String name;
 
    @OneToMany
    List<Ticket> ticketList;
 
-   Category(String name){
+   public Category(String name){
       this.name = name;
+   }
+
+   public Category() {
    }
 }
