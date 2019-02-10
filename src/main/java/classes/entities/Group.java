@@ -1,8 +1,7 @@
-package classes.classes;
+package classes.entities;
 
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -14,11 +13,19 @@ public class Group{
    @OneToMany
    List<User> members;
 
-   Group(String name,List<User> members){
+   public Group(String name,List<User> members){
       this.name = name;
       this.members = members;
    }
 
    public Group() {
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
    }
 }

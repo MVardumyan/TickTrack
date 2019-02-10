@@ -1,5 +1,6 @@
-package classes.classes;
+package classes.beans;
 
+import classes.entities.Category;
 import classes.interfaces.ICategoryManager;
 
 public class CategoryManager implements ICategoryManager {

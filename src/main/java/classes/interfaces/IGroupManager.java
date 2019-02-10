@@ -1,7 +1,7 @@
 package classes.interfaces;
 
-import classes.classes.Group;
-import classes.classes.User;
+import classes.entities.Group;
+import classes.entities.User;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
-package classes.classes;
+package classes.entities;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
@@ -13,10 +12,17 @@ public class Category{
    @OneToMany
    List<Ticket> ticketList;
 
+   public Category() {}
+
    public Category(String name){
       this.name = name;
    }
 
-   public Category() {
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getName() {
+      return name;
    }
 }

@@ -1,4 +1,7 @@
-package classes.classes;
+package classes.entities;
+
+import classes.enums.TicketPriority;
+import classes.enums.TicketStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -90,5 +93,57 @@ public class Ticket{
 
    public void setSummary(String summary) {
       this.summary = summary;
+   }
+
+   public int getID() {
+      return ID;
+   }
+
+   public TicketPriority getPriority() {
+      return priority;
+   }
+
+   public User getAsignee() {
+      return asignee;
+   }
+
+   public String getSummary() {
+      return summary;
+   }
+
+   public String getDescription() {
+      return description;
+   }
+
+   public TicketStatus getStatus() {
+      return status;
+   }
+
+   public Timestamp getOpenDate() {
+      return openDate;
+   }
+
+   public User getCreator() {
+      return creator;
+   }
+
+   public String getResolution() {
+      return resolution;
+   }
+
+   public Timestamp getDeadline() {
+      return deadline;
+   }
+
+   public Group getGroup() {
+      return group;
+   }
+
+   public Category getCategory() {
+      return category;
+   }
+
+   public List<Comment> getCommentList() {
+      return commentList;
    }
 }

@@ -1,4 +1,4 @@
-package classes;
+package classes.beans;
 
 public class NotificationSender {
 }

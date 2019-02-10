@@ -1,6 +1,6 @@
 package classes.interfaces;
 
-import classes.classes.Category;
+import classes.entities.Category;
 
 
 public interface ICategoryManager {

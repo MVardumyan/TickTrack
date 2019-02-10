@@ -1,4 +1,4 @@
-package classes.classes;
+package classes.enums;
 
 public enum UserRole {
    Admin,

@@ -3,11 +3,11 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
              version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
     <persistence-unit name="TickTrack">
-    <class>classes.classes.Ticket</class>
-    <class>classes.classes.User</class>
-    <class>classes.classes.Group</class>
-    <class>classes.classes.Category</class>
-    <class>classes.classes.Comment</class>
+    <class>classes.entities.Ticket</class>
+    <class>classes.entities.User</class>
+    <class>classes.entities.Group</class>
+    <class>classes.entities.Category</class>
+    <class>classes.entities.Comment</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
     <properties>
