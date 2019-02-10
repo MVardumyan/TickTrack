@@ -1,26 +1,51 @@
 package classes.classes;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
-public class Ticket {
+@Entity
+@Table
+public class Ticket{
+   @Id
+   @GeneratedValue(strategy = GenerationType.TABLE)
    int ID;
+   @Column(nullable = false)
    TicketPriority priority;
+   @ManyToOne
    User asignee;
-   Category category;
-   Comment comment;
+   @Column(nullable = false)
    String summary;
+   @Column(nullable = false)
    String description;
+   @Column
    TicketStatus status;
+   @Column
    Timestamp openDate;
+   @ManyToOne
    User creator;
+   @Column
    String resolution;
+   @Column
    Timestamp deadline;
 
-   Ticket(String summary,String description,TicketPriority priority,Category category){
+   @ManyToOne
+   Group group;
+
+   @ManyToOne
+   Category category;
+
+   @OneToMany
+   List<Comment> commentList;
+
+   public Ticket(String summary,String description,TicketPriority priority,Category category){
       this.summary = summary;
       this.description = description;
       this.priority = priority;
       this.category = category;
+   }
+
+   public Ticket() {
    }
 
    public void setAsignee(User asignee) {
@@ -28,7 +53,7 @@ public class Ticket {
    }
 
    public void setComment(Comment comment) {
-      this.comment = comment;
+      this.commentList.add(comment);
    }
 
    public void setStatus(TicketStatus status) {

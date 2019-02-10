@@ -1,10 +1,22 @@
 package classes.classes;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
-public class Category {
-   String name;
+@Entity
+@Table
+public class Category{
+   @Column(nullable = false)
+   @Id String name;
 
-   Category(String name){
+   @OneToMany
+   List<Ticket> ticketList;
+
+   public Category(String name){
       this.name = name;
+   }
+
+   public Category() {
    }
 }
