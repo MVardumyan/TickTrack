@@ -7,10 +7,11 @@ import java.util.List;
 @Table
 public class Category{
    @Column(nullable = false)
-   @Id String name;
+   @Id
+   private String name;
 
    @OneToMany
-   List<Ticket> ticketList;
+   private List<Ticket> ticketList;
 
    public Category() {}
 

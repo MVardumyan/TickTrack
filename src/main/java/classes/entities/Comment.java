@@ -6,12 +6,14 @@ import java.sql.Timestamp;
 @Entity
 @Table
 public class Comment{
+   @Id
+   private long id;
    @Column(nullable =  false)
-   @Id String username;
+   private String username;
    @Column(nullable = false)
-   Timestamp timestamp;
+   private Timestamp timestamp;
    @Column(nullable = false)
-   String text;
+   private String text;
 
    @ManyToOne
    Ticket ticket;

@@ -12,34 +12,34 @@ import java.util.List;
 public class Ticket{
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE)
-   int ID;
+   private long ID;
    @Column(nullable = false)
-   TicketPriority priority;
+   private TicketPriority priority;
    @ManyToOne
-   User asignee;
+   private User assignee;
    @Column(nullable = false)
-   String summary;
+   private String summary;
    @Column(nullable = false)
-   String description;
+   private String description;
    @Column
-   TicketStatus status;
+   private TicketStatus status;
    @Column
-   Timestamp openDate;
+   private Timestamp openDate;
    @ManyToOne
-   User creator;
+   private User creator;
    @Column
-   String resolution;
+   private String resolution;
    @Column
-   Timestamp deadline;
+   private Timestamp deadline;
 
    @ManyToOne
-   Group group;
+   private Group group;
 
    @ManyToOne
-   Category category;
+   private Category category;
 
    @OneToMany
-   List<Comment> commentList;
+   private List<Comment> commentList;
 
    public Ticket(String summary,String description,TicketPriority priority,Category category){
       this.summary = summary;
@@ -51,8 +51,8 @@ public class Ticket{
    public Ticket() {
    }
 
-   public void setAsignee(User asignee) {
-      this.asignee = asignee;
+   public void setAssignee(User assignee) {
+      this.assignee = assignee;
    }
 
    public void setComment(Comment comment) {
@@ -95,7 +95,7 @@ public class Ticket{
       this.summary = summary;
    }
 
-   public int getID() {
+   public long getID() {
       return ID;
    }
 
@@ -103,8 +103,8 @@ public class Ticket{
       return priority;
    }
 
-   public User getAsignee() {
-      return asignee;
+   public User getAssignee() {
+      return assignee;
    }
 
    public String getSummary() {

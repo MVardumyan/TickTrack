@@ -6,5 +6,13 @@ import classes.entities.User;
 import java.util.List;
 
 public interface IGroupManager {
-   Group create(String name, List<User> members);
+   void create(String name);
+
+   void migrateTo(String name, List<User> members);
+
+   void changeName(String oldName, String newName);
+
+   Group get(String name);
+
+   Iterable<Group> getAll();
 }
