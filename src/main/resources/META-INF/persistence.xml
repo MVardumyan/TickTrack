@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<persistence xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="TickTrack">
+    <class>classes.classes.Ticket</class>
+    <class>classes.classes.User</class>
+    <class>classes.classes.Group</class>
+    <class>classes.classes.Category</class>
+    <class>classes.classes.Comment</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+    <properties>
+        <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="javax.persistence.jdbc.url" value="jdbc:mysql://157.230.31.142:3306/TickTrack"/>
+        <property name="javax.persistence.jdbc.user" value="user"/>
+        <property name="javax.persistence.jdbc.password" value="user"/>
+
+        <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+        <property name="hibernate.show_sql" value="true"/>
+        <property name="hibernate.hbm2ddl.auto" value="create"/>
+    </properties>
+
+</persistence-unit>
+        </persistence>

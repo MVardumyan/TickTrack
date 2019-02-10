@@ -1,20 +1,49 @@
 package classes.classes;
 
+import javax.jws.soap.SOAPBinding;
+import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
-public class Ticket {
+@Entity
+@Table
+public class Ticket implements Serializable{
+   @Id
+   @GeneratedValue(strategy = GenerationType.TABLE)
    int ID;
+   @Column(nullable = false)
    TicketPriority priority;
+   @Column
    User asignee;
-   Category category;
+   @Column
    Comment comment;
+   @Column(nullable = false)
    String summary;
+   @Column(nullable = false)
    String description;
+   @Column
    TicketStatus status;
+   @Column
    Timestamp openDate;
+   @Column
    User creator;
+   @Column
    String resolution;
+   @Column
    Timestamp deadline;
+
+   @ManyToOne
+   Group group;
+
+   @ManyToOne
+   User user;
+
+   @ManyToOne
+   Category category;
+
+   @OneToMany
+   List<Comment> commentList;
 
    Ticket(String summary,String description,TicketPriority priority,Category category){
       this.summary = summary;
