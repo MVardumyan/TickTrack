@@ -9,23 +9,24 @@ import java.util.List;
 @Table
 public class User{
    @Column(nullable = false)
-   @Id String username;
+   @Id
+   private String username;
    @Column(nullable = false)
-   String firstName;
+   private String firstName;
    @Column(nullable = false)
-   String lastName;
+   private String lastName;
    @Column(nullable = false)
-   String password;
+   private String password;
    @Column(nullable = false)
-   UserRole role;
+   private UserRole role;
    @Column
-   boolean activeStatus;
+   private boolean activeStatus;
 
    @ManyToOne
-   Group group;
+   private Group group;
 
    @OneToMany
-   List<Ticket> ticketList;
+   private List<Ticket> ticketList;
 
    public User(String username,String firstName,String lastName,String password,UserRole role){
       this.username = username;

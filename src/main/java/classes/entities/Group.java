@@ -8,10 +8,11 @@ import java.util.List;
 @Table
 public class Group{
    @Column
-   @Id String name;
+   @Id
+   private String name;
 
    @OneToMany
-   List<User> members;
+   private List<User> members;
 
    public Group(String name,List<User> members){
       this.name = name;
@@ -27,5 +28,9 @@ public class Group{
 
    public String getName() {
       return name;
+   }
+
+   public List<User> getMembers() {
+      return members;
    }
 }
