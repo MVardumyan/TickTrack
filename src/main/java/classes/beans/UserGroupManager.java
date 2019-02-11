@@ -4,6 +4,8 @@ import classes.entities.UserGroup;
 import classes.entities.User;
 import classes.interfaces.IUserGroupManager;
 import classes.repositories.GroupRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,19 +17,13 @@ import java.util.Set;
 public class UserGroupManager implements IUserGroupManager {
    @Autowired
    private GroupRepository groupRepository;
+   private Logger logger = LoggerFactory.getLogger(UserGroupManager.class);
 
    @Override
    @Transactional
    public void create(String name) {
       UserGroup group = new UserGroup();
       group.setName(name);
-      groupRepository.save(group);
-   }
-
-   @Override
-   @Transactional
-   public void migrateTo(String name, Set<User> members) {
-      UserGroup group = new UserGroup(name, members);
       groupRepository.save(group);
    }
 
