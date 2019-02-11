@@ -32,6 +32,7 @@ public class CategoryManager implements ICategoryManager {
    }
 
     @Override
+    @Transactional
     public boolean deactivate(String name) {
         Optional<Category> result  = categoryRepository.findById(name);
 
@@ -48,18 +49,18 @@ public class CategoryManager implements ICategoryManager {
         }
     }
 
-    @Override
+   @Override
    @Transactional
    public boolean delete(String name) {
        Category category = get(name);
 
        if(category!=null) {
-           if(category.isDeactivated()) {
+           if(category.getTicketList().size()==0) {
                categoryRepository.deleteById(name);
                logger.debug("Category {} deleted", name);
                return true;
            } else {
-               logger.warn("Category {} cannot be deleted : there are tickets with this category. Deactivate category first", name);
+               logger.warn("Category {} cannot be deleted : there are tickets with this category", name);
                return false;
            }
        } else {
