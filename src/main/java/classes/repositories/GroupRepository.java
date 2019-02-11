@@ -3,5 +3,10 @@ package classes.repositories;
 import classes.entities.UserGroup;
 import org.springframework.data.repository.CrudRepository;
 
-public interface GroupRepository extends CrudRepository<UserGroup, String> {
+import java.util.Optional;
+
+public interface GroupRepository extends CrudRepository<UserGroup, Long> {
+    Optional<UserGroup> findByName(String name);
+
+    boolean existsByName(String name);
 }
