@@ -9,6 +9,8 @@ public class Category{
    @Column(nullable = false, unique = true)
    @Id
    private String name;
+   @Column
+   private boolean deactivated;
 
    @OneToMany(mappedBy = "category")
    private Set<Ticket> ticketList;
@@ -23,7 +25,19 @@ public class Category{
       this.name = name;
    }
 
+   public void setDeactivated(boolean deactivated) {
+      this.deactivated = deactivated;
+   }
+
    public String getName() {
       return name;
+   }
+
+   public boolean isDeactivated() {
+      return deactivated;
+   }
+
+   public Set<Ticket> getTicketList() {
+      return ticketList;
    }
 }

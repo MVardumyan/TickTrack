@@ -5,6 +5,8 @@ import classes.entities.Category;
 public interface ICategoryManager {
    boolean create(String name);
 
+   boolean deactivate(String name);
+
    boolean delete(String name);
 
    boolean changeName(String oldName, String newName);

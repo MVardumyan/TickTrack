@@ -31,15 +31,38 @@ public class CategoryManager implements ICategoryManager {
        }
    }
 
-   @Override
+    @Override
+    public boolean deactivate(String name) {
+        Optional<Category> result  = categoryRepository.findById(name);
+
+        if(result.isPresent()) {
+            Category category = result.get();
+            category.setDeactivated(true);
+            categoryRepository.save(category);
+
+            logger.debug("Category {} deactivated", name);
+            return true;
+        } else {
+            logger.warn("Category {} not found", name);
+            return false;
+        }
+    }
+
+    @Override
    @Transactional
    public boolean delete(String name) {
-       if(categoryRepository.existsById(name)) {
-           categoryRepository.deleteById(name);
-           logger.debug("Category {} deleted", name);
-           return true;
+       Category category = get(name);
+
+       if(category!=null) {
+           if(category.isDeactivated()) {
+               categoryRepository.deleteById(name);
+               logger.debug("Category {} deleted", name);
+               return true;
+           } else {
+               logger.warn("Category {} cannot be deleted : there are tickets with this category. Deactivate category first", name);
+               return false;
+           }
        } else {
-           logger.warn("Category {} not found", name);
            return false;
        }
    }
