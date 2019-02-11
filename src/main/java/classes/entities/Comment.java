@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 @Table
 public class Comment{
    @Id
+   @GeneratedValue(strategy = GenerationType.TABLE)
    private long id;
    @Column(nullable =  false)
    private String username;
@@ -15,8 +16,8 @@ public class Comment{
    @Column(nullable = false)
    private String text;
 
-   @ManyToOne
-   Ticket ticket;
+   @ManyToOne(optional = false)
+   private Ticket ticket;
 
    public Comment(String username, Timestamp timestamp, String text){
       this.username = username;

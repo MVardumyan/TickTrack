@@ -1,33 +1,33 @@
 package classes.beans;
 
-import classes.entities.Group;
+import classes.entities.UserGroup;
 import classes.entities.User;
-import classes.interfaces.IGroupManager;
+import classes.interfaces.IUserGroupManager;
 import classes.repositories.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
-public class GroupManager implements IGroupManager {
+public class UserGroupManager implements IUserGroupManager {
    @Autowired
    private GroupRepository groupRepository;
 
    @Override
    @Transactional
    public void create(String name) {
-      Group group = new Group();
+      UserGroup group = new UserGroup();
       group.setName(name);
       groupRepository.save(group);
    }
 
    @Override
    @Transactional
-   public void migrateTo(String name, List<User> members) {
-      Group group = new Group(name, members);
+   public void migrateTo(String name, Set<User> members) {
+      UserGroup group = new UserGroup(name, members);
       groupRepository.save(group);
    }
 
@@ -42,14 +42,14 @@ public class GroupManager implements IGroupManager {
 
    @Override
    @Transactional
-   public Group get(String name) {
-      Optional<Group> byId = groupRepository.findById(name);
+   public UserGroup get(String name) {
+      Optional<UserGroup> byId = groupRepository.findById(name);
       return byId.get();
    }
 
    @Override
    @Transactional
-   public Iterable<Group> getAll() {
+   public Iterable<UserGroup> getAll() {
       return groupRepository.findAll();
    }
 }

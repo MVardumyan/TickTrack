@@ -3,8 +3,11 @@ package classes;
 import java.util.Properties;
 
 import javax.sql.DataSource;
+
+import classes.interfaces.ICategoryManager;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -72,5 +75,7 @@ public class TickTrackContext {
 //        ICategoryManager manager = context.getBean(ICategoryManager.class);
 //        manager.create("BasicCategory");
 //        System.out.println("========" + manager.get("BasicCategory") + "==========");
+//        System.out.println("========" + manager.get("BasicCategory2") + "==========");
+//        manager.delete("BasicCategory2");
 //    }
 }

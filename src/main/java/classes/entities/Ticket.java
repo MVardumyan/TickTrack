@@ -5,7 +5,7 @@ import classes.enums.TicketStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -25,7 +25,7 @@ public class Ticket{
    private TicketStatus status;
    @Column
    private Timestamp openDate;
-   @ManyToOne
+   @ManyToOne(optional = false)
    private User creator;
    @Column
    private String resolution;
@@ -33,13 +33,13 @@ public class Ticket{
    private Timestamp deadline;
 
    @ManyToOne
-   private Group group;
+   private UserGroup group;
 
    @ManyToOne
    private Category category;
 
-   @OneToMany
-   private List<Comment> commentList;
+   @OneToMany(mappedBy = "ticket")
+   private Set<Comment> commentList;
 
    public Ticket(String summary,String description,TicketPriority priority,Category category){
       this.summary = summary;
@@ -135,7 +135,7 @@ public class Ticket{
       return deadline;
    }
 
-   public Group getGroup() {
+   public UserGroup getGroup() {
       return group;
    }
 
@@ -143,7 +143,7 @@ public class Ticket{
       return category;
    }
 
-   public List<Comment> getCommentList() {
+   public Set<Comment> getCommentList() {
       return commentList;
    }
 }

@@ -3,7 +3,7 @@ package classes.entities;
 import classes.enums.UserRole;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -22,11 +22,14 @@ public class User{
    @Column
    private boolean activeStatus;
 
-   @ManyToOne
-   private Group group;
+   @ManyToOne(optional = false)
+   private UserGroup group;
 
-   @OneToMany
-   private List<Ticket> ticketList;
+   @OneToMany(mappedBy = "creator")
+   private Set<Ticket> createdTicketList;
+
+   @OneToMany(mappedBy = "assignee")
+   private Set<Ticket> assignedTicketList;
 
    public User(String username,String firstName,String lastName,String password,UserRole role){
       this.username = username;
@@ -64,7 +67,7 @@ public class User{
       this.activeStatus = activeStatus;
    }
 
-   public void setGroup(Group group) {
+   public void setGroup(UserGroup group) {
       this.group = group;
    }
 
@@ -92,11 +95,15 @@ public class User{
       return activeStatus;
    }
 
-   public Group getGroup() {
+   public UserGroup getGroup() {
       return group;
    }
 
-   public List<Ticket> getTicketList() {
-      return ticketList;
+   public Set<Ticket> getCreatedTicketList() {
+      return createdTicketList;
+   }
+
+   public Set<Ticket> getAssignedTicketList() {
+      return assignedTicketList;
    }
 }

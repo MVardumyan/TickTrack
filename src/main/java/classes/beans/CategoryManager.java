@@ -19,36 +19,61 @@ public class CategoryManager implements ICategoryManager {
 
    @Override
    @Transactional
-   public void create(String name) {
-      Category category = new Category(name);
-      categoryRepository.save(category);
-      logger.debug("New category {} created and saved to db", name);
+   public boolean create(String name) {
+       if(categoryRepository.existsById(name)) {
+           logger.warn("Category {} already exists", name);
+           return false;
+       } else {
+           Category category = new Category(name);
+           categoryRepository.save(category);
+           logger.debug("New category {} created and saved to db", name);
+           return true;
+       }
    }
 
    @Override
    @Transactional
-   public void delete(String name) {
-      categoryRepository.deleteById(name);
-      logger.debug("Category {} deleted", name);
+   public boolean delete(String name) {
+       if(categoryRepository.existsById(name)) {
+           categoryRepository.deleteById(name);
+           logger.debug("Category {} deleted", name);
+           return true;
+       } else {
+           logger.warn("Category {} not found", name);
+           return false;
+       }
    }
 
    @Override
    @Transactional
-   public void changeName(String oldName, String newName) {
-      categoryRepository.findById(oldName).ifPresent(category -> {
-         category.setName(newName);
-         categoryRepository.save(category);
-      });
+   public boolean changeName(String oldName, String newName) {
+       Optional<Category> result  = categoryRepository.findById(oldName);
 
-      logger.debug("Category {} updated to {}", oldName, newName);
+       if(result.isPresent()) {
+           Category category = result.get();
+           category.setName(newName);
+           categoryRepository.save(category);
+
+           logger.debug("Category {} updated to {}", oldName, newName);
+           return true;
+       } else {
+           logger.warn("Category {} not found", oldName);
+           return false;
+       }
    }
 
    @Override
    @Transactional
    public Category get(String name) {
-      Optional<Category> byId = categoryRepository.findById(name);
-      logger.trace("Query for {} category received", name);
-      return byId.get();
+      Optional<Category> result = categoryRepository.findById(name);
+
+      if(result.isPresent()) {
+         logger.debug("Query for {} category received", name);
+         return result.get();
+      } else {
+         logger.debug("Query for {} category received null", name);
+         return null;
+      }
    }
 
    @Override
