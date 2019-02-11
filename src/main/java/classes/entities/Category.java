@@ -1,17 +1,17 @@
 package classes.entities;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
 public class Category{
-   @Column(nullable = false)
+   @Column(nullable = false, unique = true)
    @Id
    private String name;
 
-   @OneToMany
-   private List<Ticket> ticketList;
+   @OneToMany(mappedBy = "category")
+   private Set<Ticket> ticketList;
 
    public Category() {}
 
