@@ -6,8 +6,10 @@ import java.util.Set;
 @Entity
 @Table
 public class Category{
-   @Column(nullable = false, unique = true)
    @Id
+   @GeneratedValue(strategy = GenerationType.TABLE)
+   private long id;
+   @Column(nullable = false, unique = true)
    private String name;
    @Column
    private boolean deactivated;
@@ -27,6 +29,10 @@ public class Category{
 
    public void setDeactivated(boolean deactivated) {
       this.deactivated = deactivated;
+   }
+
+   public long getId() {
+      return id;
    }
 
    public String getName() {

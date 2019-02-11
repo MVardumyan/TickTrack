@@ -20,7 +20,7 @@ public class CategoryManager implements ICategoryManager {
    @Override
    @Transactional
    public boolean create(String name) {
-       if(categoryRepository.existsById(name)) {
+       if(categoryRepository.existsByName(name)) {
            logger.warn("Category {} already exists", name);
            return false;
        } else {
@@ -34,7 +34,7 @@ public class CategoryManager implements ICategoryManager {
     @Override
     @Transactional
     public boolean deactivate(String name) {
-        Optional<Category> result  = categoryRepository.findById(name);
+        Optional<Category> result  = categoryRepository.findByName(name);
 
         if(result.isPresent()) {
             Category category = result.get();
@@ -56,7 +56,7 @@ public class CategoryManager implements ICategoryManager {
 
        if(category!=null) {
            if(category.getTicketList().size()==0) {
-               categoryRepository.deleteById(name);
+               categoryRepository.delete(category);
                logger.debug("Category {} deleted", name);
                return true;
            } else {
@@ -71,17 +71,15 @@ public class CategoryManager implements ICategoryManager {
    @Override
    @Transactional
    public boolean changeName(String oldName, String newName) {
-       Optional<Category> result  = categoryRepository.findById(oldName);
+       Category category = get(oldName);
 
-       if(result.isPresent()) {
-           Category category = result.get();
+       if(category!=null) {
            category.setName(newName);
            categoryRepository.save(category);
 
            logger.debug("Category {} updated to {}", oldName, newName);
            return true;
        } else {
-           logger.warn("Category {} not found", oldName);
            return false;
        }
    }
@@ -89,7 +87,7 @@ public class CategoryManager implements ICategoryManager {
    @Override
    @Transactional
    public Category get(String name) {
-      Optional<Category> result = categoryRepository.findById(name);
+      Optional<Category> result = categoryRepository.findByName(name);
 
       if(result.isPresent()) {
          logger.debug("Query for {} category received", name);

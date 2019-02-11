@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
-public class CategoryManagerTest {
+class CategoryManagerTest {
     private static ICategoryManager categoryManager;
 
     @BeforeAll
