@@ -25,39 +25,37 @@ class CategoryManagerTest {
     }
 
     @Test
-    void createCategory() {
+    void createAndDeleteCategory() {
         assertTrue(categoryManager.create("testCategory1"));
 
         Category category = categoryManager.get("testCategory1");
         assertNotNull(category);
         assertEquals("testCategory1", category.getName());
+        assertTrue(categoryManager.delete("testCategory1"));
     }
 
     @Test
-    void updateCategory() {
+    void createAndUpdateCategory() {
         assertTrue(categoryManager.create("testCategory2"));
 
         assertTrue(categoryManager.changeName("testCategory2", "testCategory3"));
         Category category = categoryManager.get("testCategory3");
         assertNotNull(category);
         assertEquals("testCategory3", category.getName());
+
+        assertTrue(categoryManager.delete("testCategory3"));
     }
 
     @Test
-    void deleteCategory() {
-        assertTrue(categoryManager.create("testCategory4"));
-
-        assertTrue(categoryManager.delete("testCategory4"));
-    }
-
-    @Test
-    void deactivateCategory() {
+    void createAndDeactivateCategory() {
         assertTrue(categoryManager.create("testCategory5"));
 
         assertTrue(categoryManager.deactivate("testCategory5"));
         Category category = categoryManager.get("testCategory5");
         assertNotNull(category);
         assertTrue(category.isDeactivated());
+
+        assertTrue(categoryManager.delete("testCategory5"));
     }
 
 }

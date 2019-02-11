@@ -77,7 +77,7 @@ public class CategoryManager implements ICategoryManager {
            category.setName(newName);
            categoryRepository.save(category);
 
-           logger.debug("Category {} updated to {}", oldName, newName);
+           logger.debug("Category name {} updated to {}", oldName, newName);
            return true;
        } else {
            return false;

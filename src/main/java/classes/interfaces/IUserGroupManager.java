@@ -6,9 +6,11 @@ import classes.entities.User;
 import java.util.Set;
 
 public interface IUserGroupManager {
-   void create(String name);
+   boolean create(String name);
 
-   void changeName(String oldName, String newName);
+   boolean changeName(String oldName, String newName);
+
+   boolean delete(String name);
 
    UserGroup get(String name);
 
