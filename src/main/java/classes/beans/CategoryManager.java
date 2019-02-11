@@ -93,7 +93,7 @@ public class CategoryManager implements ICategoryManager {
          logger.debug("Query for {} category received", name);
          return result.get();
       } else {
-         logger.debug("Query for {} category received null", name);
+         logger.debug("Category {} not found", name);
          return null;
       }
    }

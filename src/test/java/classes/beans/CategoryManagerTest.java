@@ -50,4 +50,14 @@ class CategoryManagerTest {
         assertTrue(categoryManager.delete("testCategory4"));
     }
 
+    @Test
+    void deactivateCategory() {
+        assertTrue(categoryManager.create("testCategory5"));
+
+        assertTrue(categoryManager.deactivate("testCategory5"));
+        Category category = categoryManager.get("testCategory5");
+        assertNotNull(category);
+        assertTrue(category.isDeactivated());
+    }
+
 }
