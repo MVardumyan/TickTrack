@@ -31,6 +31,8 @@ public class Ticket{
    private String resolution;
    @Column
    private Timestamp deadline;
+   @Column
+   private Timestamp closeDate;
 
    @ManyToOne
    private UserGroup group;
