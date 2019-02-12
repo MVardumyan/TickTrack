@@ -3,7 +3,7 @@ package classes.enums;
 public enum TicketStatus {
    Open,
    Assigned,
-   InProcess,
+   InProgress,
    Resolved,
    Closed;
 }

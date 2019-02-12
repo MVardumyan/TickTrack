@@ -7,7 +7,17 @@ import classes.enums.TicketStatus;
 import java.sql.Timestamp;
 
 public interface ITicketManager {
-   Ticket create(String summary, String description, TicketPriority priority, Category category);
-   Ticket update(Ticket ticket, TicketPriority priority, User asignee, Category category, Comment comment, String summary, String description,
-                 TicketStatus status, Timestamp openDate, User creator, String resolution, Timestamp deadline);
+   boolean create(String summary, String description, TicketPriority priority, Category category);
+
+   boolean updateContent(long ticket_id, String parameterName, String value);
+
+   boolean updateStatus(long ticket_id, TicketStatus newStatus);
+
+   boolean updateCategory(long ticket_id, Category newCategory);
+
+   boolean assign(long ticket_id, User user);
+
+   Ticket get(long ticket_id);
+
+   Iterable<Ticket> getAll();
 }
