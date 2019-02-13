@@ -1,4 +1,4 @@
 package classes.interfaces;
 
-public class ISearchManager {
+public interface ISearchManager {
 }
