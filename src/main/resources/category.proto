@@ -1,0 +1,47 @@
+syntax = "proto2";
+option java_multiple_files = true;
+
+package ticktrack.proto;
+
+//SUPPORTING MESSAGES
+message CommonResponse {
+    required string responseText = 1;
+}
+//SUPPORTING MESSAGES END
+
+//CATEGORY OPERATIONS
+message CategoryOp {
+    required int64 time = 1;
+    required string sender = 2;
+
+    oneof msg {
+        CategoryOpRequest categoryOpRequest = 11;
+        CategoryOpUpdateRequest categoryOpUpdateRequest = 12;
+        UserGroupOpGetAllRequest userGroupOpGetAllRequest = 13;
+        UserGroupOpGetAllResponse userGroupOpGetAllResponse = 14;
+        CommonResponse commonResponse = 15;
+    }
+
+    message CategoryOpRequest {
+        enum OpType {
+            Create = 1;
+            Deactivate = 2;
+        }
+
+        required OpType opType = 1;
+        required string categoryName = 2;
+    }
+
+    message CategoryOpUpdateRequest {
+        required string oldName = 1;
+        required string newName = 2;
+    }
+
+    message UserGroupOpGetAllRequest {
+    }
+
+    message UserGroupOpGetAllResponse {
+        repeated string categoryName = 1;
+    }
+}
+//CATEGORY OPERATIONS END

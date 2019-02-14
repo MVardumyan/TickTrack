@@ -8,7 +8,7 @@ import java.util.Set;
 @Entity
 @Table
 public class User{
-   @Column(nullable = false)
+   @Column(nullable = false, unique = true)
    @Id
    private String username;
    @Column(nullable = false)
@@ -17,6 +17,8 @@ public class User{
    private String lastName;
    @Column(nullable = false)
    private String password;
+   @Column
+   private String email;
    @Column(nullable = false)
    private UserRole role;
    @Column
@@ -63,6 +65,10 @@ public class User{
       this.role = role;
    }
 
+   public void setEmail(String email) {
+      this.email = email;
+   }
+
    public void setActiveStatus(boolean activeStatus) {
       this.activeStatus = activeStatus;
    }
@@ -85,6 +91,10 @@ public class User{
 
    public String getPassword() {
       return password;
+   }
+
+   public String getEmail() {
+      return email;
    }
 
    public UserRole getRole() {
