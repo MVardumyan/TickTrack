@@ -1,86 +1,181 @@
 package classes.beans;
 
+import classes.entities.Category;
 import classes.entities.UserGroup;
 import classes.interfaces.IUserGroupManager;
 import classes.repositories.GroupRepository;
+import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticktrack.proto.CommonResponse;
+import ticktrack.proto.UserGroupOp;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserGroupManager implements IUserGroupManager {
-   @Autowired
-   private GroupRepository groupRepository;
-   private Logger logger = LoggerFactory.getLogger(UserGroupManager.class);
+    @Autowired
+    private GroupRepository groupRepository;
+    private Logger logger = LoggerFactory.getLogger(UserGroupManager.class);
 
-   @Override
-   @Transactional
-   public boolean create(String name) {
-      if(groupRepository.existsByName(name)) {
-         logger.warn("Group {} already exists", name);
-         return false;
-      } else {
-         UserGroup group = new UserGroup();
-         group.setName(name);
-         groupRepository.save(group);
-         logger.debug("New group {} created and saved to db", name);
-         return true;
-      }
-   }
+//   @Override
+//   @Transactional
+//   public boolean create(String name) {
+//      if(groupRepository.existsByName(name)) {
+//         logger.warn("Group {} already exists", name);
+//         return false;
+//      } else {
+//         UserGroup group = new UserGroup();
+//         group.setName(name);
+//         groupRepository.save(group);
+//         logger.debug("New group {} created and saved to db", name);
+//         return true;
+//      }
+//   }
+//
+//   @Override
+//   @Transactional
+//   public boolean changeName(String oldName, String newName) {
+//      UserGroup group = get(oldName);
+//
+//      if(group!=null) {
+//         group.setName(newName);
+//         groupRepository.save(group);
+//         logger.debug("Group name {} updated to {}", oldName, newName);
+//         return true;
+//      } else {
+//         return false;
+//      }
+//   }
+//
+//   @Override
+//   @Transactional
+//   public boolean delete(String name) {
+//      UserGroup group = get(name);
+//
+//      if(group!=null) {
+//         if (group.getMembers().size() == 0) {
+//            groupRepository.delete(group);
+//            logger.debug("Group {} deleted", name);
+//            return true;
+//         } else {
+//            logger.warn("Group {} cannot be deleted : group contains users", name);
+//         }
+//      }
+//
+//      return false;
+//   }
 
-   @Override
-   @Transactional
-   public boolean changeName(String oldName, String newName) {
-      UserGroup group = get(oldName);
+    @Override
+    public CommonResponse categoryOperation(UserGroupOp.UserGroupOpRequest request) {
+        String responseText;
+        if (request != null) {
+            UserGroupOp.UserGroupOpRequest.OpType operationType = request.getOpType();
+            String groupName;
 
-      if(group!=null) {
-         group.setName(newName);
-         groupRepository.save(group);
-         logger.debug("Group name {} updated to {}", oldName, newName);
-         return true;
-      } else {
-         return false;
-      }
-   }
+            if (request.getGroupName() != null) {
+                groupName = request.getGroupName();
 
-   @Override
-   @Transactional
-   public boolean delete(String name) {
-      UserGroup group = get(name);
+                switch (operationType) {
+                    case Create:
+                        if (groupRepository.existsByName(groupName)) {
+                            responseText = "Group" + groupName + " already exists";
+                            logger.warn(responseText);
+                        } else {
+                            UserGroup group = new UserGroup();
+                            group.setName(groupName);
+                            groupRepository.save(group);
+                            responseText = "Group" + groupName + " created";
+                            logger.debug(responseText);
+                        }
+                        break;
+                    case Delete:
+                        UserGroup group = get(groupName);
 
-      if(group!=null) {
-         if (group.getMembers().size() == 0) {
-            groupRepository.delete(group);
-            logger.debug("Group {} deleted", name);
-            return true;
-         } else {
-            logger.warn("Group {} cannot be deleted : group contains users", name);
-         }
-      }
+                        if (group != null) {
+                            if (group.getMembers().size() == 0) {
+                                groupRepository.delete(group);
 
-      return false;
-   }
+                                responseText = "Group" + groupName + " deleted";
+                                logger.debug(responseText);
+                            } else {
+                                responseText = "Group" + groupName + "cannot be deleted : group contains users";
+                                logger.warn(responseText);
+                            }
+                        } else {
+                            responseText = "Group" + groupName + " not found";
+                            logger.warn(responseText);
+                        }
+                        break;
+                    default:
+                        responseText = "Invalid operation type : should be on of Create/Delete";
+                        break;
+                }
+            } else {
+                responseText = "Group name is null";
+                logger.warn(responseText);
+            }
+        } else {
+            responseText = "Request is null";
+            logger.warn(responseText);
+        }
 
-   @Override
-   @Transactional
-   public UserGroup get(String name) {
-      Optional<UserGroup> result = groupRepository.findByName(name);
-      if(result.isPresent()) {
-         logger.debug("Query for {} group received", name);
-         return result.get();
-      } else {
-         logger.debug("Group {} not found", name);
-         return null;
-      }
-   }
+        return CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .build();
 
-   @Override
-   @Transactional
-   public Iterable<UserGroup> getAll() {
-      return groupRepository.findAll();
-   }
+    }
+
+    @Override
+    public CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request) {
+        String responseText;
+
+        if(request!=null) {
+            UserGroup group = get(request.getOldName());
+
+            if(group!=null) {
+                group.setName(request.getNewName());
+                groupRepository.save(group);
+
+                responseText = "Group name" + request.getOldName() + "updated to " + request.getNewName();
+                logger.debug(responseText);
+            } else {
+                responseText = "Group" + request.getOldName() + " not found";
+            }
+        } else {
+            responseText = "Request is null";
+            logger.warn(responseText);
+        }
+
+        return CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public UserGroup get(String name) {
+        Optional<UserGroup> result = groupRepository.findByName(name);
+        if (result.isPresent()) {
+            logger.debug("Query for {} group received", name);
+            return result.get();
+        } else {
+            logger.debug("Group {} not found", name);
+            return null;
+        }
+    }
+
+    @Override
+    @Transactional
+    public UserGroupOp.UserGroupOpGetAllResponse getAll() {
+        return UserGroupOp.UserGroupOpGetAllResponse.newBuilder()
+                .addAllGroupName(
+                        Streams.stream(groupRepository.findAll()).map(UserGroup::getName).collect(Collectors.toList())
+                )
+                .build();
+    }
 }

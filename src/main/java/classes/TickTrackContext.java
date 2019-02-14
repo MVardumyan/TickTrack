@@ -73,7 +73,7 @@ public class TickTrackContext {
 //        ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
 //
 //        ICategoryManager manager = context.getBean(ICategoryManager.class);
-//        manager.create("BasicCategory");
+//        manager.categoryOperation("BasicCategory");
 //        System.out.println("========" + manager.get("BasicCategory") + "==========");
 //        System.out.println("========" + manager.get("BasicCategory2") + "==========");
 //        manager.delete("BasicCategory2");
