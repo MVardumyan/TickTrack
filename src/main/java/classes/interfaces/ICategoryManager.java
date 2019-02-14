@@ -1,17 +1,15 @@
 package classes.interfaces;
 
 import classes.entities.Category;
+import ticktrack.proto.CategoryOp;
+import ticktrack.proto.CommonResponse;
 
 public interface ICategoryManager {
-   boolean create(String name);
+   CommonResponse categoryOperation(CategoryOp.CategoryOpRequest request);
 
-   boolean deactivate(String name);
-
-   boolean delete(String name);
-
-   boolean changeName(String oldName, String newName);
+   CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request);
 
    Category get(String name);
 
-   Iterable<Category> getAll();
+   CategoryOp.CategoryOpGetAllResponse getAll();
 }

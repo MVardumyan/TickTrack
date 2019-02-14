@@ -17,8 +17,8 @@ message CategoryOp {
     oneof msg {
         CategoryOpRequest categoryOpRequest = 11;
         CategoryOpUpdateRequest categoryOpUpdateRequest = 12;
-        UserGroupOpGetAllRequest userGroupOpGetAllRequest = 13;
-        UserGroupOpGetAllResponse userGroupOpGetAllResponse = 14;
+        CategoryOpGetAllRequest userGroupOpGetAllRequest = 13;
+        CategoryOpGetAllResponse userGroupOpGetAllResponse = 14;
         CommonResponse commonResponse = 15;
     }
 
@@ -37,10 +37,10 @@ message CategoryOp {
         required string newName = 2;
     }
 
-    message UserGroupOpGetAllRequest {
+    message CategoryOpGetAllRequest {
     }
 
-    message UserGroupOpGetAllResponse {
+    message CategoryOpGetAllResponse {
         repeated string categoryName = 1;
     }
 }

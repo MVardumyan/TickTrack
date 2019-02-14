@@ -2,17 +2,17 @@ package classes.interfaces;
 
 import classes.entities.UserGroup;
 import classes.entities.User;
+import ticktrack.proto.CommonResponse;
+import ticktrack.proto.UserGroupOp;
 
 import java.util.Set;
 
 public interface IUserGroupManager {
-   boolean create(String name);
+   CommonResponse categoryOperation(UserGroupOp.UserGroupOpRequest request);
 
-   boolean changeName(String oldName, String newName);
-
-   boolean delete(String name);
+   CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request);
 
    UserGroup get(String name);
 
-   Iterable<UserGroup> getAll();
+   UserGroupOp.UserGroupOpGetAllResponse getAll();
 }

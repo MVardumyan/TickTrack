@@ -3,104 +3,127 @@ package classes.beans;
 import classes.entities.Category;
 import classes.repositories.CategoryRepository;
 import classes.interfaces.ICategoryManager;
+import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ticktrack.proto.CategoryOp;
+import ticktrack.proto.CommonResponse;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class CategoryManager implements ICategoryManager {
-   @Autowired
-   private CategoryRepository categoryRepository;
-   private Logger logger = LoggerFactory.getLogger(CategoryManager.class);
+    @Autowired
+    private CategoryRepository categoryRepository;
+    private Logger logger = LoggerFactory.getLogger(CategoryManager.class);
 
-   @Override
-   @Transactional
-   public boolean create(String name) {
-       if(categoryRepository.existsByName(name)) {
-           logger.warn("Category {} already exists", name);
-           return false;
-       } else {
-           Category category = new Category(name);
-           categoryRepository.save(category);
-           logger.debug("New category {} created and saved to db", name);
-           return true;
-       }
-   }
+    @Override
+    public CommonResponse categoryOperation(CategoryOp.CategoryOpRequest request) {
+        String responseText;
+        if(request!=null) {
+            CategoryOp.CategoryOpRequest.OpType operationType = request.getOpType();
+            String categoryName;
+
+            if (request.getCategoryName() != null) {
+                categoryName = request.getCategoryName();
+
+                switch (operationType) {
+                    case Create:
+                        if (categoryRepository.existsByName(categoryName)) {
+                            responseText = "Category" + categoryName + " already exists";
+                            logger.warn(responseText);
+                        } else {
+                            Category category = new Category(categoryName);
+                            categoryRepository.save(category);
+                            responseText = "Category" + categoryName + " created";
+                            logger.debug(responseText);
+                        }
+                        break;
+                    case Deactivate:
+                        Optional<Category> result = categoryRepository.findByName(categoryName);
+
+                        if (result.isPresent()) {
+                            Category category = result.get();
+                            category.setDeactivated(true);
+                            categoryRepository.save(category);
+
+                            responseText = "Category" + categoryName + " deactivated";
+                            logger.debug("Category {} deactivated", responseText);
+                        } else {
+                            responseText = "Category" + categoryName + " not found";
+                            logger.warn("Category {} not found", responseText);
+                        }
+                        break;
+                    default:
+                        responseText = "Invalid operation type : should be on of Create/Deactivate";
+                        break;
+                }
+            } else {
+                responseText = "Category name is null";
+                logger.warn(responseText);
+            }
+        } else {
+            responseText = "Request is null";
+            logger.warn(responseText);
+        }
+
+        return CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .build();
+    }
 
     @Override
     @Transactional
-    public boolean deactivate(String name) {
-        Optional<Category> result  = categoryRepository.findByName(name);
+    public CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request) {
+        String responseText;
 
-        if(result.isPresent()) {
-            Category category = result.get();
-            category.setDeactivated(true);
-            categoryRepository.save(category);
+        if(request!=null) {
+            Category category = get(request.getOldName());
 
-            logger.debug("Category {} deactivated", name);
-            return true;
+            if (category != null) {
+                category.setName(request.getNewName());
+                categoryRepository.save(category);
+
+                responseText = "Category name" + request.getOldName() + "updated to " + request.getNewName();
+                logger.debug(responseText);
+            } else {
+                responseText = "Category" + request.getOldName() + " not found";
+            }
         } else {
-            logger.warn("Category {} not found", name);
-            return false;
+            responseText = "Request is null";
+            logger.warn(responseText);
+        }
+
+        return CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public Category get(String name) {
+        Optional<Category> result = categoryRepository.findByName(name);
+
+        if (result.isPresent()) {
+            logger.debug("Query for {} category received", name);
+            return result.get();
+        } else {
+            logger.debug("Category {} not found", name);
+            return null;
         }
     }
 
-   @Override
-   @Transactional
-   public boolean delete(String name) {
-       Category category = get(name);
-
-       if(category!=null) {
-           if(category.getTicketList().size()==0) {
-               categoryRepository.delete(category);
-               logger.debug("Category {} deleted", name);
-               return true;
-           } else {
-               logger.warn("Category {} cannot be deleted : there are tickets with this category", name);
-               return false;
-           }
-       } else {
-           return false;
-       }
-   }
-
-   @Override
-   @Transactional
-   public boolean changeName(String oldName, String newName) {
-       Category category = get(oldName);
-
-       if(category!=null) {
-           category.setName(newName);
-           categoryRepository.save(category);
-
-           logger.debug("Category name {} updated to {}", oldName, newName);
-           return true;
-       } else {
-           return false;
-       }
-   }
-
-   @Override
-   @Transactional
-   public Category get(String name) {
-      Optional<Category> result = categoryRepository.findByName(name);
-
-      if(result.isPresent()) {
-         logger.debug("Query for {} category received", name);
-         return result.get();
-      } else {
-         logger.debug("Category {} not found", name);
-         return null;
-      }
-   }
-
-   @Override
-   @Transactional
-   public Iterable<Category> getAll() {
-      return categoryRepository.findAll();
-   }
+    @Override
+    @Transactional
+    public CategoryOp.CategoryOpGetAllResponse getAll() {
+        return CategoryOp.CategoryOpGetAllResponse.newBuilder()
+                .addAllCategoryName(
+                        Streams.stream(categoryRepository.findAll()).map(Category::getName).collect(Collectors.toList())
+                ).build();
+    }
 }
