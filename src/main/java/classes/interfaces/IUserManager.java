@@ -1,17 +1,21 @@
 package classes.interfaces;
 
 import classes.entities.User;
-import classes.enums.UserRole;
+import ticktrack.proto.CommonResponse;
+import ticktrack.proto.UserOp;
 
 public interface IUserManager {
-   boolean create(String username,String firstName,String lastName,String password,UserRole role);
+   CommonResponse create(UserOp.UserOpCreateRequest request);
 
-   boolean update(String username, String parameterName, String value);
+   CommonResponse update(UserOp.UserOpUpdateRequest request);
 
-   boolean parameterPassword(String username, String password);
+   CommonResponse changePassword(UserOp.UserOpChangePassword request);
 
-   boolean deactivate(String username);
+   CommonResponse changeRole(UserOp.UserOpChangeRole request);
 
-   User get(String username);
+   CommonResponse deactivate(UserOp.UserOpDeactivateRequest request);
 
+    User get(String username);
+
+    UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request);
 }

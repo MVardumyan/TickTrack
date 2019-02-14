@@ -1,4 +1,11 @@
 package classes.beans;
 
-public class SearchManager {
+import classes.interfaces.ISearchManager;
+import ticktrack.proto.SearchOp;
+
+public class SearchManager implements ISearchManager {
+    @Override
+    public SearchOp.SearchOpResponse searchByCriteria(SearchOp.SearchOpRequest request) {
+        return null;
+    }
 }

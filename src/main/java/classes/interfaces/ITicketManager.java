@@ -3,21 +3,19 @@ package classes.interfaces;
 import classes.entities.*;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
+import ticktrack.proto.CommonResponse;
+import ticktrack.proto.TicketOp;
 
 import java.sql.Timestamp;
 
 public interface ITicketManager {
-   boolean create(String summary, String description, TicketPriority priority, Category category);
+   CommonResponse create(TicketOp.TicketOpCreateRequest request);
 
-   boolean updateContent(long ticket_id, String parameterName, String value);
+   CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request);
 
-   boolean updateStatus(long ticket_id, TicketStatus newStatus);
+   CommonResponse addComment(TicketOp.TicketOpAddComment request);
 
-   boolean updateCategory(long ticket_id, Category newCategory);
+    TicketOp.TicketOpGetResponse get(TicketOp.TicketOpGetRequest request);
 
-   boolean assign(long ticket_id, User user);
-
-   Ticket get(long ticket_id);
-
-   Iterable<Ticket> getAll();
+    TicketOp.TicketOpGetResponse getAll();
 }
