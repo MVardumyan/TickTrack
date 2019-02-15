@@ -8,7 +8,7 @@ import ticktrack.proto.UserGroupOp;
 import java.util.Set;
 
 public interface IUserGroupManager {
-   CommonResponse categoryOperation(UserGroupOp.UserGroupOpRequest request);
+   CommonResponse groupOperation(UserGroupOp.UserGroupOpRequest request);
 
    CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request);
 

@@ -22,6 +22,7 @@ public class CategoryManager implements ICategoryManager {
     private CategoryRepository categoryRepository;
     private Logger logger = LoggerFactory.getLogger(CategoryManager.class);
 
+    @Transactional
     @Override
     public CommonResponse categoryOperation(CategoryOp.CategoryOpRequest request) {
         String responseText;
@@ -77,8 +78,8 @@ public class CategoryManager implements ICategoryManager {
                 .build();
     }
 
-    @Override
     @Transactional
+    @Override
     public CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request) {
         String responseText;
 
@@ -104,8 +105,8 @@ public class CategoryManager implements ICategoryManager {
                 .build();
     }
 
-    @Override
     @Transactional
+    @Override
     public Category get(String name) {
         Optional<Category> result = categoryRepository.findByName(name);
 
@@ -118,8 +119,8 @@ public class CategoryManager implements ICategoryManager {
         }
     }
 
-    @Override
     @Transactional
+    @Override
     public CategoryOp.CategoryOpGetAllResponse getAll() {
         return CategoryOp.CategoryOpGetAllResponse.newBuilder()
                 .addAllCategoryName(
