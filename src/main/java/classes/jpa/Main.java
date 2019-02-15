@@ -1,10 +1,10 @@
-package classes.JPA;
+package classes.jpa;
 
 import javax.persistence.EntityManager;
 
 public class Main {
       public static void main(String[] args){
-         EntityManager entityManager = JPAUtil.getEntityManagerFactory().createEntityManager();
+         EntityManager entityManager = JpaUtil.getEntityManagerFactory().createEntityManager();
          entityManager.getTransaction().begin();
 
          // Check database version
@@ -16,6 +16,6 @@ public class Main {
          entityManager.getTransaction().commit();
          entityManager.close();
 
-         JPAUtil.shutdown();
+         JpaUtil.shutdown();
       }
 }

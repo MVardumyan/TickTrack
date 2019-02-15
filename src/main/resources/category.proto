@@ -5,7 +5,12 @@ package ticktrack.proto;
 
 //SUPPORTING MESSAGES
 message CommonResponse {
+    enum ResponseType {
+        Success = 1;
+        Failure = 2;
+    }
     required string responseText = 1;
+    required ResponseType responseType = 2;
 }
 //SUPPORTING MESSAGES END
 
