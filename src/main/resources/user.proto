@@ -11,7 +11,12 @@ enum UserRole {
 
 //SUPPORTING MESSAGES
 message CommonResponse {
+    enum ResponseType {
+        Success = 1;
+        Failure = 2; //todo other protos
+    }
     required string responseText = 1;
+    required ResponseType responseType = 2;
 }
 //SUPPORTING MESSAGES END
 
