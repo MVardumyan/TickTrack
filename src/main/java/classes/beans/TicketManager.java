@@ -4,6 +4,7 @@ import classes.entities.*;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
 import classes.interfaces.ITicketManager;
+import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
@@ -22,6 +23,8 @@ import java.util.stream.Collectors;
 public class TicketManager implements ITicketManager {
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private CommentRepository commentRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
     @Override
@@ -34,7 +37,13 @@ public class TicketManager implements ITicketManager {
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
         TicketPriority priority = result.get().getPriority();
-        //User assignee = request.; //todo
+
+        switch(request.getParamName()) {
+            case Summary:
+
+        }
+
+        //User assignee = request.getParamName();
         String summary = result.get().getSummary();
         String description = result.get().getDescription();
         TicketStatus status = result.get().getStatus();
@@ -52,22 +61,33 @@ public class TicketManager implements ITicketManager {
     @Override
     public CommonResponse addComment(TicketOp.TicketOpAddComment request) {
         String responseText;
+        CommonResponse response;
+
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
         if(request != null) {
             Comment comment = new Comment(request.getNewComment().getUsername(),
                new Timestamp(request.getNewComment().getTime()),
                request.getNewComment().getText());
-            result.get().setComment(comment);
+//            result.get().setComment(comment);
+            comment.setTicket(result.get());
+            commentRepository.save(comment);
 
             responseText = "User " + request.getNewComment().getUsername() + " added comment "
                + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
             logger.debug(responseText);
+
+            response = CommonResponse.newBuilder()
+               .setResponseText(responseText)
+               .setResponseType(CommonResponse.ResponseType.Success)
+               .build();
         }else {
             responseText = " request is null ";
+            response = CommonResponse.newBuilder()
+               .setResponseText(responseText)
+               .setResponseType(CommonResponse.ResponseType.Failure)
+               .build();
         }
-        return CommonResponse.newBuilder()
-           .setResponseText(responseText)
-           .build();
+        return response;
     }
 
     @Transactional
