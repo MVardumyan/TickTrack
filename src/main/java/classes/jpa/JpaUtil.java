@@ -1,9 +1,9 @@
-package classes.JPA;
+package classes.jpa;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class JPAUtil {
+public class JpaUtil {
    private static final String PERSISTENCE_UNIT_NAME = "TickTrack";
    private static EntityManagerFactory factory;
 
