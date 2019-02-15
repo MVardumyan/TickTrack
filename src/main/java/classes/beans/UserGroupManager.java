@@ -1,6 +1,5 @@
 package classes.beans;
 
-import classes.entities.Category;
 import classes.entities.UserGroup;
 import classes.interfaces.IUserGroupManager;
 import classes.repositories.GroupRepository;
@@ -22,56 +21,9 @@ public class UserGroupManager implements IUserGroupManager {
     private GroupRepository groupRepository;
     private Logger logger = LoggerFactory.getLogger(UserGroupManager.class);
 
-//   @Override
-//   @Transactional
-//   public boolean create(String name) {
-//      if(groupRepository.existsByName(name)) {
-//         logger.warn("Group {} already exists", name);
-//         return false;
-//      } else {
-//         UserGroup group = new UserGroup();
-//         group.setName(name);
-//         groupRepository.save(group);
-//         logger.debug("New group {} created and saved to db", name);
-//         return true;
-//      }
-//   }
-//
-//   @Override
-//   @Transactional
-//   public boolean changeName(String oldName, String newName) {
-//      UserGroup group = get(oldName);
-//
-//      if(group!=null) {
-//         group.setName(newName);
-//         groupRepository.save(group);
-//         logger.debug("Group name {} updated to {}", oldName, newName);
-//         return true;
-//      } else {
-//         return false;
-//      }
-//   }
-//
-//   @Override
-//   @Transactional
-//   public boolean delete(String name) {
-//      UserGroup group = get(name);
-//
-//      if(group!=null) {
-//         if (group.getMembers().size() == 0) {
-//            groupRepository.delete(group);
-//            logger.debug("Group {} deleted", name);
-//            return true;
-//         } else {
-//            logger.warn("Group {} cannot be deleted : group contains users", name);
-//         }
-//      }
-//
-//      return false;
-//   }
-
+    @Transactional
     @Override
-    public CommonResponse categoryOperation(UserGroupOp.UserGroupOpRequest request) {
+    public CommonResponse groupOperation(UserGroupOp.UserGroupOpRequest request) {
         String responseText;
         if (request != null) {
             UserGroupOp.UserGroupOpRequest.OpType operationType = request.getOpType();
@@ -130,6 +82,7 @@ public class UserGroupManager implements IUserGroupManager {
 
     }
 
+    @Transactional
     @Override
     public CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request) {
         String responseText;
@@ -156,8 +109,8 @@ public class UserGroupManager implements IUserGroupManager {
                 .build();
     }
 
-    @Override
     @Transactional
+    @Override
     public UserGroup get(String name) {
         Optional<UserGroup> result = groupRepository.findByName(name);
         if (result.isPresent()) {
@@ -169,8 +122,8 @@ public class UserGroupManager implements IUserGroupManager {
         }
     }
 
-    @Override
     @Transactional
+    @Override
     public UserGroupOp.UserGroupOpGetAllResponse getAll() {
         return UserGroupOp.UserGroupOpGetAllResponse.newBuilder()
                 .addAllGroupName(
