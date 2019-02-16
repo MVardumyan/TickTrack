@@ -15,6 +15,15 @@ public class PasswordHandler {
            .hashLength(16);
    static private Jargon2.Verifier verifier  = jargon2Verifier();
 
+   static public String encode(String password){
+       if(password != null){
+            byte[] passwordInBytes = password.getBytes();
+            return hasher.password(passwordInBytes).encodedHash();
+       } else {
+           return null;
+       }
+   }
+
 
    public static boolean verifyPassword(String password, String encodedHash) {
       if(password != null && encodedHash != null) {
