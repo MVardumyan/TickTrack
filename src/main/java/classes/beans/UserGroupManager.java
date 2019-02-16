@@ -9,13 +9,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticktrack.proto.CommonResponse;
-import ticktrack.proto.UserGroupOp;
+
+import static ticktrack.proto.Msg.*;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
+@Service("groupMng")
 public class UserGroupManager implements IUserGroupManager {
     @Autowired
     private GroupRepository groupRepository;
@@ -23,63 +23,68 @@ public class UserGroupManager implements IUserGroupManager {
 
     @Transactional
     @Override
-    public CommonResponse groupOperation(UserGroupOp.UserGroupOpRequest request) {
+    public CommonResponse createUserGroup(String groupName) {
         String responseText;
-        if (request != null) {
-            UserGroupOp.UserGroupOpRequest.OpType operationType = request.getOpType();
-            String groupName;
+        if (groupName != null) {
+            if (!groupRepository.existsByName(groupName)) {
+                UserGroup group = new UserGroup();
+                group.setName(groupName);
+                groupRepository.save(group);
+                responseText = "Group" + groupName + " created";
+                logger.debug(responseText);
 
-            if (request.getGroupName() != null) {
-                groupName = request.getGroupName();
-
-                switch (operationType) {
-                    case Create:
-                        if (groupRepository.existsByName(groupName)) {
-                            responseText = "Group" + groupName + " already exists";
-                            logger.warn(responseText);
-                        } else {
-                            UserGroup group = new UserGroup();
-                            group.setName(groupName);
-                            groupRepository.save(group);
-                            responseText = "Group" + groupName + " created";
-                            logger.debug(responseText);
-                        }
-                        break;
-                    case Delete:
-                        UserGroup group = get(groupName);
-
-                        if (group != null) {
-                            if (group.getMembers().size() == 0) {
-                                groupRepository.delete(group);
-
-                                responseText = "Group" + groupName + " deleted";
-                                logger.debug(responseText);
-                            } else {
-                                responseText = "Group" + groupName + "cannot be deleted : group contains users";
-                                logger.warn(responseText);
-                            }
-                        } else {
-                            responseText = "Group" + groupName + " not found";
-                            logger.warn(responseText);
-                        }
-                        break;
-                    default:
-                        responseText = "Invalid operation type : should be on of Create/Delete";
-                        break;
-                }
+                return CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
             } else {
-                responseText = "Group name is null";
+                responseText = "Group" + groupName + " already exists";
                 logger.warn(responseText);
             }
         } else {
-            responseText = "Request is null";
-            logger.warn(responseText);
+            responseText = "Group name is null";
         }
 
         return CommonResponse.newBuilder()
                 .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Failure)
                 .build();
+    }
 
+    @Transactional
+    @Override
+    public CommonResponse deleteUserGroup(String groupName) {
+        String responseText;
+        if(groupName!=null) {
+            UserGroup group = get(groupName);
+
+            if (group != null) {
+                if (group.getMembers().size() == 0) {
+                    groupRepository.delete(group);
+
+                    responseText = "Group" + groupName + " deleted";
+                    logger.debug(responseText);
+
+                    return CommonResponse.newBuilder()
+                            .setResponseText(responseText)
+                            .setResponseType(CommonResponse.ResponseType.Success)
+                            .build();
+                } else {
+                    responseText = "Group" + groupName + "cannot be deleted : group contains users";
+                    logger.warn(responseText);
+                }
+            } else {
+                responseText = "Group" + groupName + " not found";
+                logger.warn(responseText);
+            }
+        } else {
+            responseText = "Group name is null";
+        }
+
+        return CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Failure)
+                .build();
     }
 
     @Transactional
@@ -87,10 +92,10 @@ public class UserGroupManager implements IUserGroupManager {
     public CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request) {
         String responseText;
 
-        if(request!=null) {
+        if (request != null) {
             UserGroup group = get(request.getOldName());
 
-            if(group!=null) {
+            if (group != null) {
                 group.setName(request.getNewName());
                 groupRepository.save(group);
 
@@ -110,7 +115,6 @@ public class UserGroupManager implements IUserGroupManager {
     }
 
     @Transactional
-    @Override
     public UserGroup get(String name) {
         Optional<UserGroup> result = groupRepository.findByName(name);
         if (result.isPresent()) {

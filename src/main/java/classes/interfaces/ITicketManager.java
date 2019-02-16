@@ -1,12 +1,6 @@
 package classes.interfaces;
 
-import classes.entities.*;
-import classes.enums.TicketPriority;
-import classes.enums.TicketStatus;
-import ticktrack.proto.CommonResponse;
-import ticktrack.proto.TicketOp;
-
-import java.sql.Timestamp;
+import static ticktrack.proto.Msg.*;
 
 public interface ITicketManager {
    CommonResponse create(TicketOp.TicketOpCreateRequest request);
@@ -15,7 +9,7 @@ public interface ITicketManager {
 
    CommonResponse addComment(TicketOp.TicketOpAddComment request);
 
-    TicketOp.TicketOpGetResponse get(TicketOp.TicketOpGetRequest request);
+    TicketOp.TicketOpGetResponse get(long ticket_id);
 
     TicketOp.TicketOpGetResponse getAll();
 }
