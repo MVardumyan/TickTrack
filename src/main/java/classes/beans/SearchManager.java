@@ -1,7 +1,7 @@
 package classes.beans;
 
 import classes.interfaces.ISearchManager;
-import ticktrack.proto.SearchOp;
+import static ticktrack.proto.Msg.*;
 
 public class SearchManager implements ISearchManager {
     @Override
