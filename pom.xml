@@ -101,6 +101,12 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>2.25</version>
+    </dependency>
+
   </dependencies>
 
   <build>
