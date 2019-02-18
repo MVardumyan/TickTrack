@@ -1,18 +1,15 @@
 package classes.interfaces;
 
 import classes.entities.UserGroup;
-import classes.entities.User;
-import ticktrack.proto.CommonResponse;
-import ticktrack.proto.UserGroupOp;
 
-import java.util.Set;
+import static ticktrack.proto.Msg.*;
 
 public interface IUserGroupManager {
-   CommonResponse groupOperation(UserGroupOp.UserGroupOpRequest request);
+   CommonResponse createUserGroup(String groupName);
+
+   CommonResponse deleteUserGroup(String groupName);
 
    CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request);
-
-   UserGroup get(String name);
 
    UserGroupOp.UserGroupOpGetAllResponse getAll();
 }

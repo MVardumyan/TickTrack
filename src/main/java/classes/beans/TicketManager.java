@@ -1,6 +1,7 @@
 package classes.beans;
 
 import classes.entities.*;
+import classes.entities.Comment;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
 import classes.interfaces.ITicketManager;
@@ -10,9 +11,7 @@ import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import ticktrack.proto.CommonResponse;
-import ticktrack.proto.TicketInfo;
-import ticktrack.proto.TicketOp;
+import static ticktrack.proto.Msg.*;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -92,16 +91,24 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public TicketOp.TicketOpGetResponse get(TicketOp.TicketOpGetRequest request) {
-        Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
-        if (result.isPresent()) {
-            logger.debug("Query for {} ticket received", request.getTicketId());
-            return null; //todo
-        } else {
-            logger.debug("Ticket {} not found", request.getTicketId());
-            return null;
-        }
+    public TicketOp.TicketOpGetResponse get(long ticket_id) {
+        return null;
     }
+
+//    @Transactional
+//    @Override
+//    public TicketOp.TicketOpGetResponse get(TicketOp.TicketOpGetRequest request) {
+//        Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
+//        if (result.isPresent()) {
+//            logger.debug("Query for {} ticket received", request.getTicketId());
+//            return null; //todo
+//        } else {
+//            logger.debug("Ticket {} not found", request.getTicketId());
+//            return null;
+//        }
+//    }
+
+
 
     @Transactional
     @Override

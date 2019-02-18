@@ -10,46 +10,37 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ticktrack.proto.UserGroupOp;
+import static ticktrack.proto.Msg.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class UserGroupManagerTest {
-    private static IUserGroupManager groupManager;
+    private static UserGroupManager groupManager;
 
     @BeforeAll
     static void initContext() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-        groupManager = context.getBean(IUserGroupManager.class);
+        groupManager = (UserGroupManager) context.getBean("groupMng");
     }
-//
+
     @Test
     void createAndDeleteUserGroup() {
-        groupManager.groupOperation(UserGroupOp.UserGroupOpRequest.newBuilder()
-                .setGroupName("testGroup1")
-                .setOpType(UserGroupOp.UserGroupOpRequest.OpType.Create)
-                .build());
+        groupManager.createUserGroup("testGroup1");
 
         UserGroup group = groupManager.get("testGroup1");
         assertNotNull(group);
         assertEquals("testGroup1", group.getName());
 
-        groupManager.groupOperation(UserGroupOp.UserGroupOpRequest.newBuilder()
-                .setGroupName("testGroup1")
-                .setOpType(UserGroupOp.UserGroupOpRequest.OpType.Delete)
-                .build());
+        groupManager.deleteUserGroup("testGroup1");
 
         assertNull(groupManager.get("testGroup1"));
     }
-//
+
     @Test
     void createAndUpdateUserGroup() {
-        groupManager.groupOperation(UserGroupOp.UserGroupOpRequest.newBuilder()
-                .setGroupName("testGroup2")
-                .setOpType(UserGroupOp.UserGroupOpRequest.OpType.Create)
-                .build());
+        groupManager.createUserGroup("testGroup2");
 
         UserGroup group = groupManager.get("testGroup2");
         assertNotNull(group);
@@ -64,10 +55,7 @@ class UserGroupManagerTest {
         assertNotNull(group);
         assertEquals("testGroup3", group.getName());
 
-        groupManager.groupOperation(UserGroupOp.UserGroupOpRequest.newBuilder()
-                .setGroupName("testGroup3")
-                .setOpType(UserGroupOp.UserGroupOpRequest.OpType.Delete)
-                .build());
+        groupManager.deleteUserGroup("testGroup3");
 
         assertNull(groupManager.get("testGroup3"));
     }
