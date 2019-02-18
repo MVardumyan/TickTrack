@@ -37,10 +37,10 @@ public class TicketManager implements ITicketManager {
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
         TicketPriority priority = result.get().getPriority();
 
-        switch(request.getParamName()) {
-            case Summary:
-
-        }
+//        switch(request.getParamName()) {
+//            case Summary:
+//
+//        }
 
         //User assignee = request.getParamName();
         String summary = result.get().getSummary();
