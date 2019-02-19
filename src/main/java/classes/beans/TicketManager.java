@@ -8,16 +8,13 @@ import classes.interfaces.ITicketManager;
 import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
 import com.google.common.collect.Streams;
-import net.bytebuddy.build.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import static ticktrack.proto.Msg.*;
-import static ticktrack.proto.TicketOp.TicketOpUpdateRequest.ParameterName.*;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -252,11 +249,11 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public TicketOp.TicketOpGetResponse get(long ticket_id) {
+    public Ticket get(long ticket_id) {
        Optional<Ticket> result = ticketRepository.findByID(ticket_id);
         if (result.isPresent()) {
             logger.debug("Query for {} ticket received", ticket_id);
-           // return result.get(); // todo return type must be changed
+            return result.get(); // todo return type must be changed
         } else {
             logger.debug("Ticket {} not found", ticket_id);
             return null;

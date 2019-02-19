@@ -1,5 +1,7 @@
 package classes.interfaces;
 
+import classes.entities.User;
+
 import static ticktrack.proto.Msg.*;
 
 public interface IUserManager {
@@ -13,7 +15,7 @@ public interface IUserManager {
 
    CommonResponse deactivate(UserOp.UserOpDeactivateRequest request);
 
-    UserOp.UserOpGetResponse get(String username);
+    User get(String username);
 
     UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request);
 }
