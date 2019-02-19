@@ -28,16 +28,30 @@ public class TicketManager implements ITicketManager {
     private CommentRepository commentRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
-    @Transactional //todo don't forget transactional
+    @Transactional
     @Override
     public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
        String responseText;
        CommonResponse response;
-
        if(request != null){
+          TicketPriority priority = null; // todo i think i did this in bad way
+          for (TicketPriority ticketPriority: TicketPriority.values()) {
+             if(ticketPriority.equals(request.getPriority())){
+                priority = ticketPriority;
+                break;
+             }else{
+                responseText = "Requests priority doesn't match with existing types!"; //todo check this part
+                logger.debug(responseText);
+
+                response = CommonResponse.newBuilder()
+                   .setResponseText(responseText)
+                   .setResponseType(CommonResponse.ResponseType.Failure)
+                   .build();
+             }
+          }
 
           Ticket newTicket = new Ticket(request.getSummary(),request.getDescription(),
-             request.getPriority(),request.getCategory()); //todo new function for comparison
+             priority,request.getCategory()); //todo category part
 
           responseText = "Ticket " + newTicket.getID() + " created!";
           logger.debug(responseText);
@@ -60,31 +74,138 @@ public class TicketManager implements ITicketManager {
     @Transactional
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
+        String responseText;
+        CommonResponse response = null; //todo how can this not be initilized bellow?
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
+        Ticket ticket = result.get();
         if(result.isPresent()) {
-            Ticket ticket = result.get();
-        switch(request.getParamName()) {
-            case Summary:
-                result.get().setSummary(String.valueOf(request.getValue()));
-            case Status:
-//                for (TicketStatus status : TicketStatus.values()) {
-//                    if(status.equals(request.getValue())){
-//                        result.get().setStatus(status);
-//                        break;
-//                    }
-//                }
-                ticket.setStatus(TicketStatus.valueOf(request.getValue()));
-            case Assignee:
-                result.get().setAssignee(request.getParamName());
-            case Deadline:
-                result.get().setDeadline(request.getParamName());
-        } else {
+            if(request.getAssignee() != null){
+               //User asignee = String.valueOf(request.getAssignee());
+               //ticket.setAssignee(request.);  //todo
+               responseText = "Ticket " + request.getTicketID() + "'s Assignee updated!";
+               logger.debug(responseText);
 
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if(request.getDescription() != null){
+               ticket.setDescription(request.getDescription());
+               responseText = "Ticket " + request.getTicketID() + "'s Description updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if(request.getCategory() != null){
+               //ticket.setCategory(request.getCategory()); //todo
+               responseText = "Ticket " + request.getTicketID() + "'s Category updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if(request.getStatus() != null){
+               for (TicketStatus ticketStatus: TicketStatus.values()) {
+                  if(ticketStatus.equals(request.getStatus())){
+                     ticket.setStatus(ticketStatus);
+                     responseText = "Ticket " + request.getTicketID() + "'s Status updated!";
+                     logger.debug(responseText);
+
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
+                     break;
+                  }else {
+                     responseText = "Requests status doesn't match with existing types!"; //todo check this part
+                     logger.debug(responseText);
+
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Failure)
+                        .build();
+                  }
+               }
+            }else if(request.getSummary() != null){
+               ticket.setSummary(request.getSummary());
+               responseText = "Ticket " + request.getTicketID() + "'s Summary updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if(request.getSummary() != null){
+               ticket.setSummary(request.getSummary());
+               responseText = "Ticket " + request.getTicketID() + "'s Summary updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if (request.getDeadline() != null){
+               //ticket.setDeadline(request.getDeadline());  //todo
+               responseText = "Ticket " + request.getTicketID() + "'s Deadline updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else if(request.getPriority() != null){
+               for (TicketPriority ticketPriority: TicketPriority.values()) {
+                  if(ticketPriority.equals(request.getPriority())){
+                     ticket.setPriority(ticketPriority);
+                     responseText = "Ticket " + request.getTicketID() + "'s Priority updated!";
+                     logger.debug(responseText);
+
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
+                     break;
+                  }else{
+                     responseText = "Requests priority doesn't match with existing types!"; //todo check this part
+                     logger.debug(responseText);
+
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Failure)
+                        .build();
+                  }
+               }
+            }else if(request.getResolution() != null){
+               ticket.setResolution(request.getResolution());
+               responseText = "Ticket " + request.getTicketID() + "'s Resolution updated!";
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
+            }else{
+               responseText = "Nothing updated in ticket " + request.getTicketID();
+               logger.debug(responseText);
+
+               response = CommonResponse.newBuilder()
+                  .setResponseText(responseText)
+                  .setResponseType(CommonResponse.ResponseType.Success)
+                  .build();
             }
-//todo
+        }else{
+           responseText = "There is no ticket by ID " + request.getTicketID();
+           logger.warn(responseText);
+           response = CommonResponse.newBuilder()
+              .setResponseText(responseText)
+              .setResponseType(CommonResponse.ResponseType.Failure)
+              .build();
         }
 
-        return null;
+        return response;
     }
 
     @Transactional
@@ -92,31 +213,39 @@ public class TicketManager implements ITicketManager {
     public CommonResponse addComment(TicketOp.TicketOpAddComment request) {
         String responseText;
         CommonResponse response;
-
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
-        if(request != null) {
-            Comment comment = new Comment(request.getNewComment().getUsername(),
-               new Timestamp(request.getNewComment().getTime()),
-               request.getNewComment().getText());
-            result.get().setComment(comment);
-            comment.setTicket(result.get());
-            commentRepository.save(comment);
+        if(result.isPresent()) {
+           if (request != null) {
+              Comment comment = new Comment(request.getNewComment().getUsername(),
+                 new Timestamp(request.getNewComment().getTime()),
+                 request.getNewComment().getText());
+              result.get().setComment(comment);
+              comment.setTicket(result.get());
+              commentRepository.save(comment);
 
-            responseText = "User " + request.getNewComment().getUsername() + " added comment "
-               + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
-            logger.debug(responseText);
+              responseText = "User " + request.getNewComment().getUsername() + " added comment "
+                 + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
+              logger.debug(responseText);
 
-            response = CommonResponse.newBuilder()
-               .setResponseText(responseText)
-               .setResponseType(CommonResponse.ResponseType.Success)
-               .build();
+              response = CommonResponse.newBuilder()
+                 .setResponseText(responseText)
+                 .setResponseType(CommonResponse.ResponseType.Success)
+                 .build();
+           } else {
+              responseText = " request is null ";
+              logger.warn(responseText);
+              response = CommonResponse.newBuilder()
+                 .setResponseText(responseText)
+                 .setResponseType(CommonResponse.ResponseType.Failure)
+                 .build();
+           }
         }else {
-            responseText = " request is null ";
-            logger.warn(responseText);
-            response = CommonResponse.newBuilder()
-               .setResponseText(responseText)
-               .setResponseType(CommonResponse.ResponseType.Failure)
-               .build();
+           responseText = "Ticket " + request.getTicketId() + " not found!";
+           logger.warn(responseText);
+           response = CommonResponse.newBuilder()
+              .setResponseText(responseText)
+              .setResponseType(CommonResponse.ResponseType.Failure)
+              .build();
         }
         return response;
     }
@@ -124,47 +253,21 @@ public class TicketManager implements ITicketManager {
     @Transactional
     @Override
     public TicketOp.TicketOpGetResponse get(long ticket_id) {
-        return null;
+       Optional<Ticket> result = ticketRepository.findByID(ticket_id);
+        if (result.isPresent()) {
+            logger.debug("Query for {} ticket received", ticket_id);
+           // return result.get(); // todo return type must be changed
+        } else {
+            logger.debug("Ticket {} not found", ticket_id);
+            return null;
+        }
     }
-
-//    @Transactional
-//    @Override
-//    public TicketOp.TicketOpGetResponse get(TicketOp.TicketOpGetRequest request) {
-//        Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
-//        if (result.isPresent()) {
-//            logger.debug("Query for {} ticket received", request.getTicketId());
-//            return null; //todo
-//        } else {
-//            logger.debug("Ticket {} not found", request.getTicketId());
-//            return null;
-//        }
-//    }
-
-
 
     @Transactional
     @Override
     public TicketOp.TicketOpGetResponse getAll() {
-        return null;//TicketOp.TicketOpGetResponse //todo
+       Streams.stream(ticketRepository.findAll()).map(Ticket::getID).collect(Collectors.toList());
+       return TicketOp.TicketOpGetResponse.newBuilder().build(); //todo not sure what should do here
     }
-//   @Override
-//   public Ticket update(Ticket ticket, TicketPriority priority, User asignee, Category category, Comment comment, String summary,
-//                        String description, TicketStatus status, Timestamp openDate, User creator, String resolution, Timestamp deadline){
-//      ticket.setAssignee(asignee);
-//      ticket.setPriority(priority);
-//      ticket.setCategory(category);
-//      ticket.setComment(comment);
-//      ticket.setSummary(summary);
-//      ticket.setDescription(description);
-//      ticket.setStatus(status);
-//      ticket.setOpenDate(openDate);
-//      ticket.setCreator(creator);
-//      ticket.setResolution(resolution);
-//      ticket.setDeadline(deadline);
-//
-//      return ticket;
-//   }
-
-
 
 }
