@@ -8,10 +8,12 @@ import classes.interfaces.ITicketManager;
 import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
 import com.google.common.collect.Streams;
+import net.bytebuddy.build.Plugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import static ticktrack.proto.Msg.*;
+import static ticktrack.proto.TicketOp.TicketOpUpdateRequest.ParameterName.*;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -26,33 +28,62 @@ public class TicketManager implements ITicketManager {
     private CommentRepository commentRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
+    @Transactional //todo don't forget transactional
     @Override
     public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
-        return null;
+       String responseText;
+       CommonResponse response;
+
+       if(request != null){
+
+          Ticket newTicket = new Ticket(request.getSummary(),request.getDescription(),
+             request.getPriority(),request.getCategory()); //todo new function for comparison
+
+          responseText = "Ticket " + newTicket.getID() + " created!";
+          logger.debug(responseText);
+
+          response = CommonResponse.newBuilder()
+             .setResponseText(responseText)
+             .setResponseType(CommonResponse.ResponseType.Success)
+             .build();
+       }else {
+          responseText = "Request to create a Ticket is null";
+          logger.warn(responseText);
+          response = CommonResponse.newBuilder()
+             .setResponseText(responseText)
+             .setResponseType(CommonResponse.ResponseType.Failure)
+             .build();
+       }
+       return response;
     }
 
     @Transactional
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
-        TicketPriority priority = result.get().getPriority();
-
+        if(result.isPresent()) {
+            Ticket ticket = result.get();
         switch(request.getParamName()) {
             case Summary:
+                result.get().setSummary(String.valueOf(request.getValue()));
+            case Status:
+//                for (TicketStatus status : TicketStatus.values()) {
+//                    if(status.equals(request.getValue())){
+//                        result.get().setStatus(status);
+//                        break;
+//                    }
+//                }
+                ticket.setStatus(TicketStatus.valueOf(request.getValue()));
+            case Assignee:
+                result.get().setAssignee(request.getParamName());
+            case Deadline:
+                result.get().setDeadline(request.getParamName());
+        } else {
 
+            }
+//todo
         }
 
-        //User assignee = request.getParamName();
-        String summary = result.get().getSummary();
-        String description = result.get().getDescription();
-        TicketStatus status = result.get().getStatus();
-        Timestamp openDate = result.get().getOpenDate();
-        User creator = result.get().getCreator();
-        String resolution = result.get().getResolution();
-        Timestamp deadline = result.get().getDeadline();
-        //Timestamp closeDate = result.get().getCloseDate();
-
-        //result.get().setAssignee(assignee);
         return null;
     }
 
@@ -67,7 +98,7 @@ public class TicketManager implements ITicketManager {
             Comment comment = new Comment(request.getNewComment().getUsername(),
                new Timestamp(request.getNewComment().getTime()),
                request.getNewComment().getText());
-//            result.get().setComment(comment);
+            result.get().setComment(comment);
             comment.setTicket(result.get());
             commentRepository.save(comment);
 
@@ -81,6 +112,7 @@ public class TicketManager implements ITicketManager {
                .build();
         }else {
             responseText = " request is null ";
+            logger.warn(responseText);
             response = CommonResponse.newBuilder()
                .setResponseText(responseText)
                .setResponseType(CommonResponse.ResponseType.Failure)
