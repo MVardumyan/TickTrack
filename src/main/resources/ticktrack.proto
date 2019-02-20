@@ -70,7 +70,7 @@ message Msg {
         optional string assignee = 9;
         optional string resolution = 10;
         optional int64 closeDate = 11;
-        optional string deadline = 12;
+        optional int64 deadline = 12;
         repeated Comment comment = 13;
     }
     //SUPPORTING ENUMS AND MESSAGES END
@@ -128,8 +128,8 @@ message Msg {
 
         message SearchOpRequest {
             repeated int64 ticket_id = 1;
-            optional string summary = 2;
-            optional string description = 3;
+            optional string summaryOrDescription = 2;
+            optional string creator = 3;
             repeated TicketPriority priority = 4;
             repeated string category = 5;
             optional string assignee = 6;
@@ -138,6 +138,7 @@ message Msg {
             optional string resolution = 9;
             optional int64 openDate = 10;
             optional int64 closeDate = 11;
+            optional string group = 12;
         }
 
         message SearchOpResponse {

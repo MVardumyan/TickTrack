@@ -34,7 +34,7 @@ public class TicketManager implements ITicketManager {
     @Transactional
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
-        Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
+        Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
         TicketPriority priority = result.get().getPriority();
 
 //        switch(request.getParamName()) {
@@ -62,7 +62,7 @@ public class TicketManager implements ITicketManager {
         String responseText;
         CommonResponse response;
 
-        Optional<Ticket> result = ticketRepository.findByID(request.getTicketId());
+        Optional<Ticket> result = ticketRepository.findById(request.getTicketId());
         if(request != null) {
             Comment comment = new Comment(request.getNewComment().getUsername(),
                new Timestamp(request.getNewComment().getTime()),
