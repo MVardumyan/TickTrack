@@ -72,6 +72,7 @@ public class SearchManager implements ISearchManager {
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Creator {} not found", request.getCreator());
+                return getEmptyResult();
             }
         }
         //priority
@@ -99,6 +100,7 @@ public class SearchManager implements ISearchManager {
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Assignee {} not found", request.getAssignee());
+                return getEmptyResult();
             }
         }
         //status
@@ -125,12 +127,12 @@ public class SearchManager implements ISearchManager {
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Group {} is not found", request.getGroup());
+                return getEmptyResult();
             }
         }
 
         criteriaQuery.where(criteria);
         List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
-
         return composeResponseMessageFromQueryResult(result);
     }
 
@@ -175,19 +177,19 @@ public class SearchManager implements ISearchManager {
                             ).collect(Collectors.toList())
                     );
 
-            if(ticket.getAssignee()!=null) {
+            if (ticket.getAssignee() != null) {
                 ticketMessage.setAssignee(ticket.getAssignee().getUsername());
             }
-            if(ticket.getCloseDate()!=null) {
+            if (ticket.getCloseDate() != null) {
                 ticketMessage.setCloseDate(ticket.getCloseDate().getTime());
             }
-            if(ticket.getDeadline()!=null) {
+            if (ticket.getDeadline() != null) {
                 ticketMessage.setDeadline(ticket.getDeadline().getTime());
             }
-            if(ticket.getGroup()!=null) {
+            if (ticket.getGroup() != null) {
                 ticketMessage.setGroup(ticket.getGroup().getName());
             }
-            if(ticket.getResolution()!=null) {
+            if (ticket.getResolution() != null) {
                 ticketMessage.setResolution(ticket.getResolution());
             }
 
@@ -195,5 +197,10 @@ public class SearchManager implements ISearchManager {
         }).forEach(responseBuilder::addTicketInfo);
 
         return responseBuilder.build();
+    }
+
+    private SearchOp.SearchOpResponse getEmptyResult() {
+        return SearchOp.SearchOpResponse.newBuilder()
+                .build();
     }
 }

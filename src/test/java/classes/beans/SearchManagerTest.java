@@ -10,9 +10,7 @@ import classes.enums.UserRole;
 import classes.repositories.CategoryRepository;
 import classes.repositories.TicketRepository;
 import classes.repositories.UserRepository;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,16 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class SearchManagerTest {
-    private static SearchManager searchManager;
-    private static TicketRepository ticketRepository;
-    private static UserRepository userRepository;
-    private static CategoryRepository categoryRepository;
-    private static User testUser;
-    private static Ticket testTicket;
-    private static Category testCategory;
+    private SearchManager searchManager;
+    private TicketRepository ticketRepository;
+    private UserRepository userRepository;
+    private CategoryRepository categoryRepository;
+    private User testUser;
+    private Ticket testTicket;
+    private Category testCategory;
 
-    @BeforeAll
-    static void initManager() {
+    @BeforeEach
+    void initManager() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
         searchManager = (SearchManager) context.getBean("SearchMng");
         ticketRepository = context.getBean(TicketRepository.class);
@@ -93,15 +91,15 @@ class SearchManagerTest {
     @Test
     void searchNonExistingTicket() {
         Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
-                .setSummaryOrDescription("this-user-doesn't-exist")
+                .setCreator("this-user-doesn't-exist")
                 .build();
 
         Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
         assertEquals(0, response.getTicketInfoCount());
     }
 
-    @AfterAll
-    static void clearTestData() {
+    @AfterEach
+    void clearTestData() {
         ticketRepository.delete(testTicket);
         categoryRepository.delete(testCategory);
         userRepository.delete(testUser);
