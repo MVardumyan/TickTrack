@@ -1,11 +1,13 @@
 package classes.beans;
 
 import classes.TickTrackContext;
+import classes.entities.Category;
 import classes.entities.Ticket;
 import classes.entities.User;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
 import classes.enums.UserRole;
+import classes.repositories.CategoryRepository;
 import classes.repositories.TicketRepository;
 import classes.repositories.UserRepository;
 import org.junit.jupiter.api.AfterAll;
@@ -18,6 +20,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ticktrack.proto.Msg;
 
+import java.sql.Timestamp;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
@@ -26,8 +30,10 @@ class SearchManagerTest {
     private static SearchManager searchManager;
     private static TicketRepository ticketRepository;
     private static UserRepository userRepository;
+    private static CategoryRepository categoryRepository;
     private static User testUser;
     private static Ticket testTicket;
+    private static Category testCategory;
 
     @BeforeAll
     static void initManager() {
@@ -35,6 +41,7 @@ class SearchManagerTest {
         searchManager = (SearchManager) context.getBean("SearchMng");
         ticketRepository = context.getBean(TicketRepository.class);
         userRepository = context.getBean(UserRepository.class);
+        categoryRepository = context.getBean(CategoryRepository.class);
 
         testUser = new User();
         testUser.setUsername("mik");
@@ -46,12 +53,18 @@ class SearchManagerTest {
         testUser.setRole(UserRole.BusinessUser);
         userRepository.save(testUser);
 
+        testCategory = new Category();
+        testCategory.setName("Category00");
+        categoryRepository.save(testCategory);
+
         testTicket = new Ticket();
         testTicket.setSummary("this is test");
         testTicket.setDescription("test");
         testTicket.setStatus(TicketStatus.Open);
         testTicket.setPriority(TicketPriority.Medium);
         testTicket.setCreator(testUser);
+        testTicket.setCategory(testCategory);
+        testTicket.setOpenDate(new Timestamp(System.currentTimeMillis()));
         ticketRepository.save(testTicket);
     }
 
@@ -69,6 +82,7 @@ class SearchManagerTest {
     @AfterAll
     static void clearTestData() {
         ticketRepository.delete(testTicket);
+        categoryRepository.delete(testCategory);
         userRepository.delete(testUser);
     }
 }

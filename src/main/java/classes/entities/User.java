@@ -24,8 +24,6 @@ public class User{
    @Column
    private boolean activeStatus;
 
-   //todo return this to optional = false
-//   @ManyToOne(optional = false)
    @ManyToOne
    private UserGroup group;
 

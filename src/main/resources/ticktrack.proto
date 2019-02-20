@@ -72,6 +72,7 @@ message Msg {
         optional int64 closeDate = 11;
         optional int64 deadline = 12;
         repeated Comment comment = 13;
+        optional string group = 14;
     }
     //SUPPORTING ENUMS AND MESSAGES END
 
