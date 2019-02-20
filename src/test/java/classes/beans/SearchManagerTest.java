@@ -90,6 +90,16 @@ class SearchManagerTest {
         assertEquals("mik", response.getTicketInfo(0).getCreator());
     }
 
+    @Test
+    void searchNonExistingTicket() {
+        Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
+                .setSummaryOrDescription("this-user-doesn't-exist")
+                .build();
+
+        Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+        assertEquals(0, response.getTicketInfoCount());
+    }
+
     @AfterAll
     static void clearTestData() {
         ticketRepository.delete(testTicket);

@@ -21,6 +21,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -78,7 +79,8 @@ public class SearchManager implements ISearchManager {
             currentPredicate = root.get("priority").in(
                     request.getPriorityList()
                             .stream()
-                            .map(priority -> TicketPriority.valueOf(priority.toString()))
+                            .map(this::mapTicketPriority)
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList())
             );
             criteria = builder.and(criteria, currentPredicate);
@@ -104,7 +106,8 @@ public class SearchManager implements ISearchManager {
             currentPredicate = root.get("status").in(
                     request.getStatusList()
                             .stream()
-                            .map(status -> TicketStatus.valueOf(status.toString()))
+                            .map(this::mapTicketStatus)
+                            .filter(Objects::nonNull)
                             .collect(Collectors.toList())
             );
             criteria = builder.and(criteria, currentPredicate);
@@ -129,6 +132,24 @@ public class SearchManager implements ISearchManager {
         List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
 
         return composeResponseMessageFromQueryResult(result);
+    }
+
+    private TicketStatus mapTicketStatus(Msg.TicketStatus status) {
+        try {
+            return TicketStatus.valueOf(status.toString());
+        } catch (IllegalArgumentException e) {
+            logger.warn("Status {} does not exist", status);
+            return null;
+        }
+    }
+
+    private TicketPriority mapTicketPriority(Msg.TicketPriority priority) {
+        try {
+            return TicketPriority.valueOf(priority.toString());
+        } catch (IllegalArgumentException e) {
+            logger.warn("Priority {} does not exist", priority);
+            return null;
+        }
     }
 
     private SearchOp.SearchOpResponse composeResponseMessageFromQueryResult(List<Ticket> result) {
