@@ -72,7 +72,7 @@ public class TicketManager implements ITicketManager {
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         String responseText;
-        CommonResponse response = null; //todo how can this not be initilized bellow?
+        CommonResponse response = null; //todo how can this not be initialized bellow?
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
         Ticket ticket = result.get();
         if(result.isPresent()) {
