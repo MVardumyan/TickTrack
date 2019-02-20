@@ -79,6 +79,17 @@ class SearchManagerTest {
 
     }
 
+    @Test
+    void searchByTwoCriterias() {
+        Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
+                .addPriority(Msg.TicketPriority.Medium)
+                .addStatus(Msg.TicketStatus.Open)
+                .build();
+
+        Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+        assertEquals("mik", response.getTicketInfo(0).getCreator());
+    }
+
     @AfterAll
     static void clearTestData() {
         ticketRepository.delete(testTicket);
