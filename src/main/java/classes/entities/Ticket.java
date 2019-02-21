@@ -97,6 +97,10 @@ public class Ticket{
       this.summary = summary;
    }
 
+   public void setCloseDate(Timestamp closeDate) {
+      this.closeDate = closeDate;
+   }
+
    public long getID() {
       return ID;
    }
@@ -147,5 +151,9 @@ public class Ticket{
 
    public Set<Comment> getCommentList() {
       return commentList;
+   }
+
+   public Timestamp getCloseDate() {
+      return closeDate;
    }
 }

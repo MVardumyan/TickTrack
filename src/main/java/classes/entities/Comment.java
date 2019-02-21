@@ -16,8 +16,7 @@ public class Comment{
    @Column(nullable = false)
    private String text;
 
-   @ManyToOne
-   @Column(nullable = false)
+   @ManyToOne(optional = false)
    private Ticket ticket;
 
    public Comment(String username, Timestamp timestamp, String text){
