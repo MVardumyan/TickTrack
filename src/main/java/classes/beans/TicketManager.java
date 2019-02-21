@@ -31,32 +31,28 @@ public class TicketManager implements ITicketManager {
        String responseText;
        CommonResponse response;
        if(request != null){
-          TicketPriority priority = null; // todo i think i did this in bad way
-          for (TicketPriority ticketPriority: TicketPriority.values()) {
-             if(ticketPriority.equals(request.getPriority())){
-                priority = ticketPriority;
-                break;
-             }else{
-                responseText = "Requests priority doesn't match with existing types!"; //todo check this part
-                logger.debug(responseText);
+          TicketPriority priority;
+          try {
+             priority = TicketPriority.valueOf(request.getPriority().toString());
+             Ticket newTicket = new Ticket(request.getSummary(),
+                request.getDescription(),
+                priority,
+                request.getCategory());
+             responseText = "Ticket " + newTicket.getID() + " created!";
+             logger.debug(responseText);
 
-                response = CommonResponse.newBuilder()
-                   .setResponseText(responseText)
-                   .setResponseType(CommonResponse.ResponseType.Failure)
-                   .build();
-             }
+             response = CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Success)
+                .build();
+          } catch (IllegalArgumentException e) {
+             responseText = "Priority doesn't match with existing types!";
+             logger.warn(responseText);
+             response = CommonResponse.newBuilder()
+                .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Failure)
+                .build();
           }
-
-          Ticket newTicket = new Ticket(request.getSummary(),request.getDescription(),
-             priority,request.getCategory()); //todo category part
-
-          responseText = "Ticket " + newTicket.getID() + " created!";
-          logger.debug(responseText);
-
-          response = CommonResponse.newBuilder()
-             .setResponseText(responseText)
-             .setResponseType(CommonResponse.ResponseType.Success)
-             .build();
        }else {
           responseText = "Request to create a Ticket is null";
           logger.warn(responseText);
@@ -117,7 +113,7 @@ public class TicketManager implements ITicketManager {
                         .build();
                      break;
                   }else {
-                     responseText = "Requests status doesn't match with existing types!"; //todo check this part
+                     responseText = "Requests status doesn't match with existing types!";
                      logger.debug(responseText);
 
                      response = CommonResponse.newBuilder()
@@ -126,15 +122,6 @@ public class TicketManager implements ITicketManager {
                         .build();
                   }
                }
-            }else if(request.getSummary() != null){
-               ticket.setSummary(request.getSummary());
-               responseText = "Ticket " + request.getTicketID() + "'s Summary updated!";
-               logger.debug(responseText);
-
-               response = CommonResponse.newBuilder()
-                  .setResponseText(responseText)
-                  .setResponseType(CommonResponse.ResponseType.Success)
-                  .build();
             }else if(request.getSummary() != null){
                ticket.setSummary(request.getSummary());
                responseText = "Ticket " + request.getTicketID() + "'s Summary updated!";
@@ -154,26 +141,24 @@ public class TicketManager implements ITicketManager {
                   .setResponseType(CommonResponse.ResponseType.Success)
                   .build();
             }else if(request.getPriority() != null){
-               for (TicketPriority ticketPriority: TicketPriority.values()) {
-                  if(ticketPriority.equals(request.getPriority())){
-                     ticket.setPriority(ticketPriority);
-                     responseText = "Ticket " + request.getTicketID() + "'s Priority updated!";
-                     logger.debug(responseText);
+               TicketPriority priority;
+               try {
+                  priority = TicketPriority.valueOf(request.getPriority().toString());
+                  ticket.setPriority(priority);
+                  responseText = "Ticket " + request.getTicketID() + "' priority updated!";
+                  logger.debug(responseText);
 
-                     response = CommonResponse.newBuilder()
-                        .setResponseText(responseText)
-                        .setResponseType(CommonResponse.ResponseType.Success)
-                        .build();
-                     break;
-                  }else{
-                     responseText = "Requests priority doesn't match with existing types!"; //todo check this part
-                     logger.debug(responseText);
-
-                     response = CommonResponse.newBuilder()
-                        .setResponseText(responseText)
-                        .setResponseType(CommonResponse.ResponseType.Failure)
-                        .build();
-                  }
+                  response = CommonResponse.newBuilder()
+                     .setResponseText(responseText)
+                     .setResponseType(CommonResponse.ResponseType.Success)
+                     .build();
+               } catch (IllegalArgumentException e) {
+                  responseText = "Priority doesn't match with existing types!";
+                  logger.warn(responseText);
+                  response = CommonResponse.newBuilder()
+                     .setResponseText(responseText)
+                     .setResponseType(CommonResponse.ResponseType.Failure)
+                     .build();
                }
             }else if(request.getResolution() != null){
                ticket.setResolution(request.getResolution());

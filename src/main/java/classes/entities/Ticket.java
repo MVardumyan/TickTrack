@@ -50,9 +50,6 @@ public class Ticket{
       this.category = category;
    }
 
-   public Ticket() {
-   }
-
    public void setAssignee(User assignee) {
       this.assignee = assignee;
    }
