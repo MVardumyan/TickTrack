@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class UserGroupManagerTest {
-    private static UserGroupManager groupManager;
+    private static IUserGroupManager groupManager;
 
     @BeforeAll
     static void initContext() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-        groupManager = (UserGroupManager) context.getBean("groupMng");
+        groupManager = (IUserGroupManager) context.getBean("GroupMng");
     }
 
     @Test

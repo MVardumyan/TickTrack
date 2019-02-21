@@ -2,6 +2,8 @@ package classes;
 
 import java.util.Properties;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.sql.DataSource;
 
 import classes.interfaces.ICategoryManager;
@@ -69,13 +71,8 @@ public class TickTrackContext {
         return transactionManager;
     }
 
-//    public static void main(String[] args) {
-//        ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-//
-//        ICategoryManager manager = context.getBean(ICategoryManager.class);
-//        manager.categoryOperation("BasicCategory");
-//        System.out.println("========" + manager.get("BasicCategory") + "==========");
-//        System.out.println("========" + manager.get("BasicCategory2") + "==========");
-//        manager.delete("BasicCategory2");
-//    }
+    @Bean
+    public EntityManager entityManager() {
+        return Persistence.createEntityManagerFactory("TickTrack").createEntityManager();
+    }
 }
