@@ -8,11 +8,11 @@ import classes.enums.TicketStatus;
 import classes.interfaces.ISearchManager;
 import classes.repositories.GroupRepository;
 import classes.repositories.UserRepository;
-import javafx.util.converter.TimeStringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ticktrack.proto.Msg;
 
 import javax.persistence.EntityManager;
@@ -21,7 +21,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
@@ -45,6 +44,7 @@ public class SearchManager implements ISearchManager {
     }
 
     @Override
+    @Transactional
     public SearchOp.SearchOpResponse searchByCriteria(SearchOp.SearchOpRequest request) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 

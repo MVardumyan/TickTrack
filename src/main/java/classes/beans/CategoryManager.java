@@ -51,6 +51,7 @@ public class CategoryManager implements ICategoryManager {
                 .build();
     }
 
+    @Transactional
     @Override
     public CommonResponse deactivateCategory(String categoryName) {
         String responseText;
@@ -98,6 +99,11 @@ public class CategoryManager implements ICategoryManager {
 
                 responseText = "Category name" + request.getOldName() + "updated to " + request.getNewName();
                 logger.debug(responseText);
+
+                return CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
             } else {
                 responseText = "Category" + request.getOldName() + " not found";
             }
@@ -108,6 +114,7 @@ public class CategoryManager implements ICategoryManager {
 
         return CommonResponse.newBuilder()
                 .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Failure)
                 .build();
     }
 

@@ -7,6 +7,7 @@ import classes.entities.User;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
 import classes.enums.UserRole;
+import classes.interfaces.ISearchManager;
 import classes.repositories.CategoryRepository;
 import classes.repositories.TicketRepository;
 import classes.repositories.UserRepository;
@@ -25,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class SearchManagerTest {
-    private static SearchManager searchManager;
+    private static ISearchManager searchManager;
     private static TicketRepository ticketRepository;
     private static UserRepository userRepository;
     private static CategoryRepository categoryRepository;
@@ -37,7 +38,7 @@ class SearchManagerTest {
     @BeforeAll
     static void initManager() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-        searchManager = (SearchManager) context.getBean("SearchMng");
+        searchManager = (ISearchManager) context.getBean("SearchMng");
         ticketRepository = context.getBean(TicketRepository.class);
         userRepository = context.getBean(UserRepository.class);
         categoryRepository = context.getBean(CategoryRepository.class);
