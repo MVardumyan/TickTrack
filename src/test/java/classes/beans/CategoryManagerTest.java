@@ -2,6 +2,7 @@ package classes.beans;
 
 import classes.TickTrackContext;
 import classes.entities.Category;
+import classes.interfaces.ICategoryManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class CategoryManagerTest {
-    private static CategoryManager categoryManager;
+    private static ICategoryManager categoryManager;
 
     @BeforeAll
     static void initContext() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-        categoryManager = (CategoryManager) context.getBean("CategoryMng");
+        categoryManager = (ICategoryManager) context.getBean("CategoryMng");
     }
 
     @Test
