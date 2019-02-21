@@ -68,7 +68,7 @@ public class SearchManager implements ISearchManager {
         }
         //creator
         if (request.hasCreator()) {
-            Optional<User> creator = userRepository.findByUsername(request.getCreator());
+            Optional<User> creator = userRepository.findByUserName(request.getCreator());
 
             if (creator.isPresent()) {
                 currentPredicate = builder.equal(root.get("creator"), request.getCreator());
@@ -96,7 +96,7 @@ public class SearchManager implements ISearchManager {
         }
         //assignee
         if (request.hasAssignee()) {
-            Optional<User> assignee = userRepository.findByUsername(request.getAssignee());
+            Optional<User> assignee = userRepository.findByUserName(request.getAssignee());
 
             if (assignee.isPresent()) {
                 currentPredicate = builder.equal(root.get("assignee"), request.getAssignee());

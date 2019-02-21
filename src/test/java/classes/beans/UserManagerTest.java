@@ -2,6 +2,7 @@ package classes.beans;
 
 import classes.TickTrackContext;
 import classes.entities.User;
+import classes.interfaces.IUserManager;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class UserManagerTest {
-   private static UserManager userManager;
+   private static IUserManager userManager;
 
    @BeforeAll
    static void initContext() {

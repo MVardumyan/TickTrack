@@ -29,7 +29,8 @@ public class TicketManager implements ITicketManager {
     @Override
     public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
        String responseText;
-       CommonResponse response;
+       CommonResponse response = null;
+       /*
        if(request != null){
           TicketPriority priority;
           try {
@@ -60,7 +61,7 @@ public class TicketManager implements ITicketManager {
              .setResponseText(responseText)
              .setResponseType(CommonResponse.ResponseType.Failure)
              .build();
-       }
+       }*/
        return response;
     }
 
@@ -68,7 +69,7 @@ public class TicketManager implements ITicketManager {
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         String responseText;
-        CommonResponse response = null; //todo how can this not be initialized bellow?
+        CommonResponse response;
         Optional<Ticket> result = ticketRepository.findByID(request.getTicketID());
         Ticket ticket = result.get();
         if(result.isPresent()) {
