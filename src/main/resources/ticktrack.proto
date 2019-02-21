@@ -93,7 +93,7 @@ message Msg {
             required string priority = 3;
             required string category = 4;
             optional string assignee = 5;
-            optional string deadline = 6;
+            optional int64 deadline = 6;
         }
 
         message TicketOpUpdateRequest {
@@ -103,7 +103,7 @@ message Msg {
             optional TicketPriority priority = 4;
             optional string category = 5;
             optional string assignee = 6;
-            optional string deadline = 7;
+            optional int64 deadline = 7;
             optional TicketStatus status = 8;
             optional string resolution = 9;
         }

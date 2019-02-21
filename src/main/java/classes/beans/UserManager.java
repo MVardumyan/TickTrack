@@ -245,7 +245,7 @@ public class UserManager implements IUserManager {
    @Transactional
    @Override
    public User get(String username) {
-      Optional<User> result = userRepository.findByUserName(username);
+      Optional<User> result = userRepository.findByUsername(username);
       if (result.isPresent()) {
          logger.debug("Query for {} user received", username);
          return result.get();

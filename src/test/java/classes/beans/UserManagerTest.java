@@ -22,7 +22,7 @@ class UserManagerTest {
    @BeforeAll
    static void initContext() {
       ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-      userManager = (UserManager) context.getBean("userMng");
+      userManager = (IUserManager) context.getBean("userMng");
    }
 
    @Test
@@ -38,7 +38,7 @@ class UserManagerTest {
 
       User user = userManager.get("user1");
       assertNotNull(user);
-      assertEquals("user1", user.getUsername());
+      assertEquals("some", user.getFirstName());
 
       userManager.deactivate(Msg.UserOp.UserOpDeactivateRequest.newBuilder()
          .setUsername("user1")
@@ -56,11 +56,12 @@ class UserManagerTest {
          .setPassword("2222")
          .setFirstname("hisFirstName")
          .setLastname("hisLastName")
+         .setEmail("thisisemail@gmail.com")
          .build());
 
       User user = userManager.get("user2");
       assertNotNull(user);
-      assertEquals("user2", user.getUsername());
+      assertEquals("hisFirstName", user.getFirstName());
 
       userManager.update(Msg.UserOp.UserOpUpdateRequest.newBuilder()
          .setParamName(Msg.UserOp.UserOpUpdateRequest.ParameterName.FirstName)
