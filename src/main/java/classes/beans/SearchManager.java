@@ -8,6 +8,7 @@ import classes.enums.TicketStatus;
 import classes.interfaces.ISearchManager;
 import classes.repositories.GroupRepository;
 import classes.repositories.UserRepository;
+import javafx.util.converter.TimeStringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -129,6 +132,42 @@ public class SearchManager implements ISearchManager {
                 logger.warn("Group {} is not found", request.getGroup());
                 return getEmptyResult();
             }
+        }
+        //open date
+        if(request.hasOpenDateStart()) {
+            if(request.hasOpenDateEnd()) {
+                currentPredicate = builder.between(root.get("openDate"),
+                        new Timestamp(request.getOpenDateStart()),
+                        new Timestamp(request.getOpenDateEnd()));
+            } else {
+                currentPredicate = builder.equal(root.get("openDate"),
+                        new Timestamp(request.getOpenDateStart()));
+            }
+            criteria = builder.and(criteria, currentPredicate);
+        }
+        //close date
+        if(request.hasCloseDateStart()) {
+            if(request.hasCloseDateEnd()) {
+                currentPredicate = builder.between(root.get("closeDate"),
+                        new Timestamp(request.getCloseDateStart()),
+                        new Timestamp(request.getCloseDateEnd()));
+            } else {
+                currentPredicate = builder.equal(root.get("closeDate"),
+                        new Timestamp(request.getCloseDateStart()));
+            }
+            criteria = builder.and(criteria, currentPredicate);
+        }
+        //deadline
+        if(request.hasDeadlineStart()) {
+            if(request.hasDeadlineEnd()) {
+                currentPredicate = builder.between(root.get("deadline"),
+                        new Timestamp(request.getDeadlineStart()),
+                        new Timestamp(request.getDeadlineEnd()));
+            } else {
+                currentPredicate = builder.equal(root.get("deadline"),
+                        new Timestamp(request.getDeadlineStart()));
+            }
+            criteria = builder.and(criteria, currentPredicate);
         }
 
         criteriaQuery.where(criteria);

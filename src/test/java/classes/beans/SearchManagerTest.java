@@ -25,16 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TickTrackContext.class)
 class SearchManagerTest {
-    private SearchManager searchManager;
-    private TicketRepository ticketRepository;
-    private UserRepository userRepository;
-    private CategoryRepository categoryRepository;
-    private User testUser;
-    private Ticket testTicket;
-    private Category testCategory;
+    private static SearchManager searchManager;
+    private static TicketRepository ticketRepository;
+    private static UserRepository userRepository;
+    private static CategoryRepository categoryRepository;
+    private static User testUser;
+    private static Ticket testTicket;
+    private static Category testCategory;
+    private static long testOpenDate;
 
-    @BeforeEach
-    void initManager() {
+    @BeforeAll
+    static void initManager() {
         ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
         searchManager = (SearchManager) context.getBean("SearchMng");
         ticketRepository = context.getBean(TicketRepository.class);
@@ -45,7 +46,7 @@ class SearchManagerTest {
         testUser.setUsername("mik");
         testUser.setActiveStatus(true);
         testUser.setFirstName("mikayel");
-        testUser.setLastName("Vardumyan");
+        testUser.setLastName("vardumyan");
         testUser.setEmail("mikayel2505@gmail.com");
         testUser.setPassword("password");
         testUser.setRole(UserRole.BusinessUser);
@@ -62,7 +63,8 @@ class SearchManagerTest {
         testTicket.setPriority(TicketPriority.Medium);
         testTicket.setCreator(testUser);
         testTicket.setCategory(testCategory);
-        testTicket.setOpenDate(new Timestamp(System.currentTimeMillis()));
+        testOpenDate = System.currentTimeMillis();
+        testTicket.setOpenDate(new Timestamp(testOpenDate));
         ticketRepository.save(testTicket);
     }
 
@@ -74,7 +76,16 @@ class SearchManagerTest {
 
         Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
         assertEquals("mik", response.getTicketInfo(0).getCreator());
+    }
 
+    @Test
+    void searchByOpenDate() {
+        Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
+                .setOpenDateStart(testOpenDate)
+                .build();
+
+        Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+        assertEquals("mik", response.getTicketInfo(0).getCreator());
     }
 
     @Test
@@ -98,8 +109,8 @@ class SearchManagerTest {
         assertEquals(0, response.getTicketInfoCount());
     }
 
-    @AfterEach
-    void clearTestData() {
+    @AfterAll
+    static void clearTestData() {
         ticketRepository.delete(testTicket);
         categoryRepository.delete(testCategory);
         userRepository.delete(testUser);
