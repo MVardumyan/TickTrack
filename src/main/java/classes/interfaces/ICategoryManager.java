@@ -1,5 +1,7 @@
 package classes.interfaces;
 
+import classes.entities.Category;
+
 import static ticktrack.proto.Msg.*;
 
 public interface ICategoryManager {
@@ -8,6 +10,8 @@ public interface ICategoryManager {
    CommonResponse deactivateCategory(String categoryName);
 
    CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request);
+
+   Category get(String name);
 
    CategoryOp.CategoryOpGetAllResponse getAll();
 }

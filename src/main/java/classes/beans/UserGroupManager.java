@@ -15,11 +15,15 @@ import static ticktrack.proto.Msg.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service("groupMng")
+@Service("GroupMng")
 public class UserGroupManager implements IUserGroupManager {
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
     private Logger logger = LoggerFactory.getLogger(UserGroupManager.class);
+
+    @Autowired
+    public UserGroupManager(GroupRepository groupRepository) {
+        this.groupRepository = groupRepository;
+    }
 
     @Transactional
     @Override
@@ -101,6 +105,10 @@ public class UserGroupManager implements IUserGroupManager {
 
                 responseText = "Group name" + request.getOldName() + "updated to " + request.getNewName();
                 logger.debug(responseText);
+                return CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
             } else {
                 responseText = "Group" + request.getOldName() + " not found";
             }
@@ -111,10 +119,12 @@ public class UserGroupManager implements IUserGroupManager {
 
         return CommonResponse.newBuilder()
                 .setResponseText(responseText)
+                .setResponseType(CommonResponse.ResponseType.Failure)
                 .build();
     }
 
     @Transactional
+    @Override
     public UserGroup get(String name) {
         Optional<UserGroup> result = groupRepository.findByName(name);
         if (result.isPresent()) {

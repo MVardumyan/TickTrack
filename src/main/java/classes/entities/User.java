@@ -24,7 +24,7 @@ public class User{
    @Column
    private boolean activeStatus;
 
-   @ManyToOne(optional = false)
+   @ManyToOne
    private UserGroup group;
 
    @OneToMany(mappedBy = "creator")
