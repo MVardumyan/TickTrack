@@ -13,5 +13,5 @@ public interface ITicketManager {
 
     Ticket get(long ticket_id);
 
-    TicketOp.TicketOpGetResponse getAll();
+    SearchOp.SearchOpResponse getAll();
 }

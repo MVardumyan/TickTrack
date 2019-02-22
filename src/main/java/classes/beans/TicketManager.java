@@ -8,6 +8,7 @@ import classes.interfaces.ITicketManager;
 import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
 import classes.repositories.UserRepository;
+import classes.util.ResponseHandler;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,6 @@ import org.springframework.stereotype.Service;
 import static java.lang.Long.valueOf;
 import static ticktrack.proto.Msg.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -28,20 +25,23 @@ import java.util.stream.Collectors;
 
 @Service("ticketMng")
 public class TicketManager implements ITicketManager {
-    @Autowired
-    private TicketRepository ticketRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private CommentRepository commentRepository;
+    private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
-    @Transactional
+   @Autowired
+   public TicketManager(TicketRepository ticketRepository, UserRepository userRepository, CommentRepository commentRepository) {
+      this.ticketRepository = ticketRepository;
+      this.userRepository = userRepository;
+      this.commentRepository = commentRepository;
+   }
+
+   @Transactional
     @Override
     public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
        String responseText;
-       CommonResponse response = null;
-       /*
+       CommonResponse response;
        if(request != null){
           TicketPriority priority;
           try {
@@ -72,7 +72,7 @@ public class TicketManager implements ITicketManager {
              .setResponseText(responseText)
              .setResponseType(CommonResponse.ResponseType.Failure)
              .build();
-       }*/
+       }
        return response;
     }
 
@@ -80,7 +80,7 @@ public class TicketManager implements ITicketManager {
     @Override
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         String responseText;
-        CommonResponse response = null;
+        CommonResponse response;
         Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
         if(result.isPresent()) {
            Ticket ticket = result.get();
@@ -219,7 +219,6 @@ public class TicketManager implements ITicketManager {
         CommonResponse response;
         Optional<Ticket> result = ticketRepository.findById(request.getTicketId());
         if(result.isPresent()) {
-           if (request != null) {
               Comment comment = new Comment(request.getNewComment().getUsername(),
                  new Timestamp(request.getNewComment().getTime()),
                  request.getNewComment().getText());
@@ -235,14 +234,6 @@ public class TicketManager implements ITicketManager {
                  .setResponseText(responseText)
                  .setResponseType(CommonResponse.ResponseType.Success)
                  .build();
-           } else {
-              responseText = " request is null ";
-              logger.warn(responseText);
-              response = CommonResponse.newBuilder()
-                 .setResponseText(responseText)
-                 .setResponseType(CommonResponse.ResponseType.Failure)
-                 .build();
-           }
         }else {
            responseText = "Ticket " + request.getTicketId() + " not found!";
            logger.warn(responseText);
@@ -269,9 +260,8 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public TicketOp.TicketOpGetResponse getAll() {
-       Streams.stream(ticketRepository.findAll()).map(Ticket::getID).collect(Collectors.toList());
-       return TicketOp.TicketOpGetResponse.newBuilder().build(); //todo not sure what should do here
+    public SearchOp.SearchOpResponse getAll() {
+       return ResponseHandler.composeResponseMessageFromQueryResult(Streams.stream(ticketRepository.findAll()).collect(Collectors.toList()));
     }
 
 }
