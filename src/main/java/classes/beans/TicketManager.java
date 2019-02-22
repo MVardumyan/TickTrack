@@ -7,6 +7,7 @@ import classes.enums.TicketStatus;
 import classes.interfaces.ITicketManager;
 import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
+import classes.repositories.UserRepository;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,10 @@ import org.springframework.stereotype.Service;
 import static java.lang.Long.valueOf;
 import static ticktrack.proto.Msg.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Optional;
@@ -25,6 +30,8 @@ import java.util.stream.Collectors;
 public class TicketManager implements ITicketManager {
     @Autowired
     private TicketRepository ticketRepository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private CommentRepository commentRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
@@ -75,18 +82,30 @@ public class TicketManager implements ITicketManager {
         String responseText;
         CommonResponse response = null;
         Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
-        Ticket ticket = result.get();
         if(result.isPresent()) {
-            if(request.hasAssignee()){
-               //User asignee = String.valueOf(request.getAssignee());
-               //ticket.setAssignee(request.);  //todo
-               responseText = "Ticket " + request.getTicketID() + "'s Assignee updated!";
-               logger.debug(responseText);
+           Ticket ticket = result.get();
+           if(request.hasAssignee()){
+                  Optional<User> userResult = userRepository.findByUsername(request.getAssignee());
+                  if (userResult.isPresent()) {
+                     User assignee = userResult.get();
+                     ticket.setAssignee(assignee);
+                     ticketRepository.save(ticket);
+                     responseText = "Ticket " + request.getTicketID() + "'s Assignee updated!";
+                     logger.debug(responseText);
 
-               response = CommonResponse.newBuilder()
-                  .setResponseText(responseText)
-                  .setResponseType(CommonResponse.ResponseType.Success)
-                  .build();
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .build();
+                  } else {
+                     responseText = "There is no such a user to update assignee of ticket " + ticket.getID();
+                     logger.debug(responseText);
+
+                     response = CommonResponse.newBuilder()
+                        .setResponseText(responseText)
+                        .setResponseType(CommonResponse.ResponseType.Failure)
+                        .build();
+                  }
             }else if(request.hasDescription()){
                ticket.setDescription(request.getDescription());
                responseText = "Ticket " + request.getTicketID() + "'s Description updated!";
