@@ -1,7 +1,5 @@
 package classes.interfaces;
 
-import classes.entities.Ticket;
-
 import static ticktrack.proto.Msg.*;
 
 public interface ITicketManager {
@@ -11,7 +9,7 @@ public interface ITicketManager {
 
    CommonResponse addComment(TicketOp.TicketOpAddComment request);
 
-    Ticket get(long ticket_id);
+    TicketOp.TicketOpGetResponse get(long ticket_id);
 
     SearchOp.SearchOpResponse getAll();
 }

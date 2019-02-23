@@ -5,11 +5,13 @@ import classes.entities.Comment;
 import classes.enums.TicketPriority;
 import classes.enums.TicketStatus;
 import classes.interfaces.ITicketManager;
+import classes.repositories.CategoryRepository;
 import classes.repositories.CommentRepository;
 import classes.repositories.TicketRepository;
 import classes.repositories.UserRepository;
 import classes.util.ResponseHandler;
 import com.google.common.collect.Streams;
+import jdk.jshell.Snippet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +30,15 @@ public class TicketManager implements ITicketManager {
     private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final CategoryRepository categoryRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
    @Autowired
-   public TicketManager(TicketRepository ticketRepository, UserRepository userRepository, CommentRepository commentRepository) {
+   public TicketManager(TicketRepository ticketRepository, UserRepository userRepository, CommentRepository commentRepository, CategoryRepository categoryRepository) {
       this.ticketRepository = ticketRepository;
       this.userRepository = userRepository;
       this.commentRepository = commentRepository;
+      this.categoryRepository = categoryRepository;
    }
 
    @Transactional
@@ -44,15 +48,18 @@ public class TicketManager implements ITicketManager {
        CommonResponse response;
        if(request != null){
           TicketPriority priority;
+          Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
+          if(categoryResult.isPresent()) {
+             Category category = categoryResult.get();
           try {
-             priority = TicketPriority.valueOf(request.getPriority().toString());
+             priority = TicketPriority.valueOf(request.getPriority());
              Ticket newTicket = new Ticket(request.getSummary(),
                 request.getDescription(),
                 priority,
-                request.getCategory());
+                category);
+             newTicket.setStatus(TicketStatus.Open);
              responseText = "Ticket " + newTicket.getID() + " created!";
              logger.debug(responseText);
-
              response = CommonResponse.newBuilder()
                 .setResponseText(responseText)
                 .setResponseType(CommonResponse.ResponseType.Success)
@@ -89,6 +96,7 @@ public class TicketManager implements ITicketManager {
                   if (userResult.isPresent()) {
                      User assignee = userResult.get();
                      ticket.setAssignee(assignee);
+                     ticket.setStatus(TicketStatus.Assigned);
                      ticketRepository.save(ticket);
                      responseText = "Ticket " + request.getTicketID() + "'s Assignee updated!";
                      logger.debug(responseText);
@@ -116,14 +124,26 @@ public class TicketManager implements ITicketManager {
                   .setResponseType(CommonResponse.ResponseType.Success)
                   .build();
             }else if(request.hasCategory()){
-               //ticket.setCategory(request.getCategory()); //todo
-               responseText = "Ticket " + request.getTicketID() + "'s Category updated!";
-               logger.debug(responseText);
+              Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
+              if(categoryResult.isPresent()) {
+                 Category category = categoryResult.get();
+                 ticket.setCategory(category);
+                 responseText = "Ticket " + request.getTicketID() + "'s Category updated!";
+                 logger.debug(responseText);
 
-               response = CommonResponse.newBuilder()
-                  .setResponseText(responseText)
-                  .setResponseType(CommonResponse.ResponseType.Success)
-                  .build();
+                 response = CommonResponse.newBuilder()
+                    .setResponseText(responseText)
+                    .setResponseType(CommonResponse.ResponseType.Success)
+                    .build();
+              }else {
+                 responseText = "There is no such a user to update assignee of ticket " + ticket.getID();
+                 logger.debug(responseText);
+
+                 response = CommonResponse.newBuilder()
+                    .setResponseText(responseText)
+                    .setResponseType(CommonResponse.ResponseType.Failure)
+                    .build();
+              }
             }else if(request.hasStatus()){
                TicketStatus status;
                try {
@@ -247,11 +267,15 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public Ticket get(long ticket_id) {
+    public TicketOp.TicketOpGetResponse get(long ticket_id) {
        Optional<Ticket> result = ticketRepository.findById(ticket_id);
+       TicketOp.TicketOpGetResponse response;
         if (result.isPresent()) {
             logger.debug("Query for {} ticket received", ticket_id);
-            return result.get();
+            response = ticktrack.proto.TicketInfo.newBuilder()
+               .setStatus(result.get().getStatus().toString())
+               .setStatus()
+            return response;
         } else {
             logger.debug("Ticket {} not found", ticket_id);
             return null;
@@ -265,3 +289,5 @@ public class TicketManager implements ITicketManager {
     }
 
 }
+
+// todo assignee/category util methods

@@ -9,9 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ticktrack.proto.Msg;
+import ticktrack.proto.UserOp;
 
-import static classes.enums.UserRole.Admin;
-import static java.lang.Enum.valueOf;
 import static ticktrack.proto.Msg.*;
 
 import javax.transaction.Transactional;
@@ -34,6 +33,7 @@ public class UserManager implements IUserManager {
             userRole = UserRole.valueOf(request.getRole().toString());
             User newUser = new User(request.getUsername(),request.getFirstname(),request.getLastname(),
                request.getPassword(),userRole);
+            newUser.setActiveStatus(true);
             responseText = "User " + newUser.getUsername() + " created!";
             logger.debug(responseText);
 
@@ -166,13 +166,13 @@ public class UserManager implements IUserManager {
       Optional<User> result = userRepository.findById(request.getUsername());
       if(result.isPresent()){
          User user = result.get();
-         if(user.getRole().equals(request.getNewRole())){
-            responseText = "User " + user.getUsername() + "'s role was " + user.getRole();
+         if(user.getRole().equals(UserRole.valueOf(request.getNewRole().toString()))){
+            responseText = "Nothing changed. The user " + user.getUsername() + " had role " + user.getRole();
             logger.debug(responseText);
 
             response = CommonResponse.newBuilder()
                .setResponseText(responseText)
-               .setResponseType(CommonResponse.ResponseType.Success)
+               .setResponseType(CommonResponse.ResponseType.Failure)
                .build();
          }else {
             UserRole userRole;
@@ -244,11 +244,20 @@ public class UserManager implements IUserManager {
 
    @Transactional
    @Override
-   public User get(String username) {
+   public UserOp.UserOpGetResponse get(String username) {
       Optional<User> result = userRepository.findByUsername(username);
+      UserOp.UserOpGetResponse response;
+      UserRole userRole = UserRole.valueOf(result.get().getRole().toString());
       if (result.isPresent()) {
          logger.debug("Query for {} user received", username);
-         return result.get();
+         response = Msg.UserOp.UserOpGetResponse.UserInfo.newBuilder()
+            .setUsername(result.get().getUsername())
+            .setFirstname(result.get().getFirstName())
+            .setLastname(result.get().getLastName())
+            .setEmail(result.get().getEmail())
+            .setRole(userRole) //todo
+            .build();
+         return response;
       } else {
          logger.debug("User {} not found", username);
          return null;
@@ -258,6 +267,6 @@ public class UserManager implements IUserManager {
    @Transactional
    @Override
    public UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request) {
-      return null; //todo need to be discussed
+      return null; //todo only by role
    }
 }
