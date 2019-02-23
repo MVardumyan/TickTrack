@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 public class NotificationSender {
 
     private static final Configuration configuration = new Configuration()
-            .domain("sandbox640825bd39064eb58cc7d62b2de57f84.mailgun.org")
-            .apiKey("key-cf1bb82f5ef89c6a8aba2a56c057d931-1b65790d-9b99b4f0")
+            .domain("sandboxb037af6653fe4ca5b104396e3728d39f.mailgun.org")
+            .apiKey("36388af3b63eb7de8880661ec402ef01-9ce9335e-27fdf95e")
             .from("TickTrack", "TickTrack@gmail.com");
 
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -27,18 +27,19 @@ public class NotificationSender {
         }
     }
 
-    //use after using isValidMail
-    public static boolean sendMail(String address, String text){
-        if(text != null){
+    //before using this function address have to be checked with isValidMail
+    public static boolean sendMail(String address, String text)throws IllegalArgumentException{
+
+        if(text == null || text.equals("")){
+            throw new IllegalArgumentException("Somthing went wrong : text = " + text);
+        }
+
             return Mail.using(configuration)
                     .to(address)
                     .subject("TickTrack notification")
                     .text(text)
                     .build()
                     .send().isOk();
-        } else {
-            return false;
-        }
     }
 
 }
