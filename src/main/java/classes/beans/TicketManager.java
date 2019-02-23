@@ -46,35 +46,44 @@ public class TicketManager implements ITicketManager {
     public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
        String responseText;
        CommonResponse response;
-       if(request != null){
+       if(request != null) {
           TicketPriority priority;
           Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
-          if(categoryResult.isPresent()) {
+          if (categoryResult.isPresent()) {
              Category category = categoryResult.get();
-          try {
-             priority = TicketPriority.valueOf(request.getPriority());
-             Ticket newTicket = new Ticket(request.getSummary(),
-                request.getDescription(),
-                priority,
-                category);
-             newTicket.setStatus(TicketStatus.Open);
-             responseText = "Ticket " + newTicket.getID() + " created!";
-             logger.debug(responseText);
-             response = CommonResponse.newBuilder()
-                .setResponseText(responseText)
-                .setResponseType(CommonResponse.ResponseType.Success)
-                .build();
-          } catch (IllegalArgumentException e) {
-             responseText = "Priority doesn't match with existing types!";
+             try {
+                priority = TicketPriority.valueOf(request.getPriority());
+                Ticket newTicket = new Ticket(request.getSummary(),
+                   request.getDescription(),
+                   priority,
+                   category);
+                newTicket.setStatus(TicketStatus.Open);
+                responseText = "Ticket " + newTicket.getID() + " created!";
+                logger.debug(responseText);
+                response = CommonResponse.newBuilder()
+                   .setResponseText(responseText)
+                   .setResponseType(CommonResponse.ResponseType.Success)
+                   .build();
+             } catch (IllegalArgumentException e) {
+                responseText = "Priority doesn't match with existing types!";
+                logger.warn(responseText);
+                response = CommonResponse.newBuilder()
+                   .setResponseText(responseText)
+                   .setResponseType(CommonResponse.ResponseType.Failure)
+                   .build();
+             }
+          } else {
+             responseText = "Request to create a Ticket is null";
              logger.warn(responseText);
              response = CommonResponse.newBuilder()
                 .setResponseText(responseText)
                 .setResponseType(CommonResponse.ResponseType.Failure)
                 .build();
           }
-       }else {
-          responseText = "Request to create a Ticket is null";
-          logger.warn(responseText);
+       }else{
+          responseText = "Category result is not present to create a ticket!";
+          logger.debug(responseText);
+
           response = CommonResponse.newBuilder()
              .setResponseText(responseText)
              .setResponseType(CommonResponse.ResponseType.Failure)
@@ -149,7 +158,7 @@ public class TicketManager implements ITicketManager {
                try {
                   status = TicketStatus.valueOf(request.getStatus().toString());
                   ticket.setStatus(status);
-                  responseText = "Ticket " + request.getTicketID() + "' status updated!";
+                  responseText = "Ticket " + request.getTicketID() + "' Status updated!";
                   logger.debug(responseText);
 
                   response = CommonResponse.newBuilder()
@@ -272,10 +281,10 @@ public class TicketManager implements ITicketManager {
        TicketOp.TicketOpGetResponse response;
         if (result.isPresent()) {
             logger.debug("Query for {} ticket received", ticket_id);
-            response = ticktrack.proto.TicketInfo.newBuilder()
-               .setStatus(result.get().getStatus().toString())
-               .setStatus()
-            return response;
+           // response = ticktrack.proto.TicketInfo.newBuilder()
+               //.setStatus(result.get().getStatus().toString())
+              // .build();
+            return null; //response; //todo
         } else {
             logger.debug("Ticket {} not found", ticket_id);
             return null;
@@ -289,5 +298,3 @@ public class TicketManager implements ITicketManager {
     }
 
 }
-
-// todo assignee/category util methods

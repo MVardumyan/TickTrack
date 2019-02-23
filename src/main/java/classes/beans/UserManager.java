@@ -13,6 +13,11 @@ import ticktrack.proto.UserOp;
 
 import static ticktrack.proto.Msg.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
@@ -20,7 +25,13 @@ import java.util.Optional;
 public class UserManager implements IUserManager {
    @Autowired
    private UserRepository userRepository;
+   @Autowired
+   private final EntityManager entityManager;
    private Logger logger = LoggerFactory.getLogger(User.class);
+
+   public UserManager(EntityManager entityManager) {
+      this.entityManager = entityManager;
+   }
 
    @Transactional
    @Override
@@ -250,14 +261,8 @@ public class UserManager implements IUserManager {
       UserRole userRole = UserRole.valueOf(result.get().getRole().toString());
       if (result.isPresent()) {
          logger.debug("Query for {} user received", username);
-         response = Msg.UserOp.UserOpGetResponse.UserInfo.newBuilder()
-            .setUsername(result.get().getUsername())
-            .setFirstname(result.get().getFirstName())
-            .setLastname(result.get().getLastName())
-            .setEmail(result.get().getEmail())
-            .setRole(userRole) //todo
-            .build();
-         return response;
+         //response = Msg.UserOp.UserOpGetResponse.UserInfo.newBuilder().build();
+         return null; //response; //todo
       } else {
          logger.debug("User {} not found", username);
          return null;
@@ -267,6 +272,14 @@ public class UserManager implements IUserManager {
    @Transactional
    @Override
    public UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request) {
-      return null; //todo only by role
+      CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+      CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+      Root<User> root = criteriaQuery.from(User.class);
+
+      Predicate criteria = builder.conjunction();
+      Predicate currentPredicate;
+
+      //todo
+      return null;
    }
 }
