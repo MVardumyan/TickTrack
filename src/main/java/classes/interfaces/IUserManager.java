@@ -1,7 +1,5 @@
 package classes.interfaces;
 
-import ticktrack.proto.UserOp;
-
 import static ticktrack.proto.Msg.*;
 
 public interface IUserManager {

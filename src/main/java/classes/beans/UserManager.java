@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ticktrack.proto.Msg;
-import ticktrack.proto.UserOp;
 
 import static ticktrack.proto.Msg.*;
 
