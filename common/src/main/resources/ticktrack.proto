@@ -5,8 +5,6 @@ package ticktrack.proto;
 
 //MAIN MESSAGE
 message Msg {
-    required int64 time = 1;
-    required string username = 2;
 
     oneof MessageType {
         CommonResponse commonResponse = 100;
@@ -153,7 +151,8 @@ message Msg {
 
     //LOGIN MESSAGE
     message LoginRequest {
-        required string password = 3;
+        required string username = 1;
+        required string password = 2;
     }
     //LOGIN MESSAGE END
 

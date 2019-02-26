@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 
 @Service("CategoryMng")
 public class CategoryManager implements ICategoryManager {
-    @Autowired
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
     private Logger logger = LoggerFactory.getLogger(CategoryManager.class);
 
-
     @Autowired
-    EntityManager em;
+    public CategoryManager(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
 
     @Transactional
     @Override
