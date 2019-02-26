@@ -180,15 +180,9 @@ message Msg {
 
         message UserOpUpdateRequest {
             required string username = 1;
-
-            enum ParameterName {
-                FirstName = 1;
-                LastName = 2;
-                Email = 3;
-            }
-
-            required ParameterName paramName = 2;
-            required string value = 3;
+            optional string firstName = 2;
+            optional string lastName = 3;
+            optional string email = 4;
         }
 
         message UserOpChangePassword {
@@ -207,12 +201,14 @@ message Msg {
         }
 
         message UserOpGetByCriteriaRequest {
-            enum GetCriteria {
+            enum Criteria {
                 Admin = 1;
                 BusinessUser = 2;
                 RegularUser = 3;
                 All = 4;
             }
+
+            required Criteria criteria = 1;
         }
 
         message UserOpGetResponse {
@@ -224,7 +220,7 @@ message Msg {
                 required string lastname = 3;
                 required string email = 4;
                 required UserRole role = 6;
-                required bool deactivated = 7;
+                required bool isActive = 7;
                 optional string group = 8;
             }
         }

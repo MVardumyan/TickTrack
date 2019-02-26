@@ -6,7 +6,7 @@ import ticktrack.proto.Msg;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ResponseHandler {
+public final class ResponseHandler {
    public static Msg.SearchOp.SearchOpResponse composeResponseMessageFromQueryResult(List<Ticket> result) {
       Msg.SearchOp.SearchOpResponse.Builder responseBuilder = Msg.SearchOp.SearchOpResponse.newBuilder();
 
@@ -50,5 +50,19 @@ public class ResponseHandler {
       }).forEach(responseBuilder::addTicketInfo);
 
       return responseBuilder.build();
+   }
+
+   public static Msg.CommonResponse buildSuccessResponse(String responseText) {
+      return Msg.CommonResponse.newBuilder()
+              .setResponseText(responseText)
+              .setResponseType(Msg.CommonResponse.ResponseType.Success)
+              .build();
+   }
+
+   public static Msg.CommonResponse buildFailureResponse(String responseText) {
+      return Msg.CommonResponse.newBuilder()
+              .setResponseText(responseText)
+              .setResponseType(Msg.CommonResponse.ResponseType.Failure)
+              .build();
    }
 }
