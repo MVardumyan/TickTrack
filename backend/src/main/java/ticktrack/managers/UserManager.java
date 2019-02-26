@@ -60,49 +60,34 @@ public class UserManager implements IUserManager {
     @Transactional
     @Override
     public CommonResponse update(UserOp.UserOpUpdateRequest request) {
-        String responseText;
+        StringBuilder responseText = new StringBuilder();
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
         if (result.isPresent()) {
             User user = result.get();
-            switch (request.getParamName()) {
-                case FirstName:
-                    user.setFirstName(request.getValue());
-                    userRepository.save(user);
-                    responseText = "User " + user.getUsername() + "'s First Name is updated!";
-                    logger.debug(responseText);
-
-                    response = buildSuccessResponse(responseText);
-                    break;
-                case LastName:
-                    user.setLastName(request.getValue());
-                    user.setFirstName(request.getValue());
-                    userRepository.save(user);
-                    responseText = "User " + user.getUsername() + "'s Last Name is updated!";
-                    logger.debug(responseText);
-
-                    response = buildSuccessResponse(responseText);
-                    break;
-                case Email:
-                    user.setEmail(request.getValue());
-                    user.setFirstName(request.getValue());
-                    userRepository.save(user);
-                    responseText = "User " + user.getUsername() + "'s Email is updated!";
-                    logger.debug(responseText);
-
-                    response = buildSuccessResponse(responseText);
-                    break;
-                default:
-                    responseText = "Unexpected parameter name!";
-                    logger.debug(responseText);
-
-                    response = buildFailureResponse(responseText);
-                    break;
+            if (request.hasFirstName()) {
+                user.setFirstName(request.getFirstName());
+                userRepository.save(user);
+                responseText.append("User ").append(user.getUsername()).append("'s First Name is updated!\n");
             }
+            if (request.hasLastName()) {
+                user.setLastName(request.getLastName());
+                userRepository.save(user);
+                responseText.append("User ").append(user.getUsername()).append("'s Last Name is updated!\n");
+            }
+            if (request.hasEmail()) {
+                user.setEmail(request.getEmail());
+                userRepository.save(user);
+                responseText.append("User ").append(user.getUsername()).append("'s Email is updated!");
+            }
+            logger.debug(responseText.toString());
+
+            response = buildSuccessResponse(responseText.toString());
+
         } else {
-            responseText = "There is no user with username " + request.getUsername();
-            logger.warn(responseText);
-            response = buildFailureResponse(responseText);
+            responseText.append("There is no user with username ").append(request.getUsername());
+            logger.warn(responseText.toString());
+            response = buildFailureResponse(responseText.toString());
         }
         return response;
     }

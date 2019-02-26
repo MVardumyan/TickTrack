@@ -180,15 +180,9 @@ message Msg {
 
         message UserOpUpdateRequest {
             required string username = 1;
-
-            enum ParameterName {
-                FirstName = 1;
-                LastName = 2;
-                Email = 3;
-            }
-
-            required ParameterName paramName = 2;
-            required string value = 3;
+            optional string firstName = 2;
+            optional string lastName = 3;
+            optional string email = 4;
         }
 
         message UserOpChangePassword {
