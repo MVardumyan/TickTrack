@@ -1,12 +1,9 @@
 package ticktrack.controllers;
 
+import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.CategoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import ticktrack.proto.Msg;
 
 @Controller
@@ -20,22 +17,22 @@ public class CategoryController {
    }
 
    @RequestMapping(path = "/add", method = RequestMethod.POST)
-   public @ResponseBody
-   String addCategory(String categoryName) {
+   @ResponseBody
+   public Msg addCategory(@RequestParam("name") String categoryName) {
       Msg.CommonResponse result = categoryManager.createCategory(categoryName);
-      return buildDefaultResponseMessage(result).toString();
+      return buildDefaultResponseMessage(result);
    }
 
    @RequestMapping(path = "/deactivate")
-   public @ResponseBody
-   Msg deactivateCategory(String categoryName) {
+   @ResponseBody
+   public Msg deactivateCategory(@RequestParam("name") String categoryName) {
       Msg.CommonResponse result = categoryManager.deactivateCategory(categoryName);
       return buildDefaultResponseMessage(result);
    }
 
-   @RequestMapping(path = "getAll", method = RequestMethod.GET)
-   public @ResponseBody
-   Msg getAllCategories() {
+   @RequestMapping(path = "/getAll", method = RequestMethod.GET)
+   @ResponseBody
+   public Msg getAllCategories() {
       Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
       return Msg.newBuilder()
          .setCategoryOperation(
@@ -44,9 +41,9 @@ public class CategoryController {
          ).build();
    }
 
-   @RequestMapping(path = "changeName")
-   public @ResponseBody
-   Msg changeCategoryName(@RequestBody Msg request) {
+   @RequestMapping(path = "/changeName")
+   @ResponseBody
+   public Msg changeCategoryName(@RequestBody Msg request) {
       Msg.CommonResponse result;
 
       if (request.hasCategoryOperation()
@@ -66,8 +63,6 @@ public class CategoryController {
 
    private Msg buildDefaultResponseMessage(Msg.CommonResponse response) {
       return Msg.newBuilder()
-         .setTime(System.currentTimeMillis())
-         .setUsername("someone")
          .setCommonResponse(response)
          .build();
    }
