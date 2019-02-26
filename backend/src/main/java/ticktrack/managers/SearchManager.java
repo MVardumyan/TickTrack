@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ticktrack.util.ResponseHandler.composeResponseMessageFromQueryResult;
+import static ticktrack.util.ResponseHandler.buildTicketResponseFromQueryResult;
 import static ticktrack.proto.Msg.*;
 
 @Service("SearchMng")
@@ -173,7 +173,7 @@ public class SearchManager implements ISearchManager {
 
         criteriaQuery.where(criteria);
         List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
-        return composeResponseMessageFromQueryResult(result);
+        return buildTicketResponseFromQueryResult(result);
     }
 
     private TicketStatus mapTicketStatus(Msg.TicketStatus status) {

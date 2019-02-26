@@ -81,7 +81,6 @@ message Msg {
             TicketOpCreateRequest ticketOpCreateRequest = 11;
             TicketOpUpdateRequest ticketOpUpdateRequest = 12;
             TicketOpAddComment ticketOpAddComment = 13;
-            TicketOpGetResponse ticketOpGetResponse = 15;
             CommonResponse commonResponse = 16;
         }
 
@@ -89,9 +88,14 @@ message Msg {
             required string summary = 1;
             required string description = 2;
             required string priority = 3;
-            required string category = 4;
-            optional string assignee = 5;
+            required string creator = 4;
+            required string category = 5;
             optional int64 deadline = 6;
+
+            oneof Assign {
+                string assignee = 7;
+                string group = 8;
+            }
         }
 
         message TicketOpUpdateRequest {
@@ -109,10 +113,6 @@ message Msg {
         message TicketOpAddComment {
             required int64 ticket_id = 1;
             required Comment newComment = 2;
-        }
-
-        message TicketOpGetResponse {
-            required TicketInfo ticketInfo = 1;
         }
     }
     //TICKET OPERATIONS END

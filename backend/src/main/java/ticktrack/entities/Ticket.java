@@ -100,6 +100,10 @@ public class Ticket{
       this.closeDate = closeDate;
    }
 
+   public void setGroup(UserGroup group) {
+      this.group = group;
+   }
+
    public long getID() {
       return ID;
    }
