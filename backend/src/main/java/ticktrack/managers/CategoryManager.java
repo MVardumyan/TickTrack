@@ -1,6 +1,7 @@
 package ticktrack.managers;
 
 import ticktrack.entities.Category;
+import ticktrack.proto.Msg;
 import ticktrack.repositories.CategoryRepository;
 import ticktrack.interfaces.ICategoryManager;
 import com.google.common.collect.Streams;
@@ -10,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-
-import static ticktrack.proto.Msg.*;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,7 +27,7 @@ public class CategoryManager implements ICategoryManager {
 
     @Transactional
     @Override
-    public CommonResponse createCategory(String categoryName) {
+    public Msg.CommonResponse createCategory(String categoryName) {
         String responseText;
 
         if(categoryName!=null) {
@@ -39,9 +37,9 @@ public class CategoryManager implements ICategoryManager {
                 responseText = "Category" + categoryName + " created";
                 logger.debug(responseText);
 
-                return CommonResponse.newBuilder()
+                return Msg.CommonResponse.newBuilder()
                         .setResponseText(responseText)
-                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .setResponseType(Msg.CommonResponse.ResponseType.Success)
                         .build();
             } else {
                 responseText = "Category" + categoryName + " already exists";
@@ -52,15 +50,15 @@ public class CategoryManager implements ICategoryManager {
             logger.warn(responseText);
         }
 
-        return CommonResponse.newBuilder()
+        return Msg.CommonResponse.newBuilder()
                 .setResponseText(responseText)
-                .setResponseType(CommonResponse.ResponseType.Failure)
+                .setResponseType(Msg.CommonResponse.ResponseType.Failure)
                 .build();
     }
 
     @Transactional
     @Override
-    public CommonResponse deactivateCategory(String categoryName) {
+    public Msg.CommonResponse deactivateCategory(String categoryName) {
         String responseText;
         Optional<Category> result = categoryRepository.findByName(categoryName);
 
@@ -73,9 +71,9 @@ public class CategoryManager implements ICategoryManager {
                 responseText = "Category" + categoryName + " deactivated";
                 logger.debug("Category {} deactivated", responseText);
 
-                return CommonResponse.newBuilder()
+                return Msg.CommonResponse.newBuilder()
                         .setResponseText(responseText)
-                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .setResponseType(Msg.CommonResponse.ResponseType.Success)
                         .build();
             } else {
                 responseText = "Category" + categoryName + " not found";
@@ -86,15 +84,15 @@ public class CategoryManager implements ICategoryManager {
             logger.warn(responseText);
         }
 
-        return CommonResponse.newBuilder()
+        return Msg.CommonResponse.newBuilder()
                 .setResponseText(responseText)
-                .setResponseType(CommonResponse.ResponseType.Failure)
+                .setResponseType(Msg.CommonResponse.ResponseType.Failure)
                 .build();
     }
 
     @Transactional
     @Override
-    public CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request) {
+    public Msg.CommonResponse changeName(Msg.CategoryOp.CategoryOpUpdateRequest request) {
         String responseText;
 
         if(request!=null) {
@@ -107,9 +105,9 @@ public class CategoryManager implements ICategoryManager {
                 responseText = "Category name" + request.getOldName() + "updated to " + request.getNewName();
                 logger.debug(responseText);
 
-                return CommonResponse.newBuilder()
+                return Msg.CommonResponse.newBuilder()
                         .setResponseText(responseText)
-                        .setResponseType(CommonResponse.ResponseType.Success)
+                        .setResponseType(Msg.CommonResponse.ResponseType.Success)
                         .build();
             } else {
                 responseText = "Category" + request.getOldName() + " not found";
@@ -119,9 +117,9 @@ public class CategoryManager implements ICategoryManager {
             logger.warn(responseText);
         }
 
-        return CommonResponse.newBuilder()
+        return Msg.CommonResponse.newBuilder()
                 .setResponseText(responseText)
-                .setResponseType(CommonResponse.ResponseType.Failure)
+                .setResponseType(Msg.CommonResponse.ResponseType.Failure)
                 .build();
     }
 
@@ -140,8 +138,8 @@ public class CategoryManager implements ICategoryManager {
 
     @Transactional
     @Override
-    public CategoryOp.CategoryOpGetAllResponse getAll() {
-        return CategoryOp.CategoryOpGetAllResponse.newBuilder()
+    public Msg.CategoryOp.CategoryOpGetAllResponse getAll() {
+        return Msg.CategoryOp.CategoryOpGetAllResponse.newBuilder()
                 .addAllCategoryName(
                         Streams.stream(categoryRepository.findAll()).map(Category::getName).collect(Collectors.toList())
                 ).build();
