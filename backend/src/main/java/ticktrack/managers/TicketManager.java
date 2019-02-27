@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static ticktrack.enums.TicketStatus.*;
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
 
@@ -66,7 +67,7 @@ public class TicketManager implements ITicketManager {
                         request.getDescription(),
                         priority,
                         category);
-                newTicket.setStatus(TicketStatus.Open);
+                newTicket.setStatus(Open);
                 newTicket.setOpenDate(new Timestamp(System.currentTimeMillis()));
 
                 if (request.hasDeadline()) {
@@ -105,6 +106,8 @@ public class TicketManager implements ITicketManager {
     public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
         StringBuilder responseText = new StringBuilder();
         CommonResponse response;
+        boolean updateSuccess = false;
+
         Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
         if (result.isPresent()) {
             Ticket ticket = result.get();
@@ -114,11 +117,12 @@ public class TicketManager implements ITicketManager {
                 if (userResult.isPresent()) {
                     User assignee = userResult.get();
                     ticket.setAssignee(assignee);
-                    if(TicketStatus.Open.equals(ticket.getStatus())) {
-                        ticket.setStatus(TicketStatus.Assigned);
+                    if(Open.equals(ticket.getStatus())) {
+                        ticket.setStatus(Assigned);
                     }
-                    ticketRepository.save(ticket);
+
                     responseText.append("Ticket ").append(request.getTicketID()).append("'s Assignee updated!\n");
+                    updateSuccess = true;
                 } else {
                     responseText.append("There is no such a user to update assignee of ticket ").append(ticket.getID()).append("\n");
                 }
@@ -126,6 +130,7 @@ public class TicketManager implements ITicketManager {
             if (request.hasDescription()) {
                 ticket.setDescription(request.getDescription());
                 responseText.append("Ticket ").append(request.getTicketID()).append("'s Description updated!\n");
+                updateSuccess = true;
             }
             if (request.hasCategory()) {
                 Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
@@ -133,6 +138,7 @@ public class TicketManager implements ITicketManager {
                     Category category = categoryResult.get();
                     ticket.setCategory(category);
                     responseText.append("Ticket ").append(request.getTicketID()).append("'s Category updated!\n");
+                    updateSuccess = true;
                 } else {
                     responseText.append("There is no such category to update ticket ").append(ticket.getID()).append("\n");
                 }
@@ -140,12 +146,13 @@ public class TicketManager implements ITicketManager {
             if (request.hasStatus()) {
                 TicketStatus status;
                 try {
-                    status = TicketStatus.valueOf(request.getStatus().toString());
+                    status = valueOf(request.getStatus().toString());
                     ticket.setStatus(status);
-                    if(status.equals(TicketStatus.Closed) || status.equals(TicketStatus.Canceled)) {
+                    if(status.equals(Closed) || status.equals(Canceled)) {
                         ticket.setCloseDate(new Timestamp(System.currentTimeMillis()));
                     }
                     responseText.append("Ticket ").append(request.getTicketID()).append("' Status updated!\n");
+                    updateSuccess = true;
                 } catch (IllegalArgumentException e) {
                     responseText.append("Status doesn't match with existing types!\n");
                 }
@@ -153,10 +160,12 @@ public class TicketManager implements ITicketManager {
             if (request.hasSummary()) {
                 ticket.setSummary(request.getSummary());
                 responseText.append("Ticket ").append(request.getTicketID()).append("'s Summary updated!\n");
+                updateSuccess = true;
             }
             if (request.hasDeadline()) {
                 ticket.setDeadline(new Timestamp(request.getDeadline()));
                 responseText.append("Ticket ").append(request.getTicketID()).append("'s Deadline updated!\n");
+                updateSuccess = true;
             }
             if (request.hasPriority()) {
                 TicketPriority priority;
@@ -164,6 +173,7 @@ public class TicketManager implements ITicketManager {
                     priority = TicketPriority.valueOf(request.getPriority().toString());
                     ticket.setPriority(priority);
                     responseText.append("Ticket ").append(request.getTicketID()).append("' priority updated!\n");
+                    updateSuccess = true;
                 } catch (IllegalArgumentException e) {
                     responseText.append("Priority doesn't match with existing types!\n");
                 }
@@ -171,12 +181,39 @@ public class TicketManager implements ITicketManager {
             if (request.hasResolution()) {
                 ticket.setResolution(request.getResolution());
                 responseText.append("Ticket ").append(request.getTicketID()).append("'s Resolution updated!\n");
+                updateSuccess = true;
             } else {
                 responseText.append("Nothing updated in ticket ").append(request.getTicketID()).append("\n");
             }
+            if (request.hasGroup()) {
+                Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
+                if(groupResult.isPresent()) {
+                    UserGroup group = groupResult.get();
+                    ticket.setGroup(group);
 
-            logger.debug(responseText.toString());
-            response = buildSuccessResponse(responseText.toString());
+                    if(Open.equals(ticket.getStatus())) {
+                        ticket.setStatus(Assigned);
+                    }
+                    if(ticket.getAssignee() != null && !ticket.getAssignee().getGroup().equals(group)) {
+                        ticket.setAssignee(null);
+                    }
+
+                    responseText.append("Ticket ").append(request.getTicketID()).append(" assigned to group ").append(group.getName());
+                    updateSuccess = true;
+                } else {
+                    responseText.append("Group ").append(request.getGroup()).append(" not found");
+                }
+            }
+
+            if(updateSuccess) {
+                ticketRepository.save(ticket);
+                logger.debug(responseText.toString());
+                response = buildSuccessResponse(responseText.toString());
+            } else {
+                logger.warn(responseText.toString());
+                response = buildFailureResponse(responseText.toString());
+            }
+
         } else {
             responseText.append("There is no ticket by ID ").append(request.getTicketID());
             logger.warn(responseText.toString());
@@ -196,7 +233,7 @@ public class TicketManager implements ITicketManager {
             Comment comment = new Comment(request.getNewComment().getUsername(),
                     new Timestamp(request.getNewComment().getTime()),
                     request.getNewComment().getText());
-//            result.get().setComment(comment);
+
             comment.setTicket(result.get());
             commentRepository.save(comment);
 

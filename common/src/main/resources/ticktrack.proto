@@ -108,6 +108,7 @@ message Msg {
             optional int64 deadline = 7;
             optional TicketStatus status = 8;
             optional string resolution = 9;
+            optional string group = 10;
         }
 
         message TicketOpAddComment {
