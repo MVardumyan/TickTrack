@@ -17,7 +17,7 @@
 </head>
 <body>
 <br/><br/>
-<div class="container" style="width:600px;">
+<div class="container" align="left" style="width:600px;">
     <h3 align="center">Select filters to search tickets</h3>
     <br/><br/>
     <form method="post" id="search_form">
@@ -25,38 +25,40 @@
             <input type="text" class="form-control" id="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">
         </div>
-        <div class="column">
-            <div class="form-group">
-                <select id="priority" name="priority[]" multiple class="form-control">
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="ticketId"
+                   placeholder="Ticket ID">
         </div>
-        <div class="column">
-            <div class="form-group">
-                <select id="status" name="status[]" multiple class="form-control">
-                    <option value="Open">Open</option>
-                    <option value="Assigned">Assigned</option>
-                    <option value="In_Progress">In Progress</option>
-                    <option value="Resolved">Resolved</option>
-                    <option value="Canceled">Canceled</option>
-                    <option value="Closed">Closed</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="resolution"
+                   placeholder="Resolution contains...">
         </div>
-        <div class="column">
-            <div class="form-group">
-                <select id="category" name="category[]" multiple class="form-control">
-                    <c:forEach var="category" items="${categoryList}">
-                        <option value="${category}">
-                                ${category}
-                        </option>
-                    </c:forEach>
-                </select>
-            </div>
+        <div class="form-group">
+            <select id="priority" name="priority[]" multiple class="form-control">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <select id="status" name="status[]" multiple class="form-control">
+                <option value="Open">Open</option>
+                <option value="Assigned">Assigned</option>
+                <option value="In_Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Canceled">Canceled</option>
+                <option value="Closed">Closed</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <select id="category" name="category[]" multiple class="form-control">
+                <c:forEach var="category" items="${categoryList}">
+                    <option value="${category}">
+                            ${category}
+                    </option>
+                </c:forEach>
+            </select>
         </div>
         <div class="form-group">
             <label>Open date</label>
