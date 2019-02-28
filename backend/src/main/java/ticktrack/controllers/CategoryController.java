@@ -1,15 +1,21 @@
 package ticktrack.controllers;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.util.JsonFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.CategoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ticktrack.proto.Msg;
+import ticktrack.util.ResponseHandler;
 
 @Controller
 @RequestMapping(path = "/backend/v1/categories")
 public class CategoryController {
    private final CategoryManager categoryManager;
+   private final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
    @Autowired
    public CategoryController(CategoryManager categoryManager) {
@@ -32,13 +38,19 @@ public class CategoryController {
 
    @RequestMapping(path = "/getAll", method = RequestMethod.GET)
    @ResponseBody
-   public Msg getAllCategories() {
+   public String getAllCategories() {
       Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
-      return Msg.newBuilder()
-         .setCategoryOperation(
-            Msg.CategoryOp.newBuilder()
-               .setCategoryOpGetAllResponse(result)
-         ).build();
+
+      try {
+         return JsonFormat.printer().print(Msg.newBuilder()
+                 .setCategoryOperation(
+                         Msg.CategoryOp.newBuilder()
+                                 .setCategoryOpGetAllResponse(result)
+                 ).build());
+      } catch (InvalidProtocolBufferException e) {
+         logger.error("Unable to crate CategoryOpGetAllResponse message");
+         return null;
+      }
    }
 
    @RequestMapping(path = "/changeName")

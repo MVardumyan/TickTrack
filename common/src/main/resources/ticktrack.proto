@@ -255,8 +255,6 @@ message Msg {
 
     //CATEGORY OPERATIONS
     message CategoryOp {
-        required int64 time = 1;
-        required string sender = 2;
 
         oneof msg {
             CategoryOpUpdateRequest categoryOpUpdateRequest = 12;
