@@ -33,7 +33,7 @@ public class SearchController {
 
             if(request == null) {
 
-                return protobufToJson(wrapIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
 
             } else if (request.hasSearchOperation() && request.getSearchOperation().hasSearchOpRequest()) {
 
@@ -43,10 +43,10 @@ public class SearchController {
             }
 
             logger.warn("No search request found");
-            return protobufToJson(wrapIntoMsg(buildFailureResponse("No search request found")));
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No search request found")));
         } catch (Throwable t) {
-            logger.error("Unable to create failure response message", t);
-            return protobufToJson(wrapIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+            logger.error("Exception appear while handling search request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
         }
     }
 
@@ -56,12 +56,6 @@ public class SearchController {
                         Msg.SearchOp.newBuilder()
                                 .setSearchOpResponse(message)
                 )
-                .build();
-    }
-
-    private Msg wrapIntoMsg(Msg.CommonResponse message) {
-        return Msg.newBuilder()
-                .setCommonResponse(message)
                 .build();
     }
 }

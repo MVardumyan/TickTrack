@@ -200,7 +200,7 @@ public class UserManager implements IUserManager {
                     .build();
         } else {
             logger.debug("User {} not found", username);
-            return null;
+            return UserOp.UserOpGetResponse.newBuilder().build();
         }
     }
 
