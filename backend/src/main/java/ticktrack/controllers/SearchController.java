@@ -25,9 +25,9 @@ public class SearchController {
         this.searchManager = searchManager;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String searchTickets(@RequestBody String jsonRequest) {
+    String searchTickets(@RequestBody String jsonRequest) {
         try {
             Msg request = jsonToProtobuf(jsonRequest);
 

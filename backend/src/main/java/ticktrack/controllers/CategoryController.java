@@ -22,37 +22,37 @@ public class CategoryController {
         this.categoryManager = categoryManager;
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST)
+    @RequestMapping(path = "/add", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String addCategory(@RequestParam("name") String categoryName) {
+    String addCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.createCategory(categoryName);
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
 
-    @RequestMapping(path = "/deactivate")
+    @RequestMapping(path = "/deactivate", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String deactivateCategory(@RequestParam("name") String categoryName) {
+    String deactivateCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.deactivateCategory(categoryName);
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
 
-    @RequestMapping(path = "/getAll", method = RequestMethod.GET)
+    @RequestMapping(path = "/getAll", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String getAllCategories() {
+    String getAllCategories() {
         Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
         return protobufToJson(wrapIntoMsg(result));
     }
 
-    @RequestMapping(path = "/getAllActive", method = RequestMethod.GET)
+    @RequestMapping(path = "/getAllActive", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String getAllActiveCategories() {
+    String getAllActiveCategories() {
         Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAllActiveCategories();
         return protobufToJson(wrapIntoMsg(result));
     }
 
-    @RequestMapping(path = "/changeName")
+    @RequestMapping(path = "/changeName", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String changeCategoryName(@RequestBody String jsonRequest) {
+    String changeCategoryName(@RequestBody String jsonRequest) {
         try {
             Msg request = jsonToProtobuf(jsonRequest);
 

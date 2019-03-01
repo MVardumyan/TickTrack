@@ -161,10 +161,10 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public CommonResponse deactivate(UserOp.UserOpDeactivateRequest request) {
+    public CommonResponse deactivate(String username) {
         String responseText;
         CommonResponse response;
-        Optional<User> result = userRepository.findById(request.getUsername());
+        Optional<User> result = userRepository.findById(username);
         if (result.isPresent()) {
             User user = result.get();
             if (user.isActive()) {
@@ -179,7 +179,7 @@ public class UserManager implements IUserManager {
                 response = buildFailureResponse(responseText);
             }
         } else {
-            responseText = "There is no user with username " + request.getUsername();
+            responseText = "There is no user with username " + username;
             logger.warn(responseText);
             response = buildFailureResponse(responseText);
         }
@@ -206,11 +206,11 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request) {
+    public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request) {
         Iterable<User> result;
         UserOp.UserOpGetResponse.Builder responseBuilder = UserOp.UserOpGetResponse.newBuilder();
 
-        if (request.getCriteria().equals(UserOp.UserOpGetByCriteriaRequest.Criteria.All)) {
+        if (request.getCriteria().equals(UserOp.UserOpGetByRoleRequest.Criteria.All)) {
             result = userRepository.findAll();
         } else {
             try {

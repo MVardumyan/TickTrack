@@ -166,7 +166,7 @@ message Msg {
             UserOpChangePassword userOpChangePassword = 14;
             UserOpChangeRole userOpChangeRole = 15;
             UserOpDeactivateRequest userOpDeactivate = 16;
-            UserOpGetByCriteriaRequest userOpGetByCriteria = 18;
+            UserOpGetByRoleRequest userOpGetByCriteria = 18;
             UserOpGetResponse userOpGetResponse = 19;
         }
 
@@ -201,7 +201,7 @@ message Msg {
             required string username = 1;
         }
 
-        message UserOpGetByCriteriaRequest {
+        message UserOpGetByRoleRequest {
             enum Criteria {
                 Admin = 1;
                 BusinessUser = 2;
@@ -255,12 +255,9 @@ message Msg {
 
     //CATEGORY OPERATIONS
     message CategoryOp {
-        required int64 time = 1;
-        required string sender = 2;
 
         oneof msg {
             CategoryOpUpdateRequest categoryOpUpdateRequest = 12;
-            CategoryOpGetAllRequest categoryOpGetAllRequest = 13;
             CategoryOpGetAllResponse categoryOpGetAllResponse = 14;
             CommonResponse commonResponse = 15;
         }
@@ -268,9 +265,6 @@ message Msg {
         message CategoryOpUpdateRequest {
             required string oldName = 1;
             required string newName = 2;
-        }
-
-        message CategoryOpGetAllRequest {
         }
 
         message CategoryOpGetAllResponse {

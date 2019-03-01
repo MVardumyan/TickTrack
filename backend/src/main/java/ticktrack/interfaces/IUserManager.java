@@ -11,9 +11,9 @@ public interface IUserManager {
 
    CommonResponse changeRole(UserOp.UserOpChangeRole request);
 
-   CommonResponse deactivate(UserOp.UserOpDeactivateRequest request);
+   CommonResponse deactivate(String username);
 
     UserOp.UserOpGetResponse get(String username);
 
-    UserOp.UserOpGetResponse getByCriteria(UserOp.UserOpGetByCriteriaRequest request);
+    UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request);
 }

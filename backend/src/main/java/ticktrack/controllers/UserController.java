@@ -22,9 +22,9 @@ public class UserController {
         this.userManager = userManager;
     }
 
-    @RequestMapping(value = "/addUser", method = RequestMethod.POST)
+    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String addUser(@RequestBody String jsonRequest) {
+    String addUser(@RequestBody String jsonRequest) {
         try {
             Msg request = jsonToProtobuf(jsonRequest);
 
@@ -43,24 +43,95 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/getUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/update", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    public String getUser(@RequestParam(name = "username") String username) {
+    String updateUser(@RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
+
+            if (request == null) {
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpUpdateRequest()) {
+                Msg.CommonResponse result = userManager.update(request.getUserOperation().getUserOpUpdateRequest());
+                return protobufToJson(wrapCommonResponseIntoMsg(result));
+            }
+
+            logger.warn("No update user request found");
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No update user request found")));
+        } catch (Throwable t) {
+            logger.error("Exception appear while handling update user request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        }
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    String changePassword(@RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
+
+            if (request == null) {
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangePassword()) {
+                Msg.CommonResponse result = userManager.changePassword(request.getUserOperation().getUserOpChangePassword());
+                return protobufToJson(wrapCommonResponseIntoMsg(result));
+            }
+
+            logger.warn("No change password request found");
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No change password request found")));
+        } catch (Throwable t) {
+            logger.error("Exception appear while handling change password request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        }
+    }
+
+    @RequestMapping(value = "/changeRole", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    String changeRole(@RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
+
+            if (request == null) {
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangeRole()) {
+                Msg.CommonResponse result = userManager.changeRole(request.getUserOperation().getUserOpChangeRole());
+                return protobufToJson(wrapCommonResponseIntoMsg(result));
+            }
+
+            logger.warn("No change role request found");
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No change role request found")));
+        } catch (Throwable t) {
+            logger.error("Exception appear while handling change role request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        }
+    }
+
+    @RequestMapping(value = "/deactivate/{username}/", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    String deactivate(@PathVariable("username") String username) {
+        Msg.CommonResponse result = userManager.deactivate(username);
+
+        return protobufToJson(wrapCommonResponseIntoMsg(result));
+    }
+
+    @RequestMapping(value = "/getUser", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    String getUser(@RequestParam(name = "username") String username) {
         Msg.UserOp.UserOpGetResponse result = userManager.get(username);
 
         return protobufToJson(wrapIntoMsg(result));
     }
 
-    @RequestMapping(value = "/getUsersByRole")
+    @RequestMapping(value = "/getUsersByRole", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    public String getUsersByRole(@RequestBody String jsonRequest) {
+    String getUsersByRole(@RequestBody String jsonRequest) {
         try {
             Msg request = jsonToProtobuf(jsonRequest);
 
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByCriteria()) {
-                Msg.UserOp.UserOpGetResponse result = userManager.getByCriteria(request.getUserOperation().getUserOpGetByCriteria());
+                Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByCriteria());
                 return protobufToJson(wrapIntoMsg(result));
             }
 
