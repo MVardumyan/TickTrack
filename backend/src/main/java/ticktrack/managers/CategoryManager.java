@@ -1,7 +1,6 @@
 package ticktrack.managers;
 
 import ticktrack.entities.Category;
-import ticktrack.proto.Msg;
 import ticktrack.repositories.CategoryRepository;
 import ticktrack.interfaces.ICategoryManager;
 import com.google.common.collect.Streams;
@@ -10,9 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticktrack.util.ResponseHandler;
-
-import javax.persistence.EntityManager;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
@@ -100,7 +96,7 @@ public class CategoryManager implements ICategoryManager {
                 category.setName(request.getNewName());
                 categoryRepository.save(category);
 
-                responseText = "Category name" + request.getOldName() + "updated to " + request.getNewName();
+                responseText = "Category name " + request.getOldName() + " updated to " + request.getNewName();
                 logger.debug(responseText);
 
                 return buildSuccessResponse(responseText);
@@ -130,6 +126,17 @@ public class CategoryManager implements ICategoryManager {
         return CategoryOp.CategoryOpGetAllResponse.newBuilder()
                 .addAllCategoryName(
                         Streams.stream(categoryRepository.findAll()).map(Category::getName).collect(Collectors.toList())
+                ).build();
+    }
+
+    @Override
+    public CategoryOp.CategoryOpGetAllResponse getAllActiveCategories() {
+        return CategoryOp.CategoryOpGetAllResponse.newBuilder()
+                .addAllCategoryName(
+                        Streams.stream(categoryRepository.findAll())
+                                .filter(category -> !category.isDeactivated())
+                                .map(Category::getName)
+                                .collect(Collectors.toList())
                 ).build();
     }
 }
