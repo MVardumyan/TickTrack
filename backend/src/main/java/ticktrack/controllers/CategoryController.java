@@ -5,6 +5,8 @@ import ticktrack.managers.CategoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ticktrack.proto.Msg;
+import static ticktrack.util.CustomJsonParser.*;
+import static ticktrack.util.ResponseHandler.*;
 
 @Controller
 @RequestMapping(path = "/backend/v1/categories")
@@ -18,53 +20,65 @@ public class CategoryController {
 
    @RequestMapping(path = "/add", method = RequestMethod.POST)
    @ResponseBody
-   public Msg addCategory(@RequestParam("name") String categoryName) {
+   public String addCategory(@RequestParam("name") String categoryName) {
       Msg.CommonResponse result = categoryManager.createCategory(categoryName);
-      return buildDefaultResponseMessage(result);
+      return protobufToJson(wrapIntoMsg(result));
    }
 
    @RequestMapping(path = "/deactivate")
    @ResponseBody
-   public Msg deactivateCategory(@RequestParam("name") String categoryName) {
+   public String deactivateCategory(@RequestParam("name") String categoryName) {
       Msg.CommonResponse result = categoryManager.deactivateCategory(categoryName);
-      return buildDefaultResponseMessage(result);
+      return protobufToJson(wrapIntoMsg(result));
    }
 
    @RequestMapping(path = "/getAll", method = RequestMethod.GET)
    @ResponseBody
-   public Msg getAllCategories() {
+   public String getAllCategories() {
       Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
-      return Msg.newBuilder()
-         .setCategoryOperation(
-            Msg.CategoryOp.newBuilder()
-               .setCategoryOpGetAllResponse(result)
-         ).build();
+      return protobufToJson(wrapIntoMsg(result));
+   }
+
+   @RequestMapping(path = "/getAllActive", method = RequestMethod.GET)
+   @ResponseBody
+   public String getAllActiveCategories() {
+      Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAllActiveCategories();
+      return protobufToJson(wrapIntoMsg(result));
    }
 
    @RequestMapping(path = "/changeName")
    @ResponseBody
-   public Msg changeCategoryName(@RequestBody Msg request) {
+   public String changeCategoryName(@RequestBody String jsonRequest) {
+      Msg request = jsonToProtobuf(jsonRequest);
+
       Msg.CommonResponse result;
 
-      if (request.hasCategoryOperation()
+      if(request == null) {
+         return protobufToJson(wrapIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+      } else if (request.hasCategoryOperation()
          && request.getCategoryOperation().hasCategoryOpUpdateRequest()) {
          result = categoryManager.changeName(
             request.getCategoryOperation().getCategoryOpUpdateRequest()
          );
       } else {
-         result = Msg.CommonResponse.newBuilder()
-            .setResponseText("Request message should contain CategoryOp.CategoryOpUpdateRequest type")
-            .setResponseType(Msg.CommonResponse.ResponseType.Failure)
-            .build();
+         result = buildFailureResponse("Request message should contain CategoryOp.CategoryOpUpdateRequest type");
       }
 
-      return buildDefaultResponseMessage(result);
+      return protobufToJson(wrapIntoMsg(result));
    }
 
-   private Msg buildDefaultResponseMessage(Msg.CommonResponse response) {
+   private Msg wrapIntoMsg(Msg.CommonResponse message) {
       return Msg.newBuilder()
-         .setCommonResponse(response)
-         .build();
+              .setCommonResponse(message)
+              .build();
+   }
+
+   private Msg wrapIntoMsg(Msg.CategoryOp.CategoryOpGetAllResponse message) {
+      return Msg.newBuilder()
+              .setCategoryOperation(
+                      Msg.CategoryOp.newBuilder()
+                              .setCategoryOpGetAllResponse(message)
+              ).build();
    }
 
 }
