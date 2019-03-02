@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
+import ticktrack.enums.Gender;
 import ticktrack.enums.UserRole;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;
@@ -17,6 +18,7 @@ import ticktrack.repositories.UserRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
@@ -46,6 +48,7 @@ class UserManagerTest {
                 .setEmail("something@somemail.com")
                 .setPassword("password")
                 .setRole(Msg.UserRole.BusinessUser)
+                .setGender(Msg.UserOp.Gender.Male)
                 .build();
 
         userManager.create(request);
@@ -71,7 +74,9 @@ class UserManagerTest {
         user1.setLastName("Doe");
         user1.setEmail("jane@somemail.com");
         user1.setPassword("password");
+        user1.setGender(Gender.Female);
         user1.setRole(UserRole.RegularUser);
+        user1.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
 
         userRepository.save(user1);
 
@@ -80,8 +85,10 @@ class UserManagerTest {
         user2.setFirstName("John");
         user2.setLastName("Smith");
         user2.setEmail("john@somemail.com");
+        user2.setGender(Gender.Male);
         user2.setPassword("password");
         user2.setRole(UserRole.RegularUser);
+        user2.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
 
         userRepository.save(user2);
 

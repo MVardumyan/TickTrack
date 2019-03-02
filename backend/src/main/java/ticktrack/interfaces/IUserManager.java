@@ -9,8 +9,6 @@ public interface IUserManager {
 
    CommonResponse changePassword(UserOp.UserOpChangePassword request);
 
-   CommonResponse changeRole(UserOp.UserOpChangeRole request);
-
    CommonResponse deactivate(String username);
 
     UserOp.UserOpGetResponse get(String username);

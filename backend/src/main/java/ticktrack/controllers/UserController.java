@@ -85,28 +85,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/changeRole", method = RequestMethod.POST, produces = "application/json")
-    @ResponseBody
-    String changeRole(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
-
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangeRole()) {
-                Msg.CommonResponse result = userManager.changeRole(request.getUserOperation().getUserOpChangeRole());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
-            }
-
-            logger.warn("No change role request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No change role request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling change role request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
-        }
-    }
-
-    @RequestMapping(value = "/deactivate/{username}/", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     String deactivate(@PathVariable("username") String username) {
         Msg.CommonResponse result = userManager.deactivate(username);
@@ -114,9 +93,9 @@ public class UserController {
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
 
-    @RequestMapping(value = "/getUser", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/getUser/{username}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String getUser(@RequestParam(name = "username") String username) {
+    String getUser(@PathVariable("username") String username) {
         Msg.UserOp.UserOpGetResponse result = userManager.get(username);
 
         return protobufToJson(wrapIntoMsg(result));
@@ -130,8 +109,8 @@ public class UserController {
 
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByCriteria()) {
-                Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByCriteria());
+            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByRoleRequest()) {
+                Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByRoleRequest());
                 return protobufToJson(wrapIntoMsg(result));
             }
 
