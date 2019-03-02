@@ -14,4 +14,6 @@ public interface ICategoryManager {
    Category get(String name);
 
    CategoryOp.CategoryOpGetAllResponse getAll();
+
+   CategoryOp.CategoryOpGetAllResponse getAllActiveCategories();
 }

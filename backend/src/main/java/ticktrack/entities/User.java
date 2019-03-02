@@ -1,8 +1,10 @@
 package ticktrack.entities;
 
+import ticktrack.enums.Gender;
 import ticktrack.enums.UserRole;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
@@ -16,13 +18,20 @@ public class User{
    @Column(nullable = false)
    private String lastName;
    @Column(nullable = false)
+   @Enumerated(EnumType.ORDINAL)
+   private Gender gender;
+   @Column(nullable = false)
    private String password;
    @Column(nullable = false)
    private String email;
    @Column(nullable = false)
    private UserRole role;
+   @Column(nullable = false)
+   private Timestamp registrationTime;
    @Column
    private boolean activeStatus;
+   @Column
+   private Timestamp deactivationTime;
 
    @ManyToOne
    private UserGroup group;
@@ -57,6 +66,10 @@ public class User{
       this.lastName = lastName;
    }
 
+   public void setGender(Gender gender) {
+      this.gender = gender;
+   }
+
    public void setPassword(String password) {
       this.password = password;
    }
@@ -71,6 +84,14 @@ public class User{
 
    public void setActiveStatus(boolean activeStatus) {
       this.activeStatus = activeStatus;
+   }
+
+   public void setRegistrationTime(Timestamp registrationTime) {
+      this.registrationTime = registrationTime;
+   }
+
+   public void setDeactivationTime(Timestamp deactivationTime) {
+      this.deactivationTime = deactivationTime;
    }
 
    public void setGroup(UserGroup group) {
@@ -107,6 +128,18 @@ public class User{
 
    public UserGroup getGroup() {
       return group;
+   }
+
+   public Gender getGender() {
+      return gender;
+   }
+
+   public Timestamp getRegistrationTime() {
+      return registrationTime;
+   }
+
+   public Timestamp getDeactivationTime() {
+      return deactivationTime;
    }
 
    public Set<Ticket> getCreatedTicketList() {
