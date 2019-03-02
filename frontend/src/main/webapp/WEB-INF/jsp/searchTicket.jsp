@@ -1,6 +1,9 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <title>Search Tickets</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
@@ -14,11 +17,45 @@
             src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <script
             src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .btn-info {
+            background-color: #62CCE8;
+            outline: none;
+            color: #F62CCE8;
+            border-color: #59B2E6;
+        }
+        .btn-info:hover,
+        .btn-info:focus {
+            color: #000000;
+            background-color: #62CCE8;
+            border-color: #62CCE8;
+        }
+        .navbar {
+            background-color: #F55C00 !important;
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            z-index: 9999;
+        }
+        .navbar .navbar-brand {
+            color: white;
+            font-family: monospace;
+            font-size: 20px;
+        }
+
+        .container{
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
 <br/><br/>
 <div class="container" align="left" style="width:600px;">
-    <h3 align="center">Select filters to search tickets</h3>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">T!ckTrack</a>
+    </nav>
+    <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
     <form method="post" id="search_form">
         <div class="form-group">
