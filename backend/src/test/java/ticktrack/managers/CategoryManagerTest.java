@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ticktrack.repositories.CategoryRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ticktrack.proto.Msg.CategoryOp;
@@ -17,6 +18,8 @@ class CategoryManagerTest {
 
    @Autowired
    private ICategoryManager categoryManager;
+   @Autowired
+   private CategoryRepository categoryRepository;
 
    @Test
    void createAndDeactivateCategory() {
@@ -48,5 +51,17 @@ class CategoryManagerTest {
       category = categoryManager.get("testCategory3");
       assertNotNull(category);
       assertEquals("testCategory3", category.getName());
+   }
+
+   @Test
+   void getAll() {
+      categoryRepository.deleteAll();
+      Category category1 = new Category("test1");
+      categoryRepository.save(category1);
+      Category category2 = new Category("test2");
+      categoryRepository.save(category2);
+
+      CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
+      assertEquals(2, result.getCategoryNameCount());
    }
 }
