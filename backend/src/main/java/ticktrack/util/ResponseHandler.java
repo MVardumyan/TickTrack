@@ -67,4 +67,10 @@ public final class ResponseHandler {
               .setResponseType(Msg.CommonResponse.ResponseType.Failure)
               .build();
    }
+
+   public static Msg wrapCommonResponseIntoMsg(Msg.CommonResponse message) {
+      return Msg.newBuilder()
+              .setCommonResponse(message)
+              .build();
+   }
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
+import ticktrack.enums.Gender;
 import ticktrack.enums.UserRole;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;
@@ -17,6 +18,7 @@ import ticktrack.repositories.UserRepository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @ExtendWith(SpringExtension.class)
@@ -46,6 +48,7 @@ class UserManagerTest {
                 .setEmail("something@somemail.com")
                 .setPassword("password")
                 .setRole(Msg.UserRole.BusinessUser)
+                .setGender(Msg.UserOp.Gender.Male)
                 .build();
 
         userManager.create(request);
@@ -71,7 +74,9 @@ class UserManagerTest {
         user1.setLastName("Doe");
         user1.setEmail("jane@somemail.com");
         user1.setPassword("password");
+        user1.setGender(Gender.Female);
         user1.setRole(UserRole.RegularUser);
+        user1.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
 
         userRepository.save(user1);
 
@@ -80,16 +85,18 @@ class UserManagerTest {
         user2.setFirstName("John");
         user2.setLastName("Smith");
         user2.setEmail("john@somemail.com");
+        user2.setGender(Gender.Male);
         user2.setPassword("password");
         user2.setRole(UserRole.RegularUser);
+        user2.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
 
         userRepository.save(user2);
 
-        Msg.UserOp.UserOpGetByCriteriaRequest request = Msg.UserOp.UserOpGetByCriteriaRequest.newBuilder()
-                .setCriteria(Msg.UserOp.UserOpGetByCriteriaRequest.Criteria.RegularUser)
+        Msg.UserOp.UserOpGetByRoleRequest request = Msg.UserOp.UserOpGetByRoleRequest.newBuilder()
+                .setCriteria(Msg.UserOp.UserOpGetByRoleRequest.Criteria.RegularUser)
                 .build();
 
-        Msg.UserOp.UserOpGetResponse result = userManager.getByCriteria(request);
+        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request);
 
         assertEquals(2, result.getUserInfoCount());
         assertEquals("user1", result.getUserInfo(0).getUsername());
@@ -106,79 +113,3 @@ class UserManagerTest {
 
 
 }
-
-/*
-import ticktrack.TickTrackContext;
-import ticktrack.entities.User;
-import ticktrack.interfaces.IUserManager;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import ticktrack.proto.Msg;
-
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(ticktrack = TickTrackContext.class)
-class UserManagerTest {
-   private static IUserManager userManager;
-
-   @BeforeAll
-   static void initContext() {
-      ApplicationContext context = new AnnotationConfigApplicationContext(TickTrackContext.class);
-      userManager = (IUserManager) context.getBean("userMng");
-   }
-
-   @Test
-   void createAndDeactivateUser() {
-      userManager.create(Msg.UserOp.UserOpCreateRequest.newBuilder()
-         .setEmail("someone@gmail.com")
-         .setFirstname("some")
-         .setLastname("one")
-         .setPassword("1111")
-         .setRole(Msg.UserRole.RegularUser)
-         .setUsername("user1")
-         .build());
-
-      User user = userManager.get("user1");
-      assertNotNull(user);
-      assertEquals("some", user.getFirstName());
-
-      userManager.deactivate(Msg.UserOp.UserOpDeactivateRequest.newBuilder()
-         .setUsername("user1")
-         .build());
-
-      user = userManager.get("user1");
-      assertFalse(user.isActive());
-   }
-
-   @Test
-   void createAndUpdateUser() {
-      userManager.create(Msg.UserOp.UserOpCreateRequest.newBuilder()
-         .setUsername("user2")
-         .setRole(Msg.UserRole.BusinessUser)
-         .setPassword("2222")
-         .setFirstname("hisFirstName")
-         .setLastname("hisLastName")
-         .setEmail("thisisemail@gmail.com")
-         .build());
-
-      User user = userManager.get("user2");
-      assertNotNull(user);
-      assertEquals("hisFirstName", user.getFirstName());
-
-      userManager.update(Msg.UserOp.UserOpUpdateRequest.newBuilder()
-         .setParamName(Msg.UserOp.UserOpUpdateRequest.ParameterName.FirstName)
-         .setValue("newFirstName")
-         .build());
-
-      user = userManager.get("newFirstName");
-      assertNotNull(user);
-      assertEquals("newFirstName", user.getUsername());
-   }
-
-}*/
