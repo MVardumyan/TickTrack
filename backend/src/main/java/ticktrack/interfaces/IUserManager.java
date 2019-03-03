@@ -14,4 +14,6 @@ public interface IUserManager {
     UserOp.UserOpGetResponse get(String username);
 
     UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request);
+
+    CommonResponse validateLoginInformation(LoginRequest request);
 }

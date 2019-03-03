@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ticktrack.util.PasswordHandler;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
@@ -262,6 +263,24 @@ public class UserManager implements IUserManager {
         }
 
         return responseBuilder.build();
+    }
+
+    @Override
+    public CommonResponse validateLoginInformation(LoginRequest request) {
+        String responseText;
+        Optional<User> result = userRepository.findByUsername(request.getUsername());
+
+        if (result.isPresent()) {
+            User user = result.get();
+            if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
+                return buildSuccessResponse("Password is valid");
+            }
+            return buildFailureResponse("Password is invalid");
+        }
+        responseText = "User " + request.getUsername() + " not found";
+        logger.debug(responseText);
+        return buildFailureResponse(responseText);
+
     }
 
     private UserOp.UserOpGetResponse.UserInfo buildUserInfo(User user) {
