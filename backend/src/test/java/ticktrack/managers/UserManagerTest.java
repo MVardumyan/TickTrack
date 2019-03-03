@@ -128,6 +128,8 @@ class UserManagerTest {
 
         Msg.CommonResponse result = userManager.validateLoginInformation(request);
         assertEquals(Msg.CommonResponse.ResponseType.Success, result.getResponseType());
+
+        userRepository.delete(user);
     }
 
     @AfterEach
