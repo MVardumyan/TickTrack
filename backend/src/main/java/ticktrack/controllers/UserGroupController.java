@@ -65,10 +65,10 @@ public class UserGroupController {
         }
     }
 
-   /* @RequestMapping(value = "/getUserGroup/{groupName}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String getUser(@PathVariable("groupName") String groupName) {
-        Msg.UserGroupOp.UserGroupOpGetAllResponse result = userGroupManager.get(groupName);
+    String getUser() {
+        Msg.UserGroupOp.UserGroupOpGetAllResponse result = userGroupManager.getAll();
 
         return protobufToJson(wrapIntoMsg(result));
     }
@@ -79,5 +79,5 @@ public class UserGroupController {
                         Msg.UserGroupOp.newBuilder()
                                 .setUserGroupOpGetAllResponse(message)
                 ).build();
-    }*/
+    }
 }

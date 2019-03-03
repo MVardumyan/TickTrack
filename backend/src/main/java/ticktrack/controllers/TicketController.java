@@ -84,4 +84,17 @@ public class TicketController {
             return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
         }
     }
+
+    @RequestMapping(value = "/getTicket/{id}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    String getTicket(@PathVariable("id") long id) {
+        Msg.TicketInfo result = ticketManager.get(id);
+
+        return protobufToJson(wrapIntoMsg(result));
+    }
+
+    private Msg wrapIntoMsg(Msg.TicketInfo message) {
+        return Msg.newBuilder()
+                .setTicketInfo(message).build();
+    }
 }

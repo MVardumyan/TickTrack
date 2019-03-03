@@ -207,6 +207,9 @@
                                         <input type="password" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Last Name">
                                     </div>
                                     <div class="form-group">
+                                        <input type="password" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Gender">
+                                    </div>
+                                    <div class="form-group">
                                         <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
                                     </div>
                                     <div class="form-group">
