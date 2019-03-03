@@ -14,6 +14,7 @@ import ticktrack.enums.UserRole;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;
 import ticktrack.repositories.UserRepository;
+import ticktrack.util.PasswordHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -104,6 +105,31 @@ class UserManagerTest {
 
         userRepository.delete(user1);
         userRepository.delete(user2);
+    }
+
+    @Test
+    void validateLogin() {
+        User user = new User();
+        user.setUsername("user");
+        user.setFirstName("Jane");
+        user.setLastName("Doe");
+        user.setEmail("jane@somemail.com");
+        user.setPassword("password");
+        user.setGender(Gender.Female);
+        user.setRole(UserRole.RegularUser);
+        user.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
+
+        userRepository.save(user);
+
+        Msg.LoginRequest request = Msg.LoginRequest.newBuilder()
+                .setUsername("user")
+                .setPassword(PasswordHandler.encode("password"))
+                .build();
+
+        Msg.CommonResponse result = userManager.validateLoginInformation(request);
+        assertEquals(Msg.CommonResponse.ResponseType.Success, result.getResponseType());
+
+        userRepository.delete(user);
     }
 
     @AfterEach

@@ -122,6 +122,27 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/validateLogin", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    String validateLogin(@RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
+
+            if (request == null) {
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            } else if(request.hasLoginRequest()) {
+                Msg.CommonResponse result = userManager.validateLoginInformation(request.getLoginRequest());
+                return protobufToJson(wrapCommonResponseIntoMsg(result));
+            }
+
+            logger.warn("No login request found");
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No login request found")));
+        } catch (Throwable t) {
+            logger.error("Exception appear while handling get user by role request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        }
+    }
+
     private Msg wrapIntoMsg(Msg.UserOp.UserOpGetResponse message) {
         return Msg.newBuilder()
                 .setUserOperation(
