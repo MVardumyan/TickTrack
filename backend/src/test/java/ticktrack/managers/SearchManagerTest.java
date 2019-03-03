@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import ticktrack.entities.Category;
 import ticktrack.entities.Ticket;
 import ticktrack.entities.User;
+import ticktrack.enums.Gender;
 import ticktrack.enums.TicketPriority;
 import ticktrack.enums.TicketStatus;
 import ticktrack.enums.UserRole;
@@ -46,6 +47,8 @@ class SearchManagerTest {
       testUser.setEmail("mikayel2505@gmail.com");
       testUser.setPassword("password");
       testUser.setRole(UserRole.BusinessUser);
+      testUser.setGender(Gender.Male);
+      testUser.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
       userRepository.save(testUser);
 
       testCategory = new Category();
