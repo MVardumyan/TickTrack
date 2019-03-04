@@ -75,18 +75,31 @@
                    placeholder="Ticket ID">
         </div>
         <div class="form-group">
+            <input type="text" class="form-control" id="resolution"
+                   placeholder="Resolution contains...">
+        </div>
+        <div class="form-group">
             <div class="ui-widget">
                 <input type="text" class="form-control" id="assignee"
                        placeholder="Assignee">
             </div>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="creator"
-                   placeholder="Creator">
+            <select id="group" name="group[]" multiple class="form-control">
+                <c:forEach var="group" items="${groupList}">
+                    <option value="${group}">
+                            ${group}
+                    </option>
+                </c:forEach>
+            </select>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="resolution"
-                   placeholder="Resolution contains...">
+
+            <div class="ui-widget">
+                <input type="text" class="form-control" id="creator"
+                       placeholder="Creator">
+
+            </div>
         </div>
         <div class="form-group">
             <select id="priority" name="priority[]" multiple class="form-control">
@@ -166,6 +179,13 @@
         });
         $('#category').multiselect({
             nonSelectedText: 'Category',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '200px'
+        });
+        $('#group').multiselect({
+            nonSelectedText: 'Group',
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
             includeSelectAllOption: true,

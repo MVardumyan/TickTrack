@@ -32,17 +32,33 @@ public class SearchController {
         Request categoriesRequest = new Request.Builder()
                 .url("http://localhost:9001/backend/v1/categories/getAllActive")
                 .build();
+        Request groupRequest = new Request.Builder()
+                .url("http://localhost:9001/backend/v1/userGroups/getAll")
+                .build();
 
-        try (Response response = httpClient.newCall(categoriesRequest).execute()) {
-            if(response.code()==200) {
+        try (Response categoryResponse = httpClient.newCall(categoriesRequest).execute();
+        Response groupResponse = httpClient.newCall(groupRequest).execute()) {
+
+            if(categoryResponse.code()==200) {
                 Msg.Builder builder = Msg.newBuilder();
-                JsonFormat.parser().merge(response.body().string(), builder);
+                JsonFormat.parser().merge(categoryResponse.body().string(), builder);
                 Msg result = builder.build();
 
                 model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryNameList());
             } else {
-                logger.warn("Error received from backend, unable to get categories list: {}", response.message());
+                logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
             }
+
+            if(groupResponse.code()==200) {
+                Msg.Builder builder = Msg.newBuilder();
+                JsonFormat.parser().merge(groupResponse.body().string(), builder);
+                Msg result = builder.build();
+
+                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+            } else {
+                logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
+            }
+
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
         }
