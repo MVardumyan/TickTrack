@@ -176,6 +176,17 @@ public class SearchManager implements ISearchManager {
         return buildTicketResponseFromQueryResult(result);
     }
 
+    @Override
+    public List<String> searchUsersByTerm(String term) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<User> criteriaQuery = builder.createQuery(User.class);
+        Root<User> root = criteriaQuery.from(User.class);
+
+        criteriaQuery.where(builder.like(root.get("username"), "%" + term + "%"));
+        return entityManager.createQuery(criteriaQuery).getResultList().stream().map(User::getUsername).collect(Collectors.toList());
+    }
+
     private TicketStatus mapTicketStatus(Msg.TicketStatus status) {
         try {
             return TicketStatus.valueOf(status.toString());
