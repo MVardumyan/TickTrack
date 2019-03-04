@@ -159,14 +159,17 @@ message Msg {
 
     //USER OPERATIONS
     message UserOp {
+        enum Gender {
+            Male = 1;
+            Female = 2;
+        }
+
         oneof msg {
             UserOpCreateRequest userOpCreateRequest = 11;
             CommonResponse userOpCommonResponse = 12;
             UserOpUpdateRequest userOpUpdateRequest = 13;
             UserOpChangePassword userOpChangePassword = 14;
-            UserOpChangeRole userOpChangeRole = 15;
-            UserOpDeactivateRequest userOpDeactivate = 16;
-            UserOpGetByCriteriaRequest userOpGetByCriteria = 18;
+            UserOpGetByRoleRequest userOpGetByRoleRequest = 18;
             UserOpGetResponse userOpGetResponse = 19;
         }
 
@@ -176,7 +179,9 @@ message Msg {
             required string lastname = 3;
             required string email = 4;
             required string password = 5;
-            required UserRole role = 6;
+            required Gender gender = 6;
+            required UserRole role = 7;
+            optional string group = 8;
         }
 
         message UserOpUpdateRequest {
@@ -184,6 +189,9 @@ message Msg {
             optional string firstName = 2;
             optional string lastName = 3;
             optional string email = 4;
+            optional string group = 5;
+            optional UserRole role = 6;
+            optional Gender gender = 7;
         }
 
         message UserOpChangePassword {
@@ -192,16 +200,7 @@ message Msg {
             required string newPassword = 3;
         }
 
-        message UserOpChangeRole {
-            required string username = 1;
-            required UserRole newRole = 2;
-        }
-
-        message UserOpDeactivateRequest {
-            required string username = 1;
-        }
-
-        message UserOpGetByCriteriaRequest {
+        message UserOpGetByRoleRequest {
             enum Criteria {
                 Admin = 1;
                 BusinessUser = 2;
@@ -223,6 +222,9 @@ message Msg {
                 required UserRole role = 6;
                 required bool isActive = 7;
                 optional string group = 8;
+                required Gender gender = 9;
+                required int64 registrationTime = 10;
+                optional int64 deactivationTime = 11;
             }
         }
 
@@ -234,7 +236,6 @@ message Msg {
 
         oneof msg {
             UserGroupOpUpdateRequest userGroupOpUpdateRequest = 12;
-            UserGroupOpGetAllRequest userGroupOpGetAllRequest = 13;
             UserGroupOpGetAllResponse userGroupOpGetAllResponse = 14;
             CommonResponse commonResponse = 15;
         }
@@ -242,9 +243,6 @@ message Msg {
         message UserGroupOpUpdateRequest {
             required string oldName = 1;
             required string newName = 2;
-        }
-
-        message UserGroupOpGetAllRequest {
         }
 
         message UserGroupOpGetAllResponse {
@@ -258,7 +256,6 @@ message Msg {
 
         oneof msg {
             CategoryOpUpdateRequest categoryOpUpdateRequest = 12;
-            CategoryOpGetAllRequest categoryOpGetAllRequest = 13;
             CategoryOpGetAllResponse categoryOpGetAllResponse = 14;
             CommonResponse commonResponse = 15;
         }
@@ -266,9 +263,6 @@ message Msg {
         message CategoryOpUpdateRequest {
             required string oldName = 1;
             required string newName = 2;
-        }
-
-        message CategoryOpGetAllRequest {
         }
 
         message CategoryOpGetAllResponse {

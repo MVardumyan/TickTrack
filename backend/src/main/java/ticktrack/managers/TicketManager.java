@@ -50,15 +50,17 @@ public class TicketManager implements ITicketManager {
 
             response = buildFailureResponse(responseText);
         } else {
+            User creator;
             TicketPriority priority;
             Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
             Optional<User> creatorResult = userRepository.findById(request.getCreator());
-            if (categoryResult.isPresent() && creatorResult.isPresent()) {
+            if (categoryResult.isPresent() && creatorResult.isPresent() && request.hasCreator()) {
                 Category category = categoryResult.get();
                 try {
+                    creator = creatorResult.get();
                     priority = TicketPriority.valueOf(request.getPriority());
                 } catch (IllegalArgumentException e) {
-                    responseText = "Priority doesn't match with existing types!";
+                    responseText = "Priority doesn't match with existing types OR there is no such a user to assign to this ticket!";
                     logger.warn(responseText);
                     return buildFailureResponse(responseText);
                 }
@@ -66,6 +68,7 @@ public class TicketManager implements ITicketManager {
                 Ticket newTicket = new Ticket(request.getSummary(),
                         request.getDescription(),
                         priority,
+                        creator,
                         category);
                 newTicket.setStatus(Open);
                 newTicket.setOpenDate(new Timestamp(System.currentTimeMillis()));
@@ -204,7 +207,6 @@ public class TicketManager implements ITicketManager {
                     responseText.append("Group ").append(request.getGroup()).append(" not found");
                 }
             }
-
             if(updateSuccess) {
                 ticketRepository.save(ticket);
                 logger.debug(responseText.toString());

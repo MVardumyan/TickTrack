@@ -43,11 +43,12 @@ public class Ticket{
    @OneToMany(mappedBy = "ticket")
    private Set<Comment> commentList;
 
-   public Ticket(String summary,String description,TicketPriority priority,Category category){
+   public Ticket(String summary,String description,TicketPriority priority,User creator,Category category){
       this.summary = summary;
       this.description = description;
       this.priority = priority;
       this.category = category;
+      this.creator = creator;
    }
 
    public Ticket(){}
