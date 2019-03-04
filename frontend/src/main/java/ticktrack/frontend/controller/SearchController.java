@@ -22,10 +22,10 @@ public class SearchController {
         this.httpClient = httpClient;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @RequestMapping(value = "search", method = RequestMethod.GET)
     public String displaySearchPage(ModelMap model) {
         Request request = new Request.Builder()
-                .url("http://localhost:9001/backend/v1/categories/getAll")
+                .url("http://localhost:9001/backend/v1/categories/getAllActive")
                 .build();
 
         try (Response response = httpClient.newCall(request).execute()) {

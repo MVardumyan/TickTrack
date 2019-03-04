@@ -67,6 +67,14 @@
                    placeholder="Ticket ID">
         </div>
         <div class="form-group">
+            <input type="text" class="form-control" id="assignee"
+                   placeholder="Assignee">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="creator"
+                   placeholder="Creator">
+        </div>
+        <div class="form-group">
             <input type="text" class="form-control" id="resolution"
                    placeholder="Resolution contains...">
         </div>
