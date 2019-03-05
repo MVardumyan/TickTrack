@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.UserManager;
 import ticktrack.proto.Msg;
 
-import static ticktrack.util.CustomJsonParser.*;
+import static common.helpers.CustomJsonParser.*;
 import static ticktrack.util.ResponseHandler.*;
 
 @Controller

@@ -65,18 +65,14 @@
     </nav>
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
-    <form method="post" id="search_form">
+    <form method="post" id="search_form" action="searchTickets">
         <div class="form-group">
             <input type="text" class="form-control" id="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="ticketId"
+            <input type="text" class="form-control" id="ticket_id"
                    placeholder="Ticket ID">
-        </div>
-        <div class="form-group">
-            <input type="text" class="form-control" id="resolution"
-                   placeholder="Resolution contains...">
         </div>
         <div class="form-group">
             <div class="ui-widget">
@@ -94,12 +90,12 @@
             </select>
         </div>
         <div class="form-group">
-
-            <div class="ui-widget">
-                <input type="text" class="form-control" id="creator"
-                       placeholder="Creator">
-
-            </div>
+            <input type="text" class="form-control" id="creator"
+                   placeholder="Creator">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="resolution"
+                   placeholder="Resolution contains...">
         </div>
         <div class="form-group">
             <select id="priority" name="priority[]" multiple class="form-control">
@@ -170,6 +166,13 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
+        $('#group').multiselect({
+            nonSelectedText: 'Group',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '200px'
+        });
         $('#status').multiselect({
             nonSelectedText: 'Status',
             enableFiltering: true,
@@ -179,13 +182,6 @@
         });
         $('#category').multiselect({
             nonSelectedText: 'Category',
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true,
-            includeSelectAllOption: true,
-            buttonWidth: '200px'
-        });
-        $('#group').multiselect({
-            nonSelectedText: 'Group',
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
             includeSelectAllOption: true,
@@ -213,5 +209,23 @@
                 });
             }
         });
+        // $('#search_form').submit(function(e) {
+        //
+        //     e.preventDefault();
+        //
+        //     var form = $(this);
+        //     var url = form.attr('action');
+        //
+        //     $.ajax({
+        //         type: "GET",
+        //         url: url,
+        //         data: form.serialize(), // serializes the form's elements.
+        //         success: function(data)
+        //         {
+        //             alert(data); // show response from the php script.
+        //         }
+        //     });
+        //
+        // });
     });
 </script>
