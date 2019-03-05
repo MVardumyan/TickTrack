@@ -51,7 +51,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="tickets" var="ticket">
+        <c:forEach items="${tickets}" var="ticket">
         <tr>
             <td>${ticket.ticketID}</td>
             <td>${ticket.summary}</td>
