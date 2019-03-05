@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ticktrack.proto.Msg;
 
-import static ticktrack.util.CustomJsonParser.*;
+import static common.helpers.CustomJsonParser.*;
 import static ticktrack.util.ResponseHandler.*;
 
 @Controller

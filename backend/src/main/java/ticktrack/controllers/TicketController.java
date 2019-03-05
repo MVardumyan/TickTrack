@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.TicketManager;
 import ticktrack.proto.Msg;
 
-import static ticktrack.util.CustomJsonParser.jsonToProtobuf;
-import static ticktrack.util.CustomJsonParser.protobufToJson;
+import static common.helpers.CustomJsonParser.jsonToProtobuf;
+import static common.helpers.CustomJsonParser.protobufToJson;
 import static ticktrack.util.ResponseHandler.buildFailureResponse;
 import static ticktrack.util.ResponseHandler.wrapCommonResponseIntoMsg;
 

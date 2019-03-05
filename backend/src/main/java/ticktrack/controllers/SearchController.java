@@ -4,14 +4,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.SearchManager;
 import ticktrack.proto.Msg;
 
-import static ticktrack.util.CustomJsonParser.*;
+import java.util.List;
+
+import static common.helpers.CustomJsonParser.*;
 import static ticktrack.util.ResponseHandler.*;
 
 @Controller
@@ -48,6 +47,12 @@ public class SearchController {
             logger.error("Exception appear while handling search request", t);
             return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
         }
+    }
+
+    @RequestMapping(value = "/searchUsers/{term}", method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    List<String> searchUsers(@PathVariable("term") String term) {
+        return searchManager.searchUsersByTerm(term);
     }
 
     private Msg wrapIntoMsg(Msg.SearchOp.SearchOpResponse message) {

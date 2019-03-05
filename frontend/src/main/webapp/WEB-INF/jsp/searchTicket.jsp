@@ -1,22 +1,27 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <title>Search Tickets</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.2/bootstrap3-typeahead.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"/>
+    <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <%--autocomplete--%>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <%--multiselect--%>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css"/>
+    <%--datepicket--%>
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.min.css"/>
     <script
             src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
-    <script
-            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
         .btn-info {
             background-color: #62CCE8;
@@ -24,12 +29,14 @@
             color: #F62CCE8;
             border-color: #59B2E6;
         }
+
         .btn-info:hover,
         .btn-info:focus {
             color: #000000;
             background-color: #62CCE8;
             border-color: #62CCE8;
         }
+
         .navbar {
             background-color: #F55C00 !important;
             position: fixed;
@@ -38,13 +45,14 @@
             top: 0;
             z-index: 9999;
         }
+
         .navbar .navbar-brand {
             color: white;
             font-family: monospace;
             font-size: 20px;
         }
 
-        .container{
+        .container {
             margin-top: 50px;
         }
     </style>
@@ -57,14 +65,33 @@
     </nav>
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
-    <form method="post" id="search_form">
+    <form method="post" id="search_form" action="searchTickets">
         <div class="form-group">
             <input type="text" class="form-control" id="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="ticketId"
+            <input type="text" class="form-control" id="ticket_id"
                    placeholder="Ticket ID">
+        </div>
+        <div class="form-group">
+            <div class="ui-widget">
+                <input type="text" class="form-control" id="assignee"
+                       placeholder="Assignee">
+            </div>
+        </div>
+        <div class="form-group">
+            <select id="group" name="group[]" multiple class="form-control">
+                <c:forEach var="group" items="${groupList}">
+                    <option value="${group}">
+                            ${group}
+                    </option>
+                </c:forEach>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" id="creator"
+                   placeholder="Creator">
         </div>
         <div class="form-group">
             <input type="text" class="form-control" id="resolution"
@@ -139,8 +166,13 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
-    });
-    $(document).ready(function () {
+        $('#group').multiselect({
+            nonSelectedText: 'Group',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '200px'
+        });
         $('#status').multiselect({
             nonSelectedText: 'Status',
             enableFiltering: true,
@@ -148,8 +180,6 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
-    });
-    $(document).ready(function () {
         $('#category').multiselect({
             nonSelectedText: 'Category',
             enableFiltering: true,
@@ -157,13 +187,45 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
-    });
-    $(document).ready(function () {
         $('.input-daterange').datepicker({
             todayBtn: "linked",
             clearBtn: true,
             daysOfWeekHighlighted: "0",
             todayHighlight: true
         });
+        var cache = {};
+        $('#assignee, #creator').autocomplete({
+            minLength: 1,
+            source: function (request, response) {
+                var term = request.term;
+                if (term in cache) {
+                    response(cache[term]);
+                    return;
+                }
+
+                $.getJSON("searchUsers", request, function (data, status, xhr) {
+                    cache[term] = data;
+                    response(data);
+                });
+            }
+        });
+        // $('#search_form').submit(function(e) {
+        //
+        //     e.preventDefault();
+        //
+        //     var form = $(this);
+        //     var url = form.attr('action');
+        //
+        //     $.ajax({
+        //         type: "GET",
+        //         url: url,
+        //         data: form.serialize(), // serializes the form's elements.
+        //         success: function(data)
+        //         {
+        //             alert(data); // show response from the php script.
+        //         }
+        //     });
+        //
+        // });
     });
 </script>
