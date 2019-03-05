@@ -32,7 +32,14 @@ public class PersonalInfoController {
             JsonFormat.parser().merge(response.body().string(), builder);
             Msg result = builder.build();
 
-            //model.put("request", result.getUserOperation().getUserOpGetResponse());
+            model.put("username", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getUsername()); //username
+            model.put("role", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole()); //role
+            model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
+            model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
+            model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
+            model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
+            model.put("regTime", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRegistrationTime());
+            model.put("groups", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
 
         } catch (IOException e) {
             e.printStackTrace();

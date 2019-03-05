@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -55,27 +57,27 @@
                                 <!-- /input-group -->
                             </div>
                             <div class="col-sm-6">
-                                <h4 style="color:#00b1b1;">USERNAME </h4></span>
-                                <span><p>ROLE</p></span>
+                                <h4 style="color:#00b1b1;"><c> ${username} </c></h4></span>
+                                <span><p>${role}</p></span>
                             </div>
                             <div class="clearfix"></div>
                             <hr style="margin:5px 0 5px 0;">
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >First Name:</div><div class="col-sm-7 col-xs-6 ">first name</div>
+                            <div class="col-sm-5 col-xs-6 tital " >First Name:</div><div class="col-sm-7 col-xs-6 ">${firstName}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Last Name:</div><div class="col-sm-7"> last name</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Last Name:</div><div class="col-sm-7"> ${lastName}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Gender:</div><div class="col-sm-7"> gender</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Gender:</div><div class="col-sm-7"> ${gender}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Email:</div><div class="col-sm-7"> email@gmail.com</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Email:</div><div class="col-sm-7"> ${email}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
@@ -83,11 +85,11 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> reg-time</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${regTime}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Member of groups:</div><div class="col-sm-7">group list</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Member of following groups:</div><div class="col-sm-7">${groups}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         </div>
@@ -98,3 +100,4 @@
     </div>
 </div>
 </div>
+</html>
