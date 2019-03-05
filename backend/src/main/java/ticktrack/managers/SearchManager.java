@@ -1,5 +1,7 @@
 package ticktrack.managers;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import ticktrack.entities.Ticket;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
@@ -135,39 +137,33 @@ public class SearchManager implements ISearchManager {
             }
         }
         //open date
-        if(request.hasOpenDateStart()) {
-            if(request.hasOpenDateEnd()) {
-                currentPredicate = builder.between(root.get("openDate"),
-                        new Timestamp(request.getOpenDateStart()),
-                        new Timestamp(request.getOpenDateEnd()));
-            } else {
-                currentPredicate = builder.equal(root.get("openDate"),
-                        new Timestamp(request.getOpenDateStart()));
-            }
+        if (request.hasOpenDateStart() && request.hasOpenDateEnd()) {
+            DateTime start = setStartDateTime(request.getOpenDateStart());
+            DateTime end = setEndDateTime(request.getOpenDateEnd());
+
+            currentPredicate = builder.between(root.get("openDate"),
+                    new Timestamp(start.getMillis()),
+                    new Timestamp(end.getMillis()));
             criteria = builder.and(criteria, currentPredicate);
         }
         //close date
-        if(request.hasCloseDateStart()) {
-            if(request.hasCloseDateEnd()) {
-                currentPredicate = builder.between(root.get("closeDate"),
-                        new Timestamp(request.getCloseDateStart()),
-                        new Timestamp(request.getCloseDateEnd()));
-            } else {
-                currentPredicate = builder.equal(root.get("closeDate"),
-                        new Timestamp(request.getCloseDateStart()));
-            }
+        if (request.hasCloseDateStart() && request.hasCloseDateEnd()) {
+            DateTime start = setStartDateTime(request.getCloseDateStart());
+            DateTime end = setEndDateTime(request.getCloseDateEnd());
+
+            currentPredicate = builder.between(root.get("closeDate"),
+                    new Timestamp(start.getMillis()),
+                    new Timestamp(end.getMillis()));
             criteria = builder.and(criteria, currentPredicate);
         }
         //deadline
-        if(request.hasDeadlineStart()) {
-            if(request.hasDeadlineEnd()) {
-                currentPredicate = builder.between(root.get("deadline"),
-                        new Timestamp(request.getDeadlineStart()),
-                        new Timestamp(request.getDeadlineEnd()));
-            } else {
-                currentPredicate = builder.equal(root.get("deadline"),
-                        new Timestamp(request.getDeadlineStart()));
-            }
+        if (request.hasDeadlineStart() && request.hasDeadlineEnd()) {
+            DateTime start = setStartDateTime(request.getDeadlineStart());
+            DateTime end = setEndDateTime(request.getDeadlineEnd());
+
+            currentPredicate = builder.between(root.get("deadline"),
+                    new Timestamp(start.getMillis()),
+                    new Timestamp(end.getMillis()));
             criteria = builder.and(criteria, currentPredicate);
         }
 
@@ -205,9 +201,21 @@ public class SearchManager implements ISearchManager {
         }
     }
 
-
     private SearchOp.SearchOpResponse getEmptyResult() {
         return SearchOp.SearchOpResponse.newBuilder()
                 .build();
+    }
+
+    private DateTime setStartDateTime(String date) {
+        return new DateTime(date)
+                .withZone(DateTimeZone.forID("Asia/Yerevan"));
+    }
+
+    private DateTime setEndDateTime(String date) {
+        return new DateTime(date)
+                .withHourOfDay(23)
+                .withMinuteOfHour(59)
+                .withSecondOfMinute(59)
+                .withZone(DateTimeZone.forID("Asia/Yerevan"));
     }
 }
