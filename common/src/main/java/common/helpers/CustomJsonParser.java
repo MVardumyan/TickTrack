@@ -1,4 +1,4 @@
-package ticktrack.util;
+package common.helpers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;

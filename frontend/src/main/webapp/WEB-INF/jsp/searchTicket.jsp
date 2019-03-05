@@ -65,13 +65,13 @@
     </nav>
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
-    <form method="post" id="search_form">
+    <form method="post" id="search_form" action="searchTickets">
         <div class="form-group">
             <input type="text" class="form-control" id="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="ticketId"
+            <input type="text" class="form-control" id="ticket_id"
                    placeholder="Ticket ID">
         </div>
         <div class="form-group">
@@ -79,6 +79,15 @@
                 <input type="text" class="form-control" id="assignee"
                        placeholder="Assignee">
             </div>
+        </div>
+        <div class="form-group">
+            <select id="group" name="group[]" multiple class="form-control">
+                <c:forEach var="group" items="${groupList}">
+                    <option value="${group}">
+                            ${group}
+                    </option>
+                </c:forEach>
+            </select>
         </div>
         <div class="form-group">
             <input type="text" class="form-control" id="creator"
@@ -157,6 +166,13 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
+        $('#group').multiselect({
+            nonSelectedText: 'Group',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '200px'
+        });
         $('#status').multiselect({
             nonSelectedText: 'Status',
             enableFiltering: true,
@@ -193,5 +209,23 @@
                 });
             }
         });
+        // $('#search_form').submit(function(e) {
+        //
+        //     e.preventDefault();
+        //
+        //     var form = $(this);
+        //     var url = form.attr('action');
+        //
+        //     $.ajax({
+        //         type: "GET",
+        //         url: url,
+        //         data: form.serialize(), // serializes the form's elements.
+        //         success: function(data)
+        //         {
+        //             alert(data); // show response from the php script.
+        //         }
+        //     });
+        //
+        // });
     });
 </script>
