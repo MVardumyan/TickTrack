@@ -60,31 +60,32 @@
         <span class="navigation-brand">T!ckTrack</span>
 
         <div class="navigation-action-button">
-            <span class="glyphicon glyphicon-search"></span>
-            <span class="glyphicon glyphicon-user"></span>
-            <span class="glyphicon glyphicon-log-out"></span>
+            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
         </div>
     </div>
     <div class="sidnav">
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">hjyujuy</a>
+            <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">hjyujuy</a>
+            <a href="http://localhost:9093/ticketInfo" class="sidnav-item">MY TICKETS</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">hjyujuy</a>
+            <a href="#" class="sidnav-item">NEW TICKET</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">hjyujuy</a>
+            <a href="#" class="sidnav-item">UPDATE TICKET</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">hjyujuy</a>
+            <a href="#" class="sidnav-item">CHANGE PASSWORD</a>
         </div>
+
     </div>
 </body>
 </html>
