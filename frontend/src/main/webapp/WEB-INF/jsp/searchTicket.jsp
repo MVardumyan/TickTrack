@@ -191,7 +191,8 @@
             todayBtn: "linked",
             clearBtn: true,
             daysOfWeekHighlighted: "0",
-            todayHighlight: true
+            todayHighlight: true,
+            format: 'yyyy-mm-dd'
         });
         var cache = {};
         $('#assignee, #creator').autocomplete({

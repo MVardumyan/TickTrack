@@ -133,14 +133,14 @@ message Msg {
             repeated TicketPriority priority = 4;
             repeated string category = 5;
             optional string assignee = 6;
-            optional int64 deadlineStart = 7;
-            optional int64 deadlineEnd = 12;
+            optional string deadlineStart = 7;
+            optional string deadlineEnd = 12;
             repeated TicketStatus status = 8;
             optional string resolution = 9;
-            optional int64 openDateStart = 10;
-            optional int64 openDateEnd = 11;
-            optional int64 closeDateStart = 13;
-            optional int64 closeDateEnd = 14;
+            optional string openDateStart = 10;
+            optional string openDateEnd = 11;
+            optional string closeDateStart = 13;
+            optional string closeDateEnd = 14;
             optional string group = 15;
         }
 

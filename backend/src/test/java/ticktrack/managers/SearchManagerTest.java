@@ -75,15 +75,15 @@ class SearchManagerTest {
       assertEquals("mik", response.getTicketInfo(0).getCreator());
    }
 
-   @Test
-   void searchByOpenDate() {
-      Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
-         .setOpenDateStart(testOpenDate)
-         .build();
-
-      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
-      assertEquals("mik", response.getTicketInfo(0).getCreator());
-   }
+//   @Test
+//   void searchByOpenDate() {
+//      Msg.SearchOp.SearchOpRequest request = Msg.SearchOp.SearchOpRequest.newBuilder()
+//         .setOpenDateStart(testOpenDate)
+//         .build();
+//
+//      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+//      assertEquals("mik", response.getTicketInfo(0).getCreator());
+//   }
 
    @Test
    void searchByTwoCriterias() {
