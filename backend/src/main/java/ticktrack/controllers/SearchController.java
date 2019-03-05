@@ -24,7 +24,7 @@ public class SearchController {
         this.searchManager = searchManager;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     String searchTickets(@RequestBody String jsonRequest) {
         try {
