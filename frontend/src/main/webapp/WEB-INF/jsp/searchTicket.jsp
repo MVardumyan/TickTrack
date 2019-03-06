@@ -37,32 +37,50 @@
             border-color: #62CCE8;
         }
 
-        .navbar {
-            background-color: #F55C00 !important;
+        .container {
+            margin-top: 50px;
+        }
+
+        .navigation {
+            background-color: #f5821f;
             position: fixed;
             left: 0;
             right: 0;
-            top: 0;
+            top: 0px;
             z-index: 9999;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-
-        .navbar .navbar-brand {
+        .navigation .navigation-brand {
             color: white;
             font-family: monospace;
             font-size: 20px;
+            margin-left: 20px;
         }
 
-        .container {
-            margin-top: 50px;
+        .navigation-action-button {
+            margin-right: 20px;
+        }
+        .glyphicon-search,
+        .glyphicon-user {
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
 <br/><br/>
 <div class="container" align="left" style="width:600px;">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">T!ckTrack</a>
-    </nav>
+    <div class="navigation">
+        <span class="navigation-brand">T!ckTrack</span>
+
+        <div class="navigation-action-button">
+            <span class="glyphicon glyphicon-search"></span>
+            <span class="glyphicon glyphicon-user"></span>
+            <span class="glyphicon glyphicon-log-out"></span>
+        </div>
+    </div>
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
     <form method="post" id="search_form" action="searchTickets">
@@ -210,23 +228,5 @@
                 });
             }
         });
-        // $('#search_form').submit(function(e) {
-        //
-        //     e.preventDefault();
-        //
-        //     var form = $(this);
-        //     var url = form.attr('action');
-        //
-        //     $.ajax({
-        //         type: "GET",
-        //         url: url,
-        //         data: form.serialize(), // serializes the form's elements.
-        //         success: function(data)
-        //         {
-        //             alert(data); // show response from the php script.
-        //         }
-        //     });
-        //
-        // });
     });
 </script>
