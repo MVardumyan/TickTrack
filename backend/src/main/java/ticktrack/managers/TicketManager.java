@@ -1,10 +1,14 @@
 package ticktrack.managers;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import ticktrack.entities.*;
 import ticktrack.entities.Comment;
 import ticktrack.enums.TicketPriority;
 import ticktrack.enums.TicketStatus;
 import ticktrack.interfaces.ITicketManager;
+import ticktrack.proto.Msg;
 import ticktrack.repositories.*;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
@@ -28,7 +32,7 @@ public class TicketManager implements ITicketManager {
     private final CommentRepository commentRepository;
     private final CategoryRepository categoryRepository;
     private final GroupRepository groupRepository;
-    private Logger logger = LoggerFactory.getLogger(User.class);
+    private Logger logger = LoggerFactory.getLogger(TicketManager.class);
 
     @Autowired
     public TicketManager(TicketRepository ticketRepository, UserRepository userRepository, CommentRepository commentRepository, CategoryRepository categoryRepository, GroupRepository groupRepository) {
@@ -41,7 +45,7 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public CommonResponse create(TicketOp.TicketOpCreateRequest request) {
+    public Msg create(TicketOp.TicketOpCreateRequest request) {
         String responseText;
         CommonResponse response;
         if (request == null) {
@@ -62,7 +66,7 @@ public class TicketManager implements ITicketManager {
                 } catch (IllegalArgumentException e) {
                     responseText = "Priority doesn't match with existing types OR there is no such a user to assign to this ticket!";
                     logger.warn(responseText);
-                    return buildFailureResponse(responseText);
+                    return wrapCommonResponseIntoMsg(buildFailureResponse(responseText));
                 }
 
                 Ticket newTicket = new Ticket(request.getSummary(),
@@ -71,7 +75,7 @@ public class TicketManager implements ITicketManager {
                         creator,
                         category);
                 newTicket.setStatus(Open);
-                newTicket.setOpenDate(new Timestamp(System.currentTimeMillis()));
+                newTicket.setOpenDate(new Timestamp(getCurrentTimeInMillis()));
 
                 if (request.hasDeadline()) {
                     newTicket.setDeadline(new Timestamp(request.getDeadline()));
@@ -89,7 +93,7 @@ public class TicketManager implements ITicketManager {
 
                 responseText = "Ticket " + newTicket.getID() + " created!";
                 logger.debug(responseText);
-                response = buildSuccessResponse(responseText);
+                return wrapIntoMsg(buildTicketInfo(newTicket));
 
             } else if (!categoryResult.isPresent()) {
                 responseText = "Unable to create Ticket: Invalid Category type";
@@ -101,12 +105,12 @@ public class TicketManager implements ITicketManager {
                 response = buildFailureResponse(responseText);
             }
         }
-        return response;
+        return wrapCommonResponseIntoMsg(response);
     }
 
     @Transactional
     @Override
-    public CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request) {
+    public Msg updateTicket(TicketOp.TicketOpUpdateRequest request) {
         StringBuilder responseText = new StringBuilder();
         CommonResponse response;
         boolean updateSuccess = false;
@@ -120,7 +124,7 @@ public class TicketManager implements ITicketManager {
                 if (userResult.isPresent()) {
                     User assignee = userResult.get();
                     ticket.setAssignee(assignee);
-                    if(Open.equals(ticket.getStatus())) {
+                    if (Open.equals(ticket.getStatus())) {
                         ticket.setStatus(Assigned);
                     }
 
@@ -151,8 +155,8 @@ public class TicketManager implements ITicketManager {
                 try {
                     status = valueOf(request.getStatus().toString());
                     ticket.setStatus(status);
-                    if(status.equals(Closed) || status.equals(Canceled)) {
-                        ticket.setCloseDate(new Timestamp(System.currentTimeMillis()));
+                    if (status.equals(Closed) || status.equals(Canceled)) {
+                        ticket.setCloseDate(new Timestamp(getCurrentTimeInMillis()));
                     }
                     responseText.append("Ticket ").append(request.getTicketID()).append("' Status updated!\n");
                     updateSuccess = true;
@@ -190,14 +194,14 @@ public class TicketManager implements ITicketManager {
             }
             if (request.hasGroup()) {
                 Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
-                if(groupResult.isPresent()) {
+                if (groupResult.isPresent()) {
                     UserGroup group = groupResult.get();
                     ticket.setGroup(group);
 
-                    if(Open.equals(ticket.getStatus())) {
+                    if (Open.equals(ticket.getStatus())) {
                         ticket.setStatus(Assigned);
                     }
-                    if(ticket.getAssignee() != null && !ticket.getAssignee().getGroup().equals(group)) {
+                    if (ticket.getAssignee() != null && !ticket.getAssignee().getGroup().equals(group)) {
                         ticket.setAssignee(null);
                     }
 
@@ -207,10 +211,10 @@ public class TicketManager implements ITicketManager {
                     responseText.append("Group ").append(request.getGroup()).append(" not found");
                 }
             }
-            if(updateSuccess) {
+            if (updateSuccess) {
                 ticketRepository.save(ticket);
                 logger.debug(responseText.toString());
-                response = buildSuccessResponse(responseText.toString());
+                return wrapIntoMsg(buildTicketInfo(ticket));
             } else {
                 logger.warn(responseText.toString());
                 response = buildFailureResponse(responseText.toString());
@@ -222,34 +226,32 @@ public class TicketManager implements ITicketManager {
             response = buildFailureResponse(responseText.toString());
         }
 
-        return response;
+        return wrapCommonResponseIntoMsg(response);
     }
 
     @Transactional
     @Override
     public CommonResponse addComment(TicketOp.TicketOpAddComment request) {
         String responseText;
-        CommonResponse response;
         Optional<Ticket> result = ticketRepository.findById(request.getTicketId());
         if (result.isPresent()) {
+            Ticket ticket = result.get();
             Comment comment = new Comment(request.getNewComment().getUsername(),
                     new Timestamp(request.getNewComment().getTime()),
                     request.getNewComment().getText());
 
-            comment.setTicket(result.get());
+            comment.setTicket(ticket);
             commentRepository.save(comment);
 
             responseText = "User " + request.getNewComment().getUsername() + " added comment "
                     + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
             logger.debug(responseText);
 
-            response = buildSuccessResponse(responseText);
-        } else {
-            responseText = "Ticket " + request.getTicketId() + " not found!";
-            logger.warn(responseText);
-            response = buildFailureResponse(responseText);
+            return buildSuccessResponse(responseText);
         }
-        return response;
+        responseText = "Ticket " + request.getTicketId() + " not found!";
+        logger.warn(responseText);
+        return buildFailureResponse(responseText);
     }
 
     @Transactional
@@ -269,6 +271,16 @@ public class TicketManager implements ITicketManager {
     @Override
     public SearchOp.SearchOpResponse getAll() {
         return buildTicketResponseFromQueryResult(Streams.stream(ticketRepository.findAll()).collect(Collectors.toList()));
+    }
+
+    private long getCurrentTimeInMillis() {
+        return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).getMillis();
+    }
+
+    private Msg wrapIntoMsg(TicketInfo ticketInfo) {
+        return Msg.newBuilder()
+                .setTicketInfo(ticketInfo)
+                .build();
     }
 
 }

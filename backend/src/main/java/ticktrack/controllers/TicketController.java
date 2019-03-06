@@ -17,10 +17,10 @@ import static ticktrack.util.ResponseHandler.wrapCommonResponseIntoMsg;
 @RequestMapping(value = "backend/v1/Tickets")
 public class TicketController {
     private final TicketManager ticketManager;
-    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
     @Autowired
-    public TicketController(TicketManager ticketpManagerManager, TicketManager ticketManager) { this.ticketManager = ticketManager; }
+    public TicketController(TicketManager ticketManager) { this.ticketManager = ticketManager; }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
@@ -31,8 +31,8 @@ public class TicketController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasTicketOperation() && request.getTicketOperation().hasTicketOpCreateRequest()) {
-                Msg.CommonResponse result = ticketManager.create(request.getTicketOperation().getTicketOpCreateRequest());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
+                Msg result = ticketManager.create(request.getTicketOperation().getTicketOpCreateRequest());
+                return protobufToJson(result);
             }
 
             logger.warn("No create ticket request found");
@@ -52,8 +52,8 @@ public class TicketController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasTicketOperation() && request.getTicketOperation().hasTicketOpUpdateRequest()) {
-                Msg.CommonResponse result = ticketManager.updateTicket(request.getTicketOperation().getTicketOpUpdateRequest());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
+                Msg result = ticketManager.updateTicket(request.getTicketOperation().getTicketOpUpdateRequest());
+                return protobufToJson(result);
             }
 
             logger.warn("No update ticket request found");
