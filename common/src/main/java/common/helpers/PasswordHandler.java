@@ -1,4 +1,4 @@
-package ticktrack.util;
+package common.helpers;
 
 import com.kosprov.jargon2.api.Jargon2;
 import org.slf4j.Logger;

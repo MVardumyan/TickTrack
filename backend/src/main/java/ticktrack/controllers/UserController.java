@@ -122,7 +122,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/validateLogin", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/validateLogin", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     String validateLogin(@RequestBody String jsonRequest) {
         try {
