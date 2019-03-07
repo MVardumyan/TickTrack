@@ -19,7 +19,7 @@
         src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
     .sidnav {
-        height: 100%;
+        height: 200%;
         position: absolute;
         right: 86%;
         left: 0;
@@ -64,9 +64,36 @@
         font-family: monospace;
     }
 
+    .sidnav-item:hover {
+        text-decoration: none;
+        color: #f5821f;
+    }
+
+    .sidnav-item:active {
+        text-decoration: none;
+        color:  #f5821f;
+    }
+
     .glyphicon-search,
     .glyphicon-user {
         margin-right: 20px;
+    }
+
+    .container {
+        padding-left: 190px;
+        padding-top: 40px;
+    }
+
+    .container__header {
+        margin-bottom: 30px;
+    }
+
+    .form-group .btn-group {
+        width: 100% !important;
+    }
+
+    .form-group .btn-group .multiselect {
+        width: 100% !important;
     }
 
 </style>
@@ -91,47 +118,34 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">NEW TICKET</a>
+        <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
-
-    <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">UPDATE TICKET</a>
-    </div>
-
-    <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">CHANGE PASSWORD</a>
-    </div>
-
 </div>
 
-<div class="container" align="left" style="width:600px;">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">T!ckTrack</a>
-    </nav>
-    <h4 align="left">Create a new ticket</h4>
-    <br/><br/>
+<div class="container" align="left">
+    <h4 align="left" class="container__header">Create a new ticket</h4>
     <form method="post" action="createTicket" id="create_form">
         <label>Summary</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="summary"
+            <input type="text" class="form-control" name="summary"
                    placeholder="Summary">
         </div>
         <label>Description</label>
         <div class="form-group">
-            <input type="text" class="form-control" id="description"
-                   placeholder="Description">
+            <textarea type="text" class="form-control" name="description" rows="6"
+                      placeholder="Description"></textarea>
         </div>
         <label>Assignee</label>
         <div class="form-group">
             <div class="ui-widget">
-                <input type="text" class="form-control" id="assignee"
+                <input type="text" class="form-control" name="assignee"
                        placeholder="Assignee">
             </div>
         </div>
 
         <label>Group</label>
         <div class="form-group">
-            <select id="group" name="group[]" multiple class="form-control">
+            <select id="group" name="group" multiple class="form-control">
                 <c:forEach var="group" items="${groupList}">
                     <option value="${group}">
                             ${group}
@@ -142,7 +156,7 @@
 
         <label>Priority</label>
         <div class="form-group">
-            <select id="priority" name="priority[]" class="form-control">
+            <select name="priority" name="priority[]" class="form-control">
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -152,7 +166,7 @@
 
         <label>Category</label>
         <div class="form-group">
-            <select id="category" name="category[]" class="form-control">
+            <select name="category" name="category[]" class="form-control">
                 <c:forEach var="category" items="${categoryList}">
                     <option value="${category}">
                             ${category}
@@ -163,7 +177,7 @@
 
         <div class="form-group">
             <label>Deadline</label>
-            <div class="input-daterange input-group" id="deadline">
+            <div class="input-daterange input-group" name="deadline">
                 <input type="text" class="input-sm form-control" name="deadline"/>
                 <span class="input-group-addon"></span>
             </div>

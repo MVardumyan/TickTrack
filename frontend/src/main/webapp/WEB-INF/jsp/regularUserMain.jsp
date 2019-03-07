@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <style>
    .sidnav {
-       height: 100%;
+       height: 200%;
        position: absolute;
        right: 86%;
        left: 0;
@@ -50,10 +50,12 @@
 
    .sidnav-item:hover {
        text-decoration: none;
+       color: #f5821f;
    }
 
    .sidnav-item:active {
        text-decoration: none;
+       color:  #f5821f;
    }
 
     .glyphicon-search,
@@ -83,7 +85,7 @@
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">NEW TICKET</a>
+            <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
         </div>
     </div>
 </body>
