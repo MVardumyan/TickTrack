@@ -18,7 +18,7 @@ public class CheckActiveSessionInterceptor extends HandlerInterceptorAdapter {
         if(path.equals("/login")){
             return true;
         } else if(session == null || session.getAttribute("name") == null) {
-//            response.sendRedirect("/error");
+            response.sendRedirect(request.getContextPath() + "/login");
             return false;
         } else {
             return true;
