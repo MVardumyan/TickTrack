@@ -1,40 +1,29 @@
 package ticktrack.frontend.controller;
 
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import ticktrack.frontend.service.LoginService;
 
 @Controller
-@SessionAttributes("name")
+@ComponentScan()
  class LoginController {
-   @Autowired
-   Logger logger;
-
-   @Autowired
-   LoginService service;
-
-   @RequestMapping(value = "/login", method = RequestMethod.GET)
-   public String showLoginPage(ModelMap model) {
+   @RequestMapping(value = {"/login", "/"}, method = RequestMethod.GET)
+   public String showLoginPage() {
       return "login";
    }
 
    @RequestMapping(value = "/login", method = RequestMethod.POST)
    public String showWelcomePage(ModelMap model, @RequestParam String name, @RequestParam String password) {
+//      model.put("name", name);
+//      model.put("password", password);
 
-      boolean isValidUser = service.validateUser(name, password);
+      return "regularUserMain";
+   }
 
-      if (!isValidUser) {
-         model.put("errorMessage", "Invalid Credentials");
-         return "login";
-      }
-
-      model.put("name", name);
-      model.put("password", password);
-
-      return "welcome";
+   @RequestMapping(value = "/notFound", method = RequestMethod.GET)
+    String notFound() {
+       return "notFound";
    }
 
 }
