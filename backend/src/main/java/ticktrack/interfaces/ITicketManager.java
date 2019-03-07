@@ -1,11 +1,13 @@
 package ticktrack.interfaces;
 
+import ticktrack.proto.Msg;
+
 import static ticktrack.proto.Msg.*;
 
 public interface ITicketManager {
-    CommonResponse create(TicketOp.TicketOpCreateRequest request);
+    Msg create(TicketOp.TicketOpCreateRequest request);
 
-    CommonResponse updateTicket(TicketOp.TicketOpUpdateRequest request);
+    Msg updateTicket(TicketOp.TicketOpUpdateRequest request);
 
     CommonResponse addComment(TicketOp.TicketOpAddComment request);
 

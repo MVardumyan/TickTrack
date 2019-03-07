@@ -64,11 +64,11 @@ message Msg {
         required string category = 5;
         required string creator = 6;
         required TicketStatus status = 7;
-        required int64 openDate = 8;
+        required string openDate = 8;
         optional string assignee = 9;
         optional string resolution = 10;
-        optional int64 closeDate = 11;
-        optional int64 deadline = 12;
+        optional string closeDate = 11;
+        optional string deadline = 12;
         repeated Comment comment = 13;
         optional string group = 14;
     }

@@ -22,7 +22,7 @@ public final class ResponseHandler {
          .setDescription(ticket.getDescription())
          .setCategory(ticket.getCategory().getName())
          .setCreator(ticket.getCreator().getUsername())
-         .setOpenDate(ticket.getOpenDate().getTime())
+         .setOpenDate(ticket.getOpenDate().toString())
          .setPriority(Msg.TicketPriority.valueOf(ticket.getPriority().toString()))
          .setStatus(Msg.TicketStatus.valueOf(ticket.getStatus().toString()))
          .addAllComment(
@@ -39,10 +39,10 @@ public final class ResponseHandler {
          ticketMessage.setAssignee(ticket.getAssignee().getUsername());
       }
       if (ticket.getCloseDate() != null) {
-         ticketMessage.setCloseDate(ticket.getCloseDate().getTime());
+         ticketMessage.setCloseDate(ticket.getCloseDate().toString());
       }
       if (ticket.getDeadline() != null) {
-         ticketMessage.setDeadline(ticket.getDeadline().getTime());
+         ticketMessage.setDeadline(ticket.getDeadline().toString());
       }
       if (ticket.getGroup() != null) {
          ticketMessage.setGroup(ticket.getGroup().getName());
