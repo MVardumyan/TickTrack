@@ -48,6 +48,14 @@
        font-family: monospace;
    }
 
+   .sidnav-item:hover {
+       text-decoration: none;
+   }
+
+   .sidnav-item:active {
+       text-decoration: none;
+   }
+
     .glyphicon-search,
     .glyphicon-user {
         margin-right: 20px;
@@ -77,15 +85,6 @@
         <div class="sidnav-item-conteiner">
             <a href="#" class="sidnav-item">NEW TICKET</a>
         </div>
-
-        <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">UPDATE TICKET</a>
-        </div>
-
-        <div class="sidnav-item-conteiner">
-            <a href="#" class="sidnav-item">CHANGE PASSWORD</a>
-        </div>
-
     </div>
 </body>
 </html>

@@ -110,7 +110,7 @@
     </nav>
     <h4 align="left">Create a new ticket</h4>
     <br/><br/>
-    <form method="post" id="search_form">
+    <form method="post" action="createTicket" id="create_form">
         <label>Summary</label>
         <div class="form-group">
             <input type="text" class="form-control" id="summary"
@@ -121,23 +121,20 @@
             <input type="text" class="form-control" id="description"
                    placeholder="Description">
         </div>
-        <label>Resolution</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="resolution"
-                   placeholder="Resolution">
-        </div>
-        <label>Comment</label>
-        <div class="form-group">
-            <input type="text" class="form-control" id="comments"
-                   placeholder="Comment...">
-        </div>
-
         <label>Assignee</label>
         <div class="form-group">
-            <select id="assignee" name="assignee[]" class="form-control">
-                <c:forEach var="assignee" items="${assigneeList}">
-                    <option value="${assignee}">
-                            ${assignee}
+            <div class="ui-widget">
+                <input type="text" class="form-control" id="assignee"
+                       placeholder="Assignee">
+            </div>
+        </div>
+
+        <label>Group</label>
+        <div class="form-group">
+            <select id="group" name="group[]" multiple class="form-control">
+                <c:forEach var="group" items="${groupList}">
+                    <option value="${group}">
+                            ${group}
                     </option>
                 </c:forEach>
             </select>
@@ -152,17 +149,7 @@
                 <option value="Critical">Critical</option>
             </select>
         </div>
-        <label>Status</label>
-        <div class="form-group">
-            <select id="status" name="status[]" class="form-control">
-                <option value="Open">Open</option>
-                <option value="Assigned">Assigned</option>
-                <option value="In_Progress">In Progress</option>
-                <option value="Resolved">Resolved</option>
-                <option value="Canceled">Canceled</option>
-                <option value="Closed">Closed</option>
-            </select>
-        </div>
+
         <label>Category</label>
         <div class="form-group">
             <select id="category" name="category[]" class="form-control">
@@ -173,13 +160,7 @@
                 </c:forEach>
             </select>
         </div>
-        <div class="form-group">
-            <label>Open date</label>
-            <div class="input-daterange input-group" id="openDate">
-                <input type="text" class="input-sm form-control" name="openDateStart"/>
-                <span class="input-group-addon"></span>
-            </div>
-        </div>
+
         <div class="form-group">
             <label>Deadline</label>
             <div class="input-daterange input-group" id="deadline">
@@ -205,7 +186,15 @@
             includeSelectAllOption: true,
             buttonWidth: '568px'
         });
+        $('#group').multiselect({
+            nonSelectedText: 'More',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '568px'
+        });
     });
+
     $(document).ready(function () {
         $('#status').multiselect({
             nonSelectedText: 'Status',
@@ -230,6 +219,22 @@
             clearBtn: true,
             daysOfWeekHighlighted: "0",
             todayHighlight: true
+        });
+        var cache = {};
+        $('#assignee, #creator').autocomplete({
+            minLength: 1,
+            source: function (request, response) {
+                var term = request.term;
+                if (term in cache) {
+                    response(cache[term]);
+                    return;
+                }
+
+                $.getJSON("searchUsers", request, function (data, status, xhr) {
+                    cache[term] = data;
+                    response(data);
+                });
+            }
         });
     });
 </script>
