@@ -70,7 +70,7 @@ public class NewTicketController {
         return "newTicket";
     }
 
-    @RequestMapping(value = "createTicket", method = RequestMethod.POST)
+    @RequestMapping(value = "createTickets", method = RequestMethod.POST)
     String createTickets(ModelMap model,
                          @RequestParam() String summary,
                          @RequestParam() String description,
@@ -107,6 +107,20 @@ public class NewTicketController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("tickets", msg.getTicketInfo());
+                    model.put("id", msg.getTicketInfo().getTicketID());
+                    model.put("creator", msg.getTicketInfo().getCreator());
+                    model.put("description", msg.getTicketInfo().getDescription());
+                    model.put("summary", msg.getTicketInfo().getSummary());
+                    model.put("resolution", msg.getTicketInfo().getResolution());
+                    model.put("priority", msg.getTicketInfo().getPriority());
+                    model.put("status", msg.getTicketInfo().getStatus());
+                    model.put("category", msg.getTicketInfo().getCategory());
+                    model.put("assignee", msg.getTicketInfo().getAssignee());
+                    model.put("deadline", msg.getTicketInfo().getDeadline());
+                    model.put("date", msg.getTicketInfo().getCloseDate());
+                    model.put("openDate", msg.getTicketInfo().getOpenDate());
+                    model.put("group", msg.getTicketInfo().getGroup());
+                    model.put("comments", msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

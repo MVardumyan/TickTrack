@@ -219,10 +219,10 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         </div>
-                        </div>
-                        </div>
-                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
         <div class="button-group">
             <form action="http://google.com">
                 <button class="action-button">Edit</button>
@@ -233,9 +233,11 @@
             <form action="http://google.com">
                 <button class="action-button">Cancel</button>
             </form>
+            <form action="http://google.com">
+                <button class="action-button">Resolve</button>
+            </form>
         </div>
     </div>
 </div>
 </div>
 </html>
-

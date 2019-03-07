@@ -100,7 +100,7 @@
         .btn-register {
             background-color: #62CCE8;
             outline: none;
-            color: #F62CCE8;
+            color: #62CCE8;
             font-size: 14px;
             height: auto;
             font-weight: normal;
@@ -132,20 +132,30 @@
             margin-top: 200px;
         }
 
-        .navbar {
-            background-color: #F55C00 !important;
+        .navigation {
+            background-color: #f5821f;
             position: fixed;
             left: 0;
             right: 0;
-            top: 0;
+            top: 0px;
             z-index: 9999;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        .navbar .navbar-brand {
+        .navigation .navigation-brand {
             color: white;
             font-family: monospace;
             font-size: 20px;
+            margin-left: 20px;
         }
+
+        .navigation-action-button {
+            margin-right: 20px;
+        }
+
     </style>
 </head>
 <script>
@@ -154,9 +164,15 @@
 <body>
 
 <div>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="#">T!ckTrack</a>
-        </nav>
+    <div class="navigation">
+        <span class="navigation-brand">T!ckTrack</span>
+
+        <div class="navigation-action-button">
+            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3">
@@ -201,13 +217,15 @@
                                         <input type="text" name="username" id="username1" tabindex="1" class="form-control" placeholder="Username" value="">
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="first name" id="first name" tabindex="2" class="form-control" placeholder="First Name">
+                                        <input type="text" name="first name" id="first name" tabindex="2" class="form-control" placeholder="First Name">
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Last Name">
+                                        <input type="text" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Last Name">
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Gender">
+                                        <input type="radio" name="gender" value="male"> Male
+                                        <input type="radio" name="gender" value="female"> Female
+
                                     </div>
                                     <div class="form-group">
                                         <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">

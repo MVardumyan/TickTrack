@@ -114,7 +114,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="http://localhost:9093/ticketInfo" class="sidnav-item">MY TICKETS</a>
+        <a href="http://localhost:9093//myTickets" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -145,7 +145,7 @@
 
         <label>Group</label>
         <div class="form-group">
-            <select id="group" name="group" multiple class="form-control">
+            <select id="group" name="group[]" multiple class="form-control">
                 <c:forEach var="group" items="${groupList}">
                     <option value="${group}">
                             ${group}

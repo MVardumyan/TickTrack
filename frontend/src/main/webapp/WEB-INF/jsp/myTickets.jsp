@@ -181,7 +181,7 @@
     </div>
 </div>
 <div class="body" align="left">
-    <button onclick="goBack()" class="btn btn-info" name="back" style="margin-bottom:20px;margin-top:20px">Back to search form</button>
+    <h4>Tickets created by me</h4>
     <table id="searchResult" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
@@ -207,17 +207,148 @@
         </thead>
         <tbody>
         <c:forEach items="${tickets}" var="ticket">
+            <tr>
+                <td>${ticket.ticketID}</td>
+                <td>${ticket.summary}</td>
+                <td>${ticket.assignee}</td>
+                <td>${ticket.creator}</td>
+                <td>${ticket.category}</td>
+                <td>${ticket.status}</td>
+                <td>${ticket.priority}</td>
+                <td>${ticket.openDate}</td>
+                <td>${ticket.closeDate}</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+        <tfoot>
         <tr>
-            <td><a  href="http://localhost:9093/ticketInfo">${ticket.ticketID}</a></td>
-            <td>${ticket.summary}</td>
-            <td>${ticket.assignee}</td>
-            <td>${ticket.creator}</td>
-            <td>${ticket.category}</td>
-            <td>${ticket.status}</td>
-            <td>${ticket.priority}</td>
-            <td>${ticket.openDate}</td>
-            <td>${ticket.closeDate}</td>
+            <th>ID
+            </th>
+            <th>Summary
+            </th>
+            <th>Assignee
+            </th>
+            <th>Creator
+            </th>
+            <th>Category
+            </th>
+            <th>Status
+            </th>
+            <th>Priority
+            </th>
+            <th>Open date
+            </th>
+            <th>Close date
+            </th>
         </tr>
+        </tfoot>
+    </table>
+
+
+
+
+    <h4>Tickets assigned to me</h4>
+    <table id="tickets-assigned-to-me" class="table table-striped table-bordered table-sm" width="100%">
+        <thead>
+        <tr>
+            <th class="th-sm">ID
+            </th>
+            <th class="th-sm">Summary
+            </th>
+            <th class="th-sm">Assignee
+            </th>
+            <th class="th-sm">Creator
+            </th>
+            <th class="th-sm">Category
+            </th>
+            <th class="th-sm">Status
+            </th>
+            <th class="th-sm">Priority
+            </th>
+            <th class="th-sm">Open date
+            </th>
+            <th class="th-sm">Close date
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${tickets}" var="ticket">
+            <tr>
+                <td>${ticket.ticketID}</td>
+                <td>${ticket.summary}</td>
+                <td>${ticket.assignee}</td>
+                <td>${ticket.creator}</td>
+                <td>${ticket.category}</td>
+                <td>${ticket.status}</td>
+                <td>${ticket.priority}</td>
+                <td>${ticket.openDate}</td>
+                <td>${ticket.closeDate}</td>
+            </tr>
+        </c:forEach>
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>ID
+            </th>
+            <th>Summary
+            </th>
+            <th>Assignee
+            </th>
+            <th>Creator
+            </th>
+            <th>Category
+            </th>
+            <th>Status
+            </th>
+            <th>Priority
+            </th>
+            <th>Open date
+            </th>
+            <th>Close date
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+
+
+    <h4>My groups tickets</h4>
+    <table id="my-groups-tickets" class="table table-striped table-bordered table-sm" width="100%">
+        <thead>
+        <tr>
+            <th class="th-sm">ID
+            </th>
+            <th class="th-sm">Summary
+            </th>
+            <th class="th-sm">Assignee
+            </th>
+            <th class="th-sm">Creator
+            </th>
+            <th class="th-sm">Category
+            </th>
+            <th class="th-sm">Status
+            </th>
+            <th class="th-sm">Priority
+            </th>
+            <th class="th-sm">Open date
+            </th>
+            <th class="th-sm">Close date
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${tickets}" var="ticket">
+            <tr>
+                <td>${ticket.ticketID}</td>
+                <td>${ticket.summary}</td>
+                <td>${ticket.assignee}</td>
+                <td>${ticket.creator}</td>
+                <td>${ticket.category}</td>
+                <td>${ticket.status}</td>
+                <td>${ticket.priority}</td>
+                <td>${ticket.openDate}</td>
+                <td>${ticket.closeDate}</td>
+            </tr>
         </c:forEach>
         </tbody>
         <tfoot>
@@ -254,6 +385,15 @@
         $('.dataTables_length').addClass('bs-select');
     });
 
+    $(document).ready(function () {
+        $('#tickets-assigned-to-me').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+    });
+
+    $(document).ready(function () {
+        $('#my-groups-tickets').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+    });
     function goBack() {
         window.history.back();
     }
