@@ -16,7 +16,7 @@ public class FirstPageController {
         this.httpClient = httpClient;
     }
 
-    @RequestMapping(value = "/TickTrack.am", method = RequestMethod.GET)
+    @RequestMapping(value = "/TickTrack", method = RequestMethod.GET)
     public String displayErrorPage(ModelMap model) {
         return "firstPage";
     }
