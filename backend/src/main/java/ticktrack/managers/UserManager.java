@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ticktrack.util.PasswordHandler;
+import common.helpers.PasswordHandler;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;

@@ -14,7 +14,7 @@ import ticktrack.enums.UserRole;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;
 import ticktrack.repositories.UserRepository;
-import ticktrack.util.PasswordHandler;
+import common.helpers.PasswordHandler;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
