@@ -16,13 +16,13 @@ public class CheckActiveSessionInterceptor extends HandlerInterceptorAdapter {
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
         if(path.equals("/login")){
-            if(session == null || session.getAttribute("name") == null) {
+            if(session == null || session.getAttribute("user") == null) {
                 return true;
             } else {
                 response.sendRedirect(request.getContextPath() + "/regUserMain");
                 return false;
             }
-        } else if(session == null || session.getAttribute("name") == null) {
+        } else if(session == null || session.getAttribute("user") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return false;
         } else {

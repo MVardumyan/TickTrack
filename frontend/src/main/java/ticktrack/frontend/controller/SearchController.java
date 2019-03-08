@@ -1,8 +1,6 @@
 package ticktrack.frontend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import common.helpers.CustomJsonParser;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -19,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static common.helpers.CustomJsonParser.*;
+import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 
 @Controller
 public class SearchController {
@@ -33,12 +32,8 @@ public class SearchController {
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
     String displaySearchPage(ModelMap model) {
-        Request categoriesRequest = new Request.Builder()
-                .url(backendURL + "categories/getAllActive")
-                .build();
-        Request groupsRequest = new Request.Builder()
-                .url(backendURL + "userGroups/getAll")
-                .build();
+        Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAllActive");
+        Request groupsRequest = buildRequestWithoutBody(backendURL + "userGroups/getAll");
 
         try (Response categoryResponse = httpClient.newCall(categoriesRequest).execute();
              Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
@@ -167,14 +162,8 @@ public class SearchController {
             requestMessage.setDeadlineEnd(deadlineEnd);
         }
 
-        Request request = new Request.Builder()
-                .url(backendURL + "search")
-                .post(
-                        okhttp3.RequestBody.create(
-                                MediaType.parse("application/json; charset=utf-8"),
-                                CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
-                )
-                .build();
+        Request request = buildRequestWithBody(backendURL + "search",
+                protobufToJson(wrapIntoMsg(requestMessage)));
 
         try (Response response = httpClient.newCall(request).execute()) {
             if (response.code() == 200) {
@@ -195,9 +184,7 @@ public class SearchController {
     @RequestMapping(value = "searchUsers", method = RequestMethod.GET)
     @ResponseBody
     List<String> searchUsers(@RequestParam("term") String term) {
-        Request usersRequest = new Request.Builder()
-                .url(backendURL + "searchUsers/" + term)
-                .build();
+        Request usersRequest = buildRequestWithoutBody(backendURL + "searchUsers/" + term);
 
         try (Response response = httpClient.newCall(usersRequest).execute()) {
             if (response.code() == 200) {
