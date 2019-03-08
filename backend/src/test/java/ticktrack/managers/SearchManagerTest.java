@@ -6,7 +6,7 @@ import ticktrack.entities.Ticket;
 import ticktrack.entities.User;
 import ticktrack.enums.TicketPriority;
 import ticktrack.enums.TicketStatus;
-import ticktrack.enums.UserRole;
+import common.enums.UserRole;
 import ticktrack.repositories.CategoryRepository;
 import ticktrack.repositories.TicketRepository;
 import ticktrack.repositories.UserRepository;

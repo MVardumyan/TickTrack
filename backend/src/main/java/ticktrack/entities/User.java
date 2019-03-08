@@ -1,7 +1,7 @@
 package ticktrack.entities;
 
 import ticktrack.enums.Gender;
-import ticktrack.enums.UserRole;
+import common.enums.UserRole;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 
 import javax.servlet.http.HttpSession;
@@ -24,9 +26,10 @@ public class PersonalInfoController {
     }
 
     @RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
-    public String displayPersonalInfoPage(ModelMap model, HttpSession httpSession) {
+    public String displayPersonalInfoPage(ModelMap model, @SessionAttribute User user) {
+
         Request request = new Request.Builder()
-                .url("http://localhost:9001/backend/v1/users/getUser/" + httpSession.getAttribute("name"))
+                .url("http://localhost:9001/backend/v1/users/getUser/" + user.getUsername())
                 .build();
         try (Response response = httpClient.newCall(request).execute()) {
             Msg.Builder builder = Msg.newBuilder();

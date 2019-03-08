@@ -3,7 +3,7 @@ package ticktrack.managers;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.Gender;
-import ticktrack.enums.UserRole;
+import common.enums.UserRole;
 import ticktrack.interfaces.IUserManager;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;

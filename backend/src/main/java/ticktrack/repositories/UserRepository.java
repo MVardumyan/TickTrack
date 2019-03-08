@@ -2,7 +2,7 @@ package ticktrack.repositories;
 
 import ticktrack.entities.User;
 import org.springframework.data.repository.CrudRepository;
-import ticktrack.enums.UserRole;
+import common.enums.UserRole;
 
 import java.util.Optional;
 

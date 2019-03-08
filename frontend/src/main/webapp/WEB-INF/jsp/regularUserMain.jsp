@@ -1,5 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<div>
+<html>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <style>
 
@@ -242,22 +242,22 @@
         <span class="navigation-brand">T!ckTrack</span>
 
         <div class="navigation-action-button">
-            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
-            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
-            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
+            <a href="/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="/logout"><span class="glyphicon glyphicon-log-out"></span></a>
         </div>
     </div>
     <div class="sidnav">
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
+            <a href="/regUserMain" class="sidnav-item">HOME</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/myTickets" class="sidnav-item">MY TICKETS</a>
+            <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
+            <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
         </div>
     </div>
     <div class="b">
@@ -347,4 +347,3 @@
 </body>
 
 </html>
-</div>
