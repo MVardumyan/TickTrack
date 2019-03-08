@@ -124,6 +124,8 @@
 
 <div class="container" align="left">
     <h4 align="left" class="container__header">Create a new ticket</h4>
+
+
     <form method="post" action="createTicket" id="create_form">
         <label>Summary</label>
         <div class="form-group">

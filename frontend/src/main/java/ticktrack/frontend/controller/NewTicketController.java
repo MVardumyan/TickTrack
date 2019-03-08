@@ -70,8 +70,8 @@ public class NewTicketController {
         return "newTicket";
     }
 
-    @RequestMapping(value = "createTickets", method = RequestMethod.POST)
-    String createTickets(ModelMap model,
+    @RequestMapping(value = "createTicket", method = RequestMethod.POST)
+    String createTicket(ModelMap model,
                          @RequestParam() String summary,
                          @RequestParam() String description,
                          @RequestParam(required = false) String assignee,
@@ -82,15 +82,23 @@ public class NewTicketController {
 
     ) {
 
-        Msg.TicketOp.TicketOpCreateRequest requestMessage = Msg.TicketOp.TicketOpCreateRequest.newBuilder()
+        Msg.TicketOp.TicketOpCreateRequest.Builder requestMessage = Msg.TicketOp.TicketOpCreateRequest.newBuilder();
+
+        requestMessage
+                .setCreator("Lusine")
                 .setSummary(summary)
                 .setDescription(description)
-                .setAssignee(assignee)
-                .setGroup(group)
-                .setCategory(category)
                 .setPriority(priority)
-                .setCreator("Lusine")
-                .build();
+                .setCategory(category);
+        if(assignee != null && assignee.length() > 0){
+            requestMessage.setAssignee(assignee);
+        }
+        if(group != null && group.length() > 0){
+            requestMessage.setGroup(group);
+        }
+//        if(deadline != null && deadline.length() > 0){
+//            requestMessage.setDeadline(()deadline);
+//        }
 
 
         Request request = new Request.Builder()
@@ -106,21 +114,8 @@ public class NewTicketController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    model.put("tickets", msg.getTicketInfo());
-                    model.put("id", msg.getTicketInfo().getTicketID());
-                    model.put("creator", msg.getTicketInfo().getCreator());
-                    model.put("description", msg.getTicketInfo().getDescription());
-                    model.put("summary", msg.getTicketInfo().getSummary());
-                    model.put("resolution", msg.getTicketInfo().getResolution());
-                    model.put("priority", msg.getTicketInfo().getPriority());
-                    model.put("status", msg.getTicketInfo().getStatus());
-                    model.put("category", msg.getTicketInfo().getCategory());
-                    model.put("assignee", msg.getTicketInfo().getAssignee());
-                    model.put("deadline", msg.getTicketInfo().getDeadline());
-                    model.put("date", msg.getTicketInfo().getCloseDate());
-                    model.put("openDate", msg.getTicketInfo().getOpenDate());
-                    model.put("group", msg.getTicketInfo().getGroup());
-                    model.put("comments", msg.getTicketInfo().getCommentList());
+                    model.put("ticket", msg.getTicketInfo());
+                    //msg.getTicketInfo().getTicketID();
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -132,7 +127,7 @@ public class NewTicketController {
         return "ticketInfo";
     }
 
-    private Msg wrapIntoMsg(Msg.TicketOp.TicketOpCreateRequest requestMessage) {
+    private Msg wrapIntoMsg(Msg.TicketOp.TicketOpCreateRequest.Builder requestMessage) {
         return Msg.newBuilder().setTicketOperation(
                         Msg.TicketOp.newBuilder().setTicketOpCreateRequest(requestMessage)
                 )

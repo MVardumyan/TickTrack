@@ -16,6 +16,7 @@ import java.io.IOException;
 @Controller
 public class TicketInfoController {
     private final OkHttpClient httpClient;
+    private String backendURL = "http://localhost:9001/backend/v1/";
 
     @Autowired
     public TicketInfoController(OkHttpClient httpClient) {
@@ -25,7 +26,7 @@ public class TicketInfoController {
     @RequestMapping(value = "/ticketInfo", method = RequestMethod.GET)
     public String displayTicketInfoPage(ModelMap model) {
         Request request = new Request.Builder()
-                .url("http://localhost:9001/backend/v1/Tickets/getTicket/19")
+                .url(backendURL + "Tickets/getTicket/19")
                 .build();
         try (Response response = httpClient.newCall(request).execute()) {
             Msg.Builder builder = Msg.newBuilder();

@@ -156,6 +156,21 @@
     <div class="body">
         <div class="row">
 
+            <c:forEach items="${info}" var="ticket">
+                <tr>
+                    <td><a  href="http://localhost:9093/ticketInfo">${ticket.ticketID}</a></td>
+                    <td>${ticket.summary}</td>
+                    <td>${ticket.assignee}</td>
+                    <td>${ticket.creator}</td>
+                    <td>${ticket.category}</td>
+                    <td>${ticket.status}</td>
+                    <td>${ticket.priority}</td>
+                    <td>${ticket.openDate}</td>
+                    <td>${ticket.closeDate}</td>
+                </tr>
+            </c:forEach>
+
+
             <div class="col-md-7 ">
 
                 <div class="panel panel-default">
