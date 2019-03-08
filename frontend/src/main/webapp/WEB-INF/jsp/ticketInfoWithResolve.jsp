@@ -156,21 +156,6 @@
     <div class="body">
         <div class="row">
 
-            <c:forEach items="${info}" var="ticket">
-                <tr>
-                    <td><a  href="http://localhost:9093/ticketInfo">${ticket.ticketID}</a></td>
-                    <td>${ticket.summary}</td>
-                    <td>${ticket.assignee}</td>
-                    <td>${ticket.creator}</td>
-                    <td>${ticket.category}</td>
-                    <td>${ticket.status}</td>
-                    <td>${ticket.priority}</td>
-                    <td>${ticket.openDate}</td>
-                    <td>${ticket.closeDate}</td>
-                </tr>
-            </c:forEach>
-
-
             <div class="col-md-7 ">
 
                 <div class="panel panel-default">
@@ -234,10 +219,10 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         </div>
-                        </div>
-                        </div>
-                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
         <div class="button-group">
             <form action="http://google.com">
                 <button class="action-button">Edit</button>
@@ -248,9 +233,11 @@
             <form action="http://google.com">
                 <button class="action-button">Cancel</button>
             </form>
+            <form action="http://google.com">
+                <button class="action-button">Resolve</button>
+            </form>
         </div>
     </div>
 </div>
 </div>
 </html>
-

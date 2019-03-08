@@ -23,22 +23,14 @@
     <script
             src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/js/bootstrap-datepicker.js"></script>
     <style>
-        .btn-info {
-            background-color: #62CCE8;
-            outline: none;
-            color: #F62CCE8;
-            border-color: #59B2E6;
-        }
 
-        .btn-info:hover,
-        .btn-info:focus {
-            color: #000000;
-            background-color: #62CCE8;
-            border-color: #62CCE8;
-        }
-
-        .container {
-            margin-top: 50px;
+        .sidnav {
+            height: 200%;
+            position: absolute;
+            right: 86%;
+            left: 0;
+            top: 34px;
+            background-color: #474c55;
         }
 
         .navigation {
@@ -53,6 +45,7 @@
             align-items: center;
             justify-content: space-between;
         }
+
         .navigation .navigation-brand {
             color: white;
             font-family: monospace;
@@ -63,6 +56,56 @@
         .navigation-action-button {
             margin-right: 20px;
         }
+
+        .sidnav-item-conteiner {
+            border-bottom: 1px solid white;
+            padding: 20px;
+        }
+
+        .sidnav-item {
+            text-decoration: none;
+            font-size: 17px;
+            text-transform: uppercase;
+            color: white;
+            font-family: monospace;
+        }
+
+        .sidnav-item:hover {
+            text-decoration: none;
+            color: #f5821f;
+        }
+
+        .sidnav-item:active {
+            text-decoration: none;
+            color:  #f5821f;
+        }
+
+        .glyphicon-search,
+        .glyphicon-user {
+            margin-right: 20px;
+        }
+
+        .btn-info {
+            background-color: #62CCE8;
+            outline: none;
+            color: #62CCE8;
+            border-color: #59B2E6;
+        }
+
+        .btn-info:hover,
+        .btn-info:focus {
+            color: #000000;
+            background-color: #62CCE8;
+            border-color: #62CCE8;
+        }
+
+        .body {
+            margin-left: 100px;
+            margin-top: 50px;
+            padding-left: 190px;
+            padding-right: 50px;
+        }
+
         .glyphicon-search,
         .glyphicon-user {
             margin-right: 20px;
@@ -70,17 +113,29 @@
     </style>
 </head>
 <body>
-<br/><br/>
-<div class="container" align="left" style="width:600px;">
-    <div class="navigation">
-        <span class="navigation-brand">T!ckTrack</span>
+<div class="navigation">
+    <span class="navigation-brand">T!ckTrack</span>
 
-        <div class="navigation-action-button">
-            <span class="glyphicon glyphicon-search"></span>
-            <span class="glyphicon glyphicon-user"></span>
-            <span class="glyphicon glyphicon-log-out"></span>
-        </div>
+    <div class="navigation-action-button">
+        <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
+        <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+        <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
     </div>
+</div>
+<div class="sidnav">
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093//myTickets" class="sidnav-item">MY TICKETS</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
+    </div>
+</div>
+<div class="body" align="left">
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
     <form method="post" id="search_form" action="searchTickets">

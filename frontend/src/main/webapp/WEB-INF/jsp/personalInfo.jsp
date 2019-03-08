@@ -4,8 +4,84 @@
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <style>
-    .container{
-        margin-top: 100px;
+
+    .sidnav {
+        height: 200%;
+        position: absolute;
+        right: 86%;
+        left: 0;
+        top: 34px;
+        background-color: #474c55;
+    }
+
+    .navigation {
+        background-color: #f5821f;
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 0px;
+        z-index: 9999;
+        height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .navigation .navigation-brand {
+        color: white;
+        font-family: monospace;
+        font-size: 20px;
+        margin-left: 20px;
+    }
+
+    .navigation-action-button {
+        margin-right: 20px;
+    }
+
+    .sidnav-item-conteiner {
+        border-bottom: 1px solid white;
+        padding: 20px;
+    }
+
+    .sidnav-item {
+        text-decoration: none;
+        font-size: 17px;
+        text-transform: uppercase;
+        color: white;
+        font-family: monospace;
+    }
+
+    .sidnav-item:hover {
+        text-decoration: none;
+        color: #f5821f;
+    }
+
+    .sidnav-item:active {
+        text-decoration: none;
+        color:  #f5821f;
+    }
+
+    .glyphicon-search,
+    .glyphicon-user {
+        margin-right: 20px;
+    }
+
+    .body {
+        margin-left: 100px;
+        margin-top: 50px;
+        padding-left: 190px;
+    }
+
+    .container__header {
+        margin-bottom: 30px;
+    }
+
+    .form-group .btn-group {
+        width: 100% !important;
+    }
+
+    .form-group .btn-group .multiselect {
+        width: 100% !important;
     }
 
     .navbar {
@@ -37,13 +113,46 @@
     .tital{ font-size:16px; font-weight:500;}
     .bot-border{ border-bottom:1px #f8f8f8 solid;  margin:5px 0  5px 0}
 
+    .button-group {
+        display: flex;
+    }
+
+    .action-button {
+        margin-right: 20px;
+        background-color: #62CCE8;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        width: 180px;
+        height: 40px;
+        font-size: 18px;
+    }
+
 </style>
 
-<div>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">T!ckTrack</a>
-</nav>
-<div class="container">
+<div class="navigation">
+    <span class="navigation-brand">T!ckTrack</span>
+
+    <div class="navigation-action-button">
+        <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
+        <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+        <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
+    </div>
+</div>
+<div class="sidnav">
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093//myTickets" class="sidnav-item">MY TICKETS</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
+    </div>
+</div>
+<div class="body">
     <div class="row">
 
         <div class="col-md-7 ">
@@ -81,10 +190,6 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Password:</div><div class="col-sm-7"> ******</div>
-                            <div class="clearfix"></div>
-                            <div class="bot-border"></div>
-
                             <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${regTime}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
@@ -97,6 +202,14 @@
                 </div>
             </div>
         </div>
+
+    <div class="button-group">
+        <form action="http://google.com">
+            <button class="action-button">Edit</button>
+        </form>
+        <form action="http://google.com">
+            <button class="action-button">Change Password</button>
+        </form>
     </div>
 </div>
 </div>

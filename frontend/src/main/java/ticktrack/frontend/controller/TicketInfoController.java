@@ -16,6 +16,7 @@ import java.io.IOException;
 @Controller
 public class TicketInfoController {
     private final OkHttpClient httpClient;
+    private String backendURL = "http://localhost:9001/backend/v1/";
 
     @Autowired
     public TicketInfoController(OkHttpClient httpClient) {
@@ -24,6 +25,37 @@ public class TicketInfoController {
 
     @RequestMapping(value = "/ticketInfo", method = RequestMethod.GET)
     public String displayTicketInfoPage(ModelMap model) {
+        Request request = new Request.Builder()
+                .url(backendURL + "Tickets/getTicket/19")
+                .build();
+        try (Response response = httpClient.newCall(request).execute()) {
+            Msg.Builder builder = Msg.newBuilder();
+            JsonFormat.parser().merge(response.body().string(), builder);
+            Msg result = builder.build();
+
+            model.put("id", result.getTicketInfo().getTicketID());
+            model.put("creator", result.getTicketInfo().getCreator());
+            model.put("description", result.getTicketInfo().getDescription());
+            model.put("summary", result.getTicketInfo().getSummary());
+            model.put("resolution", result.getTicketInfo().getResolution());
+            model.put("priority", result.getTicketInfo().getPriority());
+            model.put("status", result.getTicketInfo().getStatus());
+            model.put("category", result.getTicketInfo().getCategory());
+            model.put("assignee", result.getTicketInfo().getAssignee());
+            model.put("deadline", result.getTicketInfo().getDeadline());
+            model.put("date", result.getTicketInfo().getCloseDate());
+            model.put("openDate", result.getTicketInfo().getOpenDate());
+            model.put("group", result.getTicketInfo().getGroup());
+            model.put("comments", result.getTicketInfo().getCommentList());
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "ticketInfo";
+    }
+    @RequestMapping(value = "/ticketInfoWithResolve", method = RequestMethod.GET)
+    public String displayTicketInfoWithResolvePage(ModelMap model) {
         Request request = new Request.Builder()
                 .url("http://localhost:9001/backend/v1/Tickets/getTicket/19")
                 .build();
@@ -51,6 +83,6 @@ public class TicketInfoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "ticketInfo";
+        return "ticketInfoWithResolve";
     }
 }
