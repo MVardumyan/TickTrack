@@ -208,7 +208,7 @@
         <tbody>
         <c:forEach items="${tickets}" var="ticket">
         <tr>
-            <td><a  href="http://localhost:9093/ticketInfo">${ticket.ticketID}</a></td>
+            <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
             <td>${ticket.summary}</td>
             <td>${ticket.assignee}</td>
             <td>${ticket.creator}</td>

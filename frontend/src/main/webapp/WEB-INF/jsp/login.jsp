@@ -167,12 +167,6 @@
 <div>
     <div class="navigation">
         <span class="navigation-brand">T!ckTrack</span>
-
-        <div class="navigation-action-button">
-            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
-            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
-            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
-        </div>
     </div>
     <div class="container">
         <div class="row">
