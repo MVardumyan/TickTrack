@@ -24,16 +24,19 @@ public final class ResponseHandler {
          .setCreator(ticket.getCreator().getUsername())
          .setOpenDate(ticket.getOpenDate().toString())
          .setPriority(Msg.TicketPriority.valueOf(ticket.getPriority().toString()))
-         .setStatus(Msg.TicketStatus.valueOf(ticket.getStatus().toString()))
-         .addAllComment(
-            ticket.getCommentList().stream().map(
-               comment -> Msg.Comment.newBuilder()
-                  .setTime(comment.getTimestamp().getTime())
-                  .setText(comment.getText())
-                  .setUsername(comment.getUsername())
-                  .build()
-            ).collect(Collectors.toList())
+         .setStatus(Msg.TicketStatus.valueOf(ticket.getStatus().toString()));
+
+      if(ticket.getCommentList() != null){
+         ticketMessage.addAllComment(
+                 ticket.getCommentList().stream().map(
+                         comment -> Msg.Comment.newBuilder()
+                                 .setTime(comment.getTimestamp().getTime())
+                                 .setText(comment.getText())
+                                 .setUsername(comment.getUsername())
+                                 .build()
+                 ).collect(Collectors.toList())
          );
+      }
 
       if (ticket.getAssignee() != null) {
          ticketMessage.setAssignee(ticket.getAssignee().getUsername());
