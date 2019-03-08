@@ -90,7 +90,7 @@
         </div>
         <div class="form-group">
             <input type="text" class="form-control" id="ticket_id"
-                   placeholder="Ticket ID">
+                   placeholder="Ticket ID - for multiple id's use ; separator">
         </div>
         <div class="form-group">
             <div class="ui-widget">

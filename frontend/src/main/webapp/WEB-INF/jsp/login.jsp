@@ -188,7 +188,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <c:if test="${failure}">
-                                    <p>Invalid username or login</p>
+                                    <p style="color:red">Invalid username or login</p>
                                 </c:if>
                                 <form id="login-form" action="login" method="post"
                                       role="form" style="display: block;">
@@ -208,6 +208,9 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <c:if test="${logout}">
+                                        <p style="color:red">You logged out</p>
+                                    </c:if>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-lg-12">

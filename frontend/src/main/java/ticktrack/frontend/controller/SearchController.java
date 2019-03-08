@@ -1,8 +1,6 @@
 package ticktrack.frontend.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.util.JsonFormat;
 import common.helpers.CustomJsonParser;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -19,7 +17,6 @@ import ticktrack.proto.Msg;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.*;
 
@@ -114,10 +111,10 @@ public class SearchController {
             requestMessage.addAllCategory(groups);
         }
 
-//        if(ticket_id!=null) {
-//            List<Long> ticketIDs = Arrays.stream(ticket_id).boxed().collect(Collectors.toList());
-//            requestMessage.addAllTicketId(ticketIDs);
-//        }
+        if(ticket_id!=null) {
+            Long[] ticketIDs = (Long[]) Arrays.stream(ticket_id.split(";")).map(Long::parseLong).toArray();
+            requestMessage.addAllTicketId(Arrays.asList(ticketIDs));
+        }
 
         if (category != null && category.length > 0) {
             List<String> categories = Arrays.asList(category);
