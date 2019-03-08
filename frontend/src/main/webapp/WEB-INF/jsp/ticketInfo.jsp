@@ -135,40 +135,28 @@
         <span class="navigation-brand">T!ckTrack</span>
 
         <div class="navigation-action-button">
-            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
-            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
-            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
+            <a href="/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="/logout"><span class="glyphicon glyphicon-log-out"></span></a>
         </div>
     </div>
     <div class="sidnav">
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
+            <a href="/regUserMain" class="sidnav-item">HOME</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093//myTickets" class="sidnav-item">MY TICKETS</a>
+            <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
+            <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
         </div>
     </div>
     <div class="body">
         <div class="row">
 
-            <c:forEach items="${info}" var="ticket">
-                <tr>
-                    <td><a  href="http://localhost:9093/ticketInfo">${ticket.ticketID}</a></td>
-                    <td>${ticket.summary}</td>
-                    <td>${ticket.assignee}</td>
-                    <td>${ticket.creator}</td>
-                    <td>${ticket.category}</td>
-                    <td>${ticket.status}</td>
-                    <td>${ticket.priority}</td>
-                    <td>${ticket.openDate}</td>
-                    <td>${ticket.closeDate}</td>
-                </tr>
-            </c:forEach>
+
 
 
             <div class="col-md-7 ">
@@ -182,57 +170,57 @@
                                 <!-- /input-group -->
                             </div>
                             <div class="col-sm-6">
-                                <h4 style="color:#00b1b1;"><c> ${id} </c></h4></span>
-                                <span><p>Created by: ${creator}</p></span>
+                                <h4 style="color:#00b1b1;"> ${info.ticketID} </h4></span>
+                                <span><p>Created by: ${info.creator}</p></span>
                             </div>
                             <div class="clearfix"></div>
                             <hr style="margin:5px 0 5px 0;">
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Summary:</div><div class="col-sm-7 col-xs-6 ">${summary}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Summary:</div><div class="col-sm-7 col-xs-6 ">${info.summary}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Description:</div><div class="col-sm-7"> ${description}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Description:</div><div class="col-sm-7"> ${info.description}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Resolution:</div><div class="col-sm-7"> ${resolution}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Resolution:</div><div class="col-sm-7"> ${info.resolution}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Status:</div><div class="col-sm-7"> ${status}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Status:</div><div class="col-sm-7"> ${info.status}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Priority:</div><div class="col-sm-7"> ${priority}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Priority:</div><div class="col-sm-7"> ${info.priority}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Category:</div><div class="col-sm-7"> ${category}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Category:</div><div class="col-sm-7"> ${info.category}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Assignee or Group:</div><div class="col-sm-7">${assignee} , ${groups}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Assignee or Group:</div><div class="col-sm-7">${info.assignee} , ${groups}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Deadline:</div><div class="col-sm-7">${deadline}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Deadline:</div><div class="col-sm-7">${info.deadline}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Date:</div><div class="col-sm-7">${date}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Open Date:</div><div class="col-sm-7">${info.openDate}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Open Date:</div><div class="col-sm-7">${openDate}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Close Date:</div><div class="col-sm-7">${info.closeDate}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Comments:</div><div class="col-sm-7">${comments}</div>
-                            <div class="clearfix"></div>
-                            <div class="bot-border"></div>
+                            <%--<div class="col-sm-5 col-xs-6 tital " >Comments:</div><div class="col-sm-7">${info.comments}</div>--%>
+                            <%--<div class="clearfix"></div>--%>
+                            <%--<div class="bot-border"></div>--%>
                         </div>
                         </div>
                         </div>
