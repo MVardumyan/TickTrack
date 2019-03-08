@@ -4,10 +4,13 @@ import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
+import ticktrack.frontend.attributes.User;
+
+import javax.servlet.http.HttpSession;
 
 @Controller
+//@SessionAttributes("name")
 public class RegularUserMainController {
     private final OkHttpClient httpClient;
 
@@ -17,8 +20,8 @@ public class RegularUserMainController {
     }
 
     @RequestMapping(value = "/regUserMain", method = RequestMethod.GET)
-    public String displaySearchPage(ModelMap model) {
-
+    public String displaySearchPage(ModelMap model, @SessionAttribute("user") User user) {
+        model.put("name", user.getUsername());
         return "regularUserMain";
     }
 }

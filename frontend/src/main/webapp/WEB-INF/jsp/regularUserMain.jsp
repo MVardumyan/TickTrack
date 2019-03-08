@@ -172,6 +172,69 @@
         margin-right: 20px;
     }
 
+    section {
+        text-align: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    section span{
+        display: block;
+    }
+
+    .title-one{
+        color: #fff;
+        font-size: 60px;
+        font-weight: 700;
+        letter-spacing: 8px;
+        margin-bottom: 100px;
+        /*background: #3a3a3a;*/
+        position: relative;
+        animation: text 3s 1;
+        margin-left: 165px;
+    }
+
+    .title-two{
+        font-size: 50px;
+        color: brown;
+        animation: text2 3s 1;
+        margin-left: 165px;
+        margin-bottom: 100px;
+    }
+
+    @keyframes text {
+        0%{
+            opacity: 0;
+            margin-bottom: -40px;
+        }
+        30%{
+            letter-spacing: 25px;
+            margin-bottom: -40px;
+        }
+        85%{
+            letter-spacing: 8px;
+            margin-bottom: -40px;
+        }
+    }
+
+    @keyframes text2 {
+        0%{
+            opacity: 0;
+        }
+        30%{
+            opacity: 0;
+        }
+        85%{
+            opacity: 0;
+        }
+        100%{
+            opacity: 1;
+        }
+    }
+
+
 </style>
 
 <body>
@@ -179,81 +242,29 @@
         <span class="navigation-brand">T!ckTrack</span>
 
         <div class="navigation-action-button">
-            <a href="http://localhost:9093/search"> <span class="glyphicon glyphicon-search"></span></a>
-            <a href="http://localhost:9093/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
-            <a href="http://localhost:9093/login"><span class="glyphicon glyphicon-log-out"></span></a>
+            <a href="/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="/logout"><span class="glyphicon glyphicon-log-out"></span></a>
         </div>
     </div>
     <div class="sidnav">
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/regUserMain" class="sidnav-item">HOME</a>
+            <a href="/regUserMain" class="sidnav-item">HOME</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/myTickets" class="sidnav-item">MY TICKETS</a>
+            <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="http://localhost:9093/newTicket" class="sidnav-item">NEW TICKET</a>
+            <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
         </div>
     </div>
     <div class="b">
+
         <div class="a">
-            <svg viewBox="0 0 150 150" class="used">
-                <use xlink:href="#theHex" class="theHex" fill="#ffae3e" />
 
-                <use xlink:href="#_lb_wisker" class="use_lb"  width="110" x="20" y="15" />
-                <use xlink:href="#_lt_wisker" class="use_lt"  width="110" x="20" y="15" />
-                <use xlink:href="#_rb_wisker" class="use_rb"  width="110" x="20" y="15" />
-                <use xlink:href="#_rt_wisker" class="use_rt"  width="110" x="20" y="15" />
-                <use xlink:href="#eyes"  class="use_eyes"  width="110" x="20" y="15" />
 
-                <path class="tongue" d="M75 97H65A5,10 0 0 0 85,97z" />
-                <use xlink:href="#thecat"  width="110" x="20" y="15" />
-
-            </svg>
-            <svg viewBox="0 0 150 150" class="used">
-                <use xlink:href="#theHex" class="theHex" fill="#ffca5e" />
-
-                <use xlink:href="#_lb_wisker" class="use_lb"  width="110" x="20" y="15" />
-                <use xlink:href="#_lt_wisker" class="use_lt"  width="110" x="20" y="15" />
-                <use xlink:href="#_rb_wisker" class="use_rb"  width="110" x="20" y="15" />
-                <use xlink:href="#_rt_wisker" class="use_rt"  width="110" x="20" y="15" />
-                <use xlink:href="#eyes"  class="use_eyes"  width="110" x="20" y="15" />
-
-                <path class="tongue" d="M75 97H65A5,10 0 0 0 85,97z" />
-                <use xlink:href="#thecat"  width="110" x="20" y="15" />
-
-            </svg>
-        </div>
-        <div class="a">
-            <svg viewBox="0 0 150 150" class="used">
-                <use xlink:href="#theHex" class="theHex" fill="#ff8b2a" />
-
-                <use xlink:href="#_lb_wisker" class="use_lb"  width="110" x="20" y="15" />
-                <use xlink:href="#_lt_wisker" class="use_lt"  width="110" x="20" y="15" />
-                <use xlink:href="#_rb_wisker" class="use_rb"  width="110" x="20" y="15" />
-                <use xlink:href="#_rt_wisker" class="use_rt"  width="110" x="20" y="15" />
-                <use xlink:href="#eyes"  class="use_eyes"  width="110" x="20" y="15" />
-
-                <path class="tongue" d="M75 97H65A5,10 0 0 0 85,97z" />
-                <use xlink:href="#thecat"  width="110" x="20" y="15" />
-
-            </svg>
-            <svg viewBox="0 0 150 150" class="used">
-                <use xlink:href="#theHex" class="theHex" fill="#ffae3e" />
-
-                <use xlink:href="#_lb_wisker" class="use_lb"  width="110" x="20" y="15" />
-                <use xlink:href="#_lt_wisker" class="use_lt"  width="110" x="20" y="15" />
-                <use xlink:href="#_rb_wisker" class="use_rb"  width="110" x="20" y="15" />
-                <use xlink:href="#_rt_wisker" class="use_rt"  width="110" x="20" y="15" />
-                <use xlink:href="#eyes"  class="use_eyes"  width="110" x="20" y="15" />
-
-                <path class="tongue" d="M75 97H65A5,10 0 0 0 85,97z" />
-                <use xlink:href="#thecat"  width="110" x="20" y="15" />
-
-            </svg>
-        </div>
         <div class="a">
             <svg viewBox="0 0 150 150" class="used">
                 <use xlink:href="#theHex" class="theHex" fill="#ffca5e" />
@@ -328,6 +339,11 @@
             </g>
         </defs>
     </svg>
+    </div>
+    <section>
+        <span class="title-one">Hello!</span>
+        <span class="title-two">${name}</span>
+    </section>
 </body>
 
 </html>

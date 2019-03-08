@@ -1,4 +1,4 @@
-package ticktrack.enums;
+package common.enums;
 
 public enum UserRole {
    Admin,
