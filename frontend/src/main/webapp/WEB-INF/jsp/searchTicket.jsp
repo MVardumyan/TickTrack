@@ -85,13 +85,6 @@
             margin-right: 20px;
         }
 
-        .btn-info {
-            background-color: #62CCE8;
-            outline: none;
-            color: #62CCE8;
-            border-color: #59B2E6;
-        }
-
         .btn-info:hover,
         .btn-info:focus {
             color: #000000;
@@ -145,7 +138,7 @@
         </div>
         <div class="form-group">
             <input type="text" class="form-control" id="ticket_id"
-                   placeholder="Ticket ID">
+                   placeholder="Ticket ID - for multiple id's use ; separator">
         </div>
         <div class="form-group">
             <div class="ui-widget">

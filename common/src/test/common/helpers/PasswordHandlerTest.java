@@ -1,11 +1,9 @@
-package ticktrack.util;
-
+package common.helpers;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ticktrack.util.PasswordHandler;
 
 import java.util.ArrayList;
 import java.util.List;
