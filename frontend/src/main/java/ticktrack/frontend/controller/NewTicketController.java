@@ -102,7 +102,7 @@ public class NewTicketController {
 
 
         Request request = new Request.Builder()
-                .url(backendURL + "newTicket")
+                .url(backendURL + "Tickets/add")
                 .post(
                         okhttp3.RequestBody.create(
                                 MediaType.parse("application/json; charset=utf-8"),
@@ -114,7 +114,7 @@ public class NewTicketController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    model.put("ticket", msg.getTicketInfo());
+                    model.put("info", msg.getTicketInfo());
                     //msg.getTicketInfo().getTicketID();
                 }
             } else {
