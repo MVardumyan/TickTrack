@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.support.SessionStatus;
 import ticktrack.proto.Msg;
 
 import javax.servlet.http.HttpSession;
@@ -31,7 +30,9 @@ class SessionController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    String showLoginPage() {
+    String showLoginPage(ModelMap model) {
+        model.put("failure", false);
+        model.put("logout", false);
         return "login";
     }
 
@@ -55,6 +56,7 @@ class SessionController {
                     return "regularUserMain";
                 } else {
                     model.put("failure", true);
+                    model.put("logout", false);
                     return "login";
                 }
             } else {
@@ -67,9 +69,10 @@ class SessionController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    String logout(ModelMap model, SessionStatus status) {
-        status.setComplete();
+    String logout(ModelMap model, HttpSession httpSession) {
+        httpSession.removeAttribute("name");
         model.put("logout", true);
+        model.put("failure", false);
         return "login";
     }
 

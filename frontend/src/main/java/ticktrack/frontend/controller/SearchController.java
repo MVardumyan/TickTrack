@@ -180,7 +180,7 @@ public class SearchController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    model.put("info", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
+                    model.put("tickets", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

@@ -85,13 +85,6 @@
             margin-right: 20px;
         }
 
-        .btn-info {
-            background-color: #62CCE8;
-            outline: none;
-            color: #62CCE8;
-            border-color: #59B2E6;
-        }
-
         .btn-info:hover,
         .btn-info:focus {
             color: #000000;

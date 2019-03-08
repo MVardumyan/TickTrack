@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -191,7 +192,10 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <form id="login-form" action="https://phpoll.com/login/process" method="post" role="form" style="display: block;">
+                                <c:if test="${failure}">
+                                    <p style="color:red">Invalid username or login</p>
+                                </c:if>
+                                <form id="login-form" action="/login" method="post" role="form" style="display: block;">
                                     <div class="form-group">
                                         <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
                                     </div>
@@ -211,8 +215,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <c:if test="${logout}">
+                                        <p style="color:red">You logged out</p>
+                                    </c:if>
                                 </form>
-                                <form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
+                            <form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
                                     <div class="form-group">
                                         <input type="text" name="username" id="username1" tabindex="1" class="form-control" placeholder="Username" value="">
                                     </div>
