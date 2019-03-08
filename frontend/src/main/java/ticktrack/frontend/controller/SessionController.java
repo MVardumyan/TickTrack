@@ -1,6 +1,5 @@
 package ticktrack.frontend.controller;
 
-import common.enums.UserRole;
 import common.helpers.PasswordHandler;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,6 +17,7 @@ import ticktrack.proto.Msg;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+import static common.enums.UserRole.*;
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 
@@ -57,12 +57,17 @@ class SessionController {
 
                     if(roleResult!=null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount()==1) {
                         User user = new User(username,
-                                UserRole.valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
+                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
                                 );
 
                         httpSession.setAttribute("user", user);
-                        model.put("name", username);
-                        return "regularUserMain";
+
+                        if(Admin.equals(user.getRole())) {
+                            return "adminMain";
+                        } else {
+                            model.put("name", username);
+                            return "regularUserMain";
+                        }
                     } else {
                         return "error";
                     }
@@ -82,8 +87,9 @@ class SessionController {
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    String logout(ModelMap model, SessionStatus sessionStatus) {
+    String logout(ModelMap model, SessionStatus sessionStatus, HttpSession httpSession) {
         sessionStatus.setComplete();
+        httpSession.removeAttribute("user");
         model.put("logout", true);
         model.put("failure", false);
         return "login";
