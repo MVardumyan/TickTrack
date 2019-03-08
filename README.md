@@ -2,8 +2,6 @@
 System for ticket tracking
 
 ### Users
-user: mikvar password: wordpass role: admin
-user: Lusine password: cantsay role: regular user
 
 | username  | password | role |
 | --- | --- | --- |
