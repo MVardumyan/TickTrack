@@ -2,12 +2,14 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import ticktrack.entities.Category;
 import ticktrack.entities.Ticket;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.TicketPriority;
 import ticktrack.enums.TicketStatus;
 import ticktrack.interfaces.ISearchManager;
+import ticktrack.repositories.CategoryRepository;
 import ticktrack.repositories.GroupRepository;
 import ticktrack.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -37,13 +39,15 @@ public class SearchManager implements ISearchManager {
     private final EntityManager entityManager;
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final CategoryRepository categoryRepository;
     private final Logger logger = LoggerFactory.getLogger(SearchManager.class);
 
     @Autowired
-    public SearchManager(EntityManager entityManager, UserRepository userRepository, GroupRepository groupRepository) {
+    public SearchManager(EntityManager entityManager, UserRepository userRepository, GroupRepository groupRepository, CategoryRepository categoryRepository) {
         this.entityManager = entityManager;
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -74,7 +78,7 @@ public class SearchManager implements ISearchManager {
             Optional<User> creator = userRepository.findByUsername(request.getCreator());
 
             if (creator.isPresent()) {
-                currentPredicate = builder.equal(root.get("creator"), request.getCreator());
+                currentPredicate = builder.equal(root.get("creator"), creator.get());
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Creator {} not found", request.getCreator());
@@ -94,7 +98,13 @@ public class SearchManager implements ISearchManager {
         }
         //category
         if (request.getCategoryCount() > 0) {
-            currentPredicate = root.get("category").in(request.getCategoryList());
+            currentPredicate = root.get("category").in(
+                    request.getCategoryList()
+                            .stream()
+                            .map(this::mapCategory)
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList())
+            );
             criteria = builder.and(criteria, currentPredicate);
         }
         //assignee
@@ -102,7 +112,7 @@ public class SearchManager implements ISearchManager {
             Optional<User> assignee = userRepository.findByUsername(request.getAssignee());
 
             if (assignee.isPresent()) {
-                currentPredicate = builder.equal(root.get("assignee"), request.getAssignee());
+                currentPredicate = builder.equal(root.get("assignee"), assignee.get());
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Assignee {} not found", request.getAssignee());
@@ -129,7 +139,7 @@ public class SearchManager implements ISearchManager {
         if (request.hasGroup()) {
             Optional<UserGroup> group = groupRepository.findByName(request.getGroup());
             if (group.isPresent()) {
-                currentPredicate = builder.equal(root.get("group"), group);
+                currentPredicate = builder.equal(root.get("group"), group.get());
                 criteria = builder.and(criteria, currentPredicate);
             } else {
                 logger.warn("Group {} is not found", request.getGroup());
@@ -197,6 +207,16 @@ public class SearchManager implements ISearchManager {
             return TicketPriority.valueOf(priority.toString());
         } catch (IllegalArgumentException e) {
             logger.warn("Priority {} does not exist", priority);
+            return null;
+        }
+    }
+
+    private Category mapCategory(String category) {
+        Optional<Category> result = categoryRepository.findByName(category);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            logger.warn("Category " + category + " does not exist");
             return null;
         }
     }

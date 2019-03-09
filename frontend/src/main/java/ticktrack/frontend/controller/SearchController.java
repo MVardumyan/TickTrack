@@ -15,6 +15,7 @@ import ticktrack.proto.Msg;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
@@ -68,7 +69,7 @@ public class SearchController {
                          @RequestParam(required = false) String summaryOrDescription,
                          @RequestParam(required = false) String ticket_id,
                          @RequestParam(required = false) String assignee,
-                         @RequestParam(required = false) String[] group,
+                         @RequestParam(required = false) String group,
                          @RequestParam(required = false) String creator,
                          @RequestParam(required = false) String resolution,
                          @RequestParam(required = false) String[] priority,
@@ -85,28 +86,32 @@ public class SearchController {
 
         Msg.SearchOp.SearchOpRequest.Builder requestMessage = Msg.SearchOp.SearchOpRequest.newBuilder();
 
-        if (summaryOrDescription != null) {
+        if (!"".equals(summaryOrDescription)) {
             requestMessage.setSummaryOrDescription(summaryOrDescription);
         }
 
-        if (assignee != null) {
+        if (!"".equals(assignee)) {
             requestMessage.setAssignee(assignee);
         }
 
-        if (creator != null) {
+        if (!"".equals(creator)) {
             requestMessage.setCreator(creator);
         }
 
-        if (resolution != null) {
+        if (!"".equals(resolution)) {
             requestMessage.setResolution(resolution);
         }
 
-        if (group != null && group.length > 0) {
-            List<String> groups = Arrays.asList(group);
-            requestMessage.addAllCategory(groups);
+//        if (group != null && group.length > 0) {
+//            List<String> groups = Arrays.asList(group);
+//            requestMessage.setGroup(groups);
+//        }
+
+        if (group != null) {
+            requestMessage.setGroup(group);
         }
 
-        if(ticket_id!=null) {
+        if (!"".equals(ticket_id)) {
             Long[] ticketIDs = (Long[]) Arrays.stream(ticket_id.split(";")).map(Long::parseLong).toArray();
             requestMessage.addAllTicketId(Arrays.asList(ticketIDs));
         }
@@ -118,12 +123,16 @@ public class SearchController {
 
         if (priority != null && priority.length > 0) {
             List<String> priorities = Arrays.asList(priority);
-            requestMessage.addAllCategory(priorities);
+            requestMessage.addAllPriority(
+                    priorities.stream().map(Msg.TicketPriority::valueOf).collect(Collectors.toList())
+            );
         }
 
         if (status != null && status.length > 0) {
             List<String> statuses = Arrays.asList(status);
-            requestMessage.addAllCategory(statuses);
+            requestMessage.addAllStatus(
+                    statuses.stream().map(Msg.TicketStatus::valueOf).collect(Collectors.toList())
+            );
         }
 
         // open date
