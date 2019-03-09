@@ -202,7 +202,11 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Assignee or Group:</div><div class="col-sm-7">${info.assignee} , ${groups}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Assignee:</div><div class="col-sm-7">${info.assignee}</div>
+                            <div class="clearfix"></div>
+                            <div class="bot-border"></div>
+
+                            <div class="col-sm-5 col-xs-6 tital " >Group:</div><div class="col-sm-7">${info.group}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
