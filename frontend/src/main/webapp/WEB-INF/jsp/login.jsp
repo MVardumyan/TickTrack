@@ -187,7 +187,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <c:if test="${failure}">
-                                    <p style="color:red">Invalid username or login</p>
+                                    <p align="center" style="color:red">Invalid username or login</p>
                                 </c:if>
                                 <form id="login-form" action="/login" method="post" role="form" style="display: block;">
                                     <div class="form-group">
@@ -210,7 +210,7 @@
                                         </div>
                                     </div>
                                     <c:if test="${logout}">
-                                        <p style="color:red">You logged out</p>
+                                        <p align="center" style="color:red">You logged out</p>
                                     </c:if>
                                 </form>
                             <form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
