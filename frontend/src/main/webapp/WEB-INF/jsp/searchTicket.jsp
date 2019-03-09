@@ -133,21 +133,22 @@
     <br/><br/>
     <form method="post" id="search_form" action="searchTickets">
         <div class="form-group">
-            <input type="text" class="form-control" id="summaryOrDescription"
+            <input type="text" class="form-control" id="summaryOrDescription" name="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="ticket_id"
+            <input type="text" class="form-control" id="ticket_id" name="ticket_id"
                    placeholder="Ticket ID - for multiple id's use ; separator">
         </div>
         <div class="form-group">
             <div class="ui-widget">
-                <input type="text" class="form-control" id="assignee"
+                <input type="text" class="form-control" id="assignee" name="assignee"
                        placeholder="Assignee">
             </div>
         </div>
         <div class="form-group">
-            <select id="group" name="group[]" multiple class="form-control">
+            <select id="group" name="group" class="form-control">
+                <option selected disabled>Group</option>
                 <c:forEach var="group" items="${groupList}">
                     <option value="${group}">
                             ${group}
@@ -156,15 +157,15 @@
             </select>
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="creator"
+            <input type="text" class="form-control" id="creator" name="creator"
                    placeholder="Creator">
         </div>
         <div class="form-group">
-            <input type="text" class="form-control" id="resolution"
+            <input type="text" class="form-control" id="resolution" name="resolution"
                    placeholder="Resolution contains...">
         </div>
         <div class="form-group">
-            <select id="priority" name="priority[]" multiple class="form-control">
+            <select id="priority" name="priority" multiple class="form-control">
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -172,17 +173,17 @@
             </select>
         </div>
         <div class="form-group">
-            <select id="status" name="status[]" multiple class="form-control">
+            <select id="status" name="status" multiple class="form-control">
                 <option value="Open">Open</option>
                 <option value="Assigned">Assigned</option>
-                <option value="In_Progress">In Progress</option>
+                <option value="InProgress">In Progress</option>
                 <option value="Resolved">Resolved</option>
                 <option value="Canceled">Canceled</option>
                 <option value="Closed">Closed</option>
             </select>
         </div>
         <div class="form-group">
-            <select id="category" name="category[]" multiple class="form-control">
+            <select id="category" name="category" multiple class="form-control">
                 <c:forEach var="category" items="${categoryList}">
                     <option value="${category}">
                             ${category}
@@ -232,13 +233,13 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
-        $('#group').multiselect({
-            nonSelectedText: 'Group',
-            enableFiltering: true,
-            enableCaseInsensitiveFiltering: true,
-            includeSelectAllOption: true,
-            buttonWidth: '200px'
-        });
+        // $('#group').multiselect({
+        //     nonSelectedText: 'Group',
+        //     enableFiltering: true,
+        //     enableCaseInsensitiveFiltering: true,
+        //     includeSelectAllOption: true,
+        //     buttonWidth: '200px'
+        // });
         $('#status').multiselect({
             nonSelectedText: 'Status',
             enableFiltering: true,
