@@ -147,7 +147,7 @@
 
         <label>Group</label>
         <div class="form-group">
-            <select id="group" name="group[]" multiple class="form-control">
+            <select id="group" name="group" multiple class="form-control">
                 <c:forEach var="group" items="${groupList}">
                     <option value="${group}">
                             ${group}
