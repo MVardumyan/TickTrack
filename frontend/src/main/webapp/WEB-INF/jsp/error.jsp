@@ -85,7 +85,7 @@
                         Sorry, an error has occured!
                     </div>
                        <div>
-                           <form action="http://localhost:9093/regUserMain">
+                           <form action="/regUserMain">
                                <button class="button button1">Take Me Home</button>
                            </form>
                        </div>

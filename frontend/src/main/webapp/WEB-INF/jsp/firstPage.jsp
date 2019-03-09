@@ -96,7 +96,7 @@
 </style>
 
 <div class="body">
-    <form action="http://localhost:9093/login">
+    <form action="/login">
         <button class="login-button">Log In</button>
     </form>
 

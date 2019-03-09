@@ -1,5 +1,6 @@
 package ticktrack.frontend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.util.JsonFormat;
 import common.helpers.CustomJsonParser;
 import okhttp3.MediaType;
@@ -11,9 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 
 import java.io.IOException;
@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
+import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithoutBody;
 
 @Controller
 public class NewTicketController {
@@ -72,6 +73,7 @@ public class NewTicketController {
 
     @RequestMapping(value = "createTicket", method = RequestMethod.POST)
     String createTicket(ModelMap model,
+                        @SessionAttribute("user") User user,
                          @RequestParam() String summary,
                          @RequestParam() String description,
                          @RequestParam(required = false) String assignee,
@@ -85,7 +87,7 @@ public class NewTicketController {
         Msg.TicketOp.TicketOpCreateRequest.Builder requestMessage = Msg.TicketOp.TicketOpCreateRequest.newBuilder();
 
         requestMessage
-                .setCreator("Lusine")
+                .setCreator(user.getUsername())
                 .setSummary(summary)
                 .setDescription(description)
                 .setPriority(priority)

@@ -16,6 +16,8 @@ import ticktrack.proto.Msg;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import static common.enums.UserRole.*;
 import static common.helpers.CustomJsonParser.*;
@@ -51,13 +53,14 @@ class SessionController {
             if (result != null) {
                 if (result.getCommonResponse().getResponseType().equals(Msg.CommonResponse.ResponseType.Success)) {
                     Request roleRequest = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-
                     Response roleResponse = httpClient.newCall(roleRequest).execute();
                     Msg roleResult = jsonToProtobuf(roleResponse.body().string());
 
                     if(roleResult!=null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount()==1) {
+                        List<String> groups = Arrays.asList(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
                         User user = new User(username,
-                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
+                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name()),
+                                groups
                                 );
 
                         httpSession.setAttribute("user", user);
@@ -71,7 +74,6 @@ class SessionController {
                     } else {
                         return "error";
                     }
-
                 } else {
                     model.put("failure", true);
                     model.put("logout", false);
