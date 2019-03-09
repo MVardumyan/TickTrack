@@ -45,10 +45,8 @@ public class MyTicketsController {
         requestCreatedByMe.setCreator(user.getUsername());
         requestAssignedToMe.setAssignee(user.getUsername());
 
-        if (user.getUserGroups() != null) {
-            for(int i = 0; i < user.getUserGroups().size(); i++) {
-                requestAssignedToMyGroups.setGroup(user.getUserGroups().get(i));
-            }
+        if (user.getUserGroup() != null) {
+           requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
         Request reqCreatedByMe = buildRequestWithBody(backendURL + "search",
@@ -90,7 +88,7 @@ public class MyTicketsController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    model.put("ticketsAssignedToMyGroups", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
+                    model.put("ticketsAssignedToMyGroup", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

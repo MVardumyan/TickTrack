@@ -92,10 +92,10 @@ public class NewTicketController {
                 .setDescription(description)
                 .setPriority(priority)
                 .setCategory(category);
-        if(assignee != null && assignee.length() > 0){
+        if(assignee != null){
             requestMessage.setAssignee(assignee);
         }
-        if(group != null && group.length() > 0){
+        if(group != null){
             requestMessage.setGroup(group);
         }
 //        if(deadline != null && deadline.length() > 0){

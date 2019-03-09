@@ -57,10 +57,9 @@ class SessionController {
                     Msg roleResult = jsonToProtobuf(roleResponse.body().string());
 
                     if(roleResult!=null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount()==1) {
-                        List<String> groups = Arrays.asList(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
                         User user = new User(username,
                                 valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name()),
-                                groups
+                                roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup()
                                 );
 
                         httpSession.setAttribute("user", user);
