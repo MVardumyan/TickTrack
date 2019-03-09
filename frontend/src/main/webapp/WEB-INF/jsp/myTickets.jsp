@@ -206,7 +206,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${ticketsAssignedToMyGroups}" var="ticket">
+        <c:forEach items="${ticketsCreatedByMe}" var="ticket">
             <tr>
                 <td>${ticket.ticketID}</td>
                 <td>${ticket.summary}</td>
@@ -337,7 +337,7 @@
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${ticketsCreatedByMe}" var="ticket">
+        <c:forEach items="${ticketsAssignedToMyGroups}" var="ticket">
             <tr>
                 <td>${ticket.ticketID}</td>
                 <td>${ticket.summary}</td>
