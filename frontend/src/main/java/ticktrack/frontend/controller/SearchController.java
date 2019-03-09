@@ -102,18 +102,13 @@ public class SearchController {
             requestMessage.setResolution(resolution);
         }
 
-//        if (group != null && group.length > 0) {
-//            List<String> groups = Arrays.asList(group);
-//            requestMessage.setGroup(groups);
-//        }
-
         if (group != null) {
             requestMessage.setGroup(group);
         }
 
         if (!"".equals(ticket_id)) {
-            Long[] ticketIDs = (Long[]) Arrays.stream(ticket_id.split(";")).map(Long::parseLong).toArray();
-            requestMessage.addAllTicketId(Arrays.asList(ticketIDs));
+            List<Long> ticketIDs = Arrays.stream(ticket_id.split(";")).map(Long::parseLong).collect(Collectors.toList());
+            requestMessage.addAllTicketId(ticketIDs);
         }
 
         if (category != null && category.length > 0) {
