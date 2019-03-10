@@ -9,19 +9,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
+import ticktrack.proto.Msg.UserOp.UserOpCreateRequest;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import static common.enums.UserRole.*;
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
+import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
 
 @Controller
 class SessionController {
@@ -38,6 +38,8 @@ class SessionController {
     String showLoginPage(ModelMap model) {
         model.put("failure", false);
         model.put("logout", false);
+        model.put("registerFailure", false);
+        fillLoginPage(model);
         return "login";
     }
 
@@ -51,16 +53,17 @@ class SessionController {
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
             if (result != null) {
-                if (result.getCommonResponse().getResponseType().equals(Msg.CommonResponse.ResponseType.Success)) {
+                if (result.getCommonResponse().getResponseType().equals(Success)) {
                     Request roleRequest = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
                     Response roleResponse = httpClient.newCall(roleRequest).execute();
                     Msg roleResult = jsonToProtobuf(roleResponse.body().string());
 
                     if(roleResult!=null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount()==1) {
                         User user = new User(username,
-                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name()),
-                                roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup()
+                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
                                 );
+
+                        user.setUserGroup(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
 
                         httpSession.setAttribute("user", user);
 
@@ -76,6 +79,8 @@ class SessionController {
                 } else {
                     model.put("failure", true);
                     model.put("logout", false);
+                    model.put("registerFailure", false);
+                    fillLoginPage(model);
                     return "login";
                 }
             } else {
@@ -87,12 +92,56 @@ class SessionController {
         }
     }
 
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    String register(@ModelAttribute UserOpCreateRequest.Builder createRequest, ModelMap model, HttpSession session, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            bindingResult.getFieldErrors().forEach(error -> {
+                logger.error("{} : {}", error.getField(), error.getDefaultMessage());
+            });
+            return "error";
+        }
+
+        createRequest.setRole(Msg.UserRole.RegularUser);
+        Request request = buildRequestWithBody(backendURL + "users/add",
+                protobufToJson(buildCreateUserRequest(createRequest)));
+
+        try(Response response = httpClient.newCall(request).execute()) {
+            Msg result = jsonToProtobuf(response.body().string());
+            if(result!=null && result.hasCommonResponse()) {
+                Msg.CommonResponse commonResponse = result.getCommonResponse();
+                if(commonResponse.getResponseType().equals(Success)) {
+                    User user = new User(createRequest.getUsername(), RegularUser);
+                    session.setAttribute("user", user);
+
+                    if(Admin.equals(user.getRole())) {
+                        return "adminMain";
+                    } else {
+                        model.put("name", createRequest.getUsername());
+                        return "regularUserMain";
+                    }
+                } else {
+                    model.put("registerFailure", true);
+                    fillLoginPage(model);
+                    return "login";
+                }
+
+            } else {
+                return "error";
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to create new user", e);
+            return "error";
+        }
+    }
+
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     String logout(ModelMap model, SessionStatus sessionStatus, HttpSession httpSession) {
         sessionStatus.setComplete();
         httpSession.removeAttribute("user");
         model.put("logout", true);
         model.put("failure", false);
+        model.put("registerFailure", false);
+        fillLoginPage(model);
         return "login";
     }
 
@@ -103,6 +152,19 @@ class SessionController {
                                 .setUsername(username)
                                 .setPassword(password)
                 ).build();
+    }
+
+    private Msg buildCreateUserRequest(UserOpCreateRequest.Builder createRequest) {
+        return Msg.newBuilder()
+                .setUserOperation(
+                        Msg.UserOp.newBuilder()
+                            .setUserOpCreateRequest(createRequest)
+                ).build();
+    }
+
+    private void fillLoginPage(ModelMap model) {
+        model.put("genders", Msg.UserOp.Gender.values());
+        model.put("createRequest", UserOpCreateRequest.newBuilder());
     }
 
 }
