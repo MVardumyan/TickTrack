@@ -16,6 +16,8 @@ import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
 import java.io.IOException;
 
+import static common.helpers.CustomJsonParser.jsonToProtobuf;
+
 @Controller
 public class PersonalInfoController {
     private final OkHttpClient httpClient;
@@ -38,9 +40,7 @@ public class PersonalInfoController {
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser" + user.getUsername());
         try (Response response = httpClient.newCall(request).execute()) {
-            Msg.Builder builder = Msg.newBuilder();
-            JsonFormat.parser().merge(response.body().string(), builder);
-            Msg result = builder.build();
+            Msg result = jsonToProtobuf(response.body().string());
             model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
             model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
             model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
@@ -107,7 +107,7 @@ public class PersonalInfoController {
         OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword",CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)));
 
 
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/");
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
     }
