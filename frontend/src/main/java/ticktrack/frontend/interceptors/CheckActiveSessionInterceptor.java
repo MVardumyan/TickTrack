@@ -18,7 +18,7 @@ public class CheckActiveSessionInterceptor extends HandlerInterceptorAdapter {
 
         String path = request.getRequestURI().substring(request.getContextPath().length());
 
-        if(path.equals("/login")){
+        if(path.equals("/login") || path.equals("/register")){
             if(session == null || session.getAttribute("user") == null) {
                 return true;
             } else {

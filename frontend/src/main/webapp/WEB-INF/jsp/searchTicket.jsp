@@ -233,13 +233,6 @@
             includeSelectAllOption: true,
             buttonWidth: '200px'
         });
-        // $('#group').multiselect({
-        //     nonSelectedText: 'Group',
-        //     enableFiltering: true,
-        //     enableCaseInsensitiveFiltering: true,
-        //     includeSelectAllOption: true,
-        //     buttonWidth: '200px'
-        // });
         $('#status').multiselect({
             nonSelectedText: 'Status',
             enableFiltering: true,

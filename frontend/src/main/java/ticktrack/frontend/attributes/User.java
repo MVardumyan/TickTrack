@@ -9,11 +9,9 @@ public final class User {
     private UserRole role;
     private String userGroup;
 
-
-    public User(String username, UserRole role, String userGroup) {
+    public User(String username, UserRole role) {
         this.username = username;
         this.role = role;
-        this.userGroup = userGroup;
     }
 
     public String getUserGroup() { return userGroup; }
