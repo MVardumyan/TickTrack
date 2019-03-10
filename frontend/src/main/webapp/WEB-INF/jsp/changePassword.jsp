@@ -126,28 +126,17 @@
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="updateUsersInfo" id="create_form">
-        <label>First name</label>
+    <form method="post" action="changePassword" id="create_form">
+        <label>Old Password</label>
         <div class="form-group">
-            <input type="text" class="form-control" name="firstName"
-                   value="${firstName}">
+            <input type="password" class="form-control" name="oldPassword"
+                   placeholder="oldPassword">
         </div>
-        <label>Last name</label>
+        <label>New Password</label>
         <div class="form-group">
-            <input type="text" class="form-control" name="lastName"
-                      value="${lastName}">
+            <input type="password" class="form-control" name="newPassword"
+                   placeholder="newPassword">
         </div>
-        <label>Gender</label>
-        <div class="form-group">
-            <input type="radio" name="gender" value="male"> Male
-            <input type="radio" name="gender" value="female"> Female
-        </div>
-        <label>Email</label>
-        <div class="form-group">
-            <input type="text" class="form-control" name="email"
-                      value="${email}">
-        </div>
-
         <div class="form-group">
             <input type="submit" class="btn btn-info" name="submit" value="Done"/>
         </div>
