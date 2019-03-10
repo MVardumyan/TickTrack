@@ -1,5 +1,4 @@
 package ticktrack.frontend.controller;
-
 import com.google.protobuf.util.JsonFormat;
 import common.helpers.CustomJsonParser;
 import okhttp3.OkHttpClient;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import ticktrack.frontend.attributes.User;
 import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
-
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @Controller
@@ -39,7 +36,7 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody("http://localhost:9001/backend/v1/users/getUser/" + user.getUsername());
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser" + user.getUsername());
         try (Response response = httpClient.newCall(request).execute()) {
             Msg.Builder builder = Msg.newBuilder();
             JsonFormat.parser().merge(response.body().string(), builder);
@@ -73,7 +70,7 @@ public class PersonalInfoController {
         OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)));
 
 
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody("http://localhost:9001/backend/v1/users/getUser/" + user.getUsername());
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "/users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
     }
@@ -82,6 +79,8 @@ public class PersonalInfoController {
         return Msg.newBuilder().setUserOperation(Msg.UserOp.newBuilder().setUserOpUpdateRequest(requestMessage))
                 .build();
     }
+
+    //CHANGE PASSWORD
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     String displayChangePassword(ModelMap model, @SessionAttribute("user") User user) {
@@ -99,14 +98,23 @@ public class PersonalInfoController {
                 .setOldPassword(oldPassword)
                 .setNewPassword(newPassword);
 
-        if(oldPassword!=null && oldPassword.equals(requestMessage.getOldPassword())){
+        if(oldPassword!=null ){
             requestMessage.setNewPassword(newPassword);
         }else {
             return "error";
         }
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody("http://localhost:9001/backend/v1/users/getUser/" + user.getUsername());
+
+        OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword",CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)));
+
+
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/");
         showPersonalInfo(request,model);
         return "personalInfo";
+    }
+
+    private Msg wrapPasswordIntoMsg(Msg.UserOp.UserOpChangePassword.Builder requestMessage) {
+        return Msg.newBuilder().setUserOperation(Msg.UserOp.newBuilder().setUserOpChangePassword(requestMessage))
+                .build();
     }
 
     void showPersonalInfo(Request request,ModelMap model){
