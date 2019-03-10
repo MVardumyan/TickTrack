@@ -40,36 +40,42 @@ public class UserManager implements IUserManager {
         CommonResponse response;
         UserRole userRole;
         if (request != null) {
-            try {
-                userRole = UserRole.valueOf(request.getRole().toString());
-                User newUser = new User(request.getUsername(), request.getFirstname(), request.getLastname(),
-                        request.getPassword(), userRole);
+            Optional<User> searchResult = userRepository.findByUsername(request.getUsername());
 
-                if (request.hasGroup()) {
-                    Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
-                    if (groupResult.isPresent()) {
-                        newUser.setGroup(groupResult.get());
-                    } else {
-                        responseText = "Group {} doesn't match with existing types!";
-                        logger.warn(responseText);
-                        return buildFailureResponse(responseText);
+            if(searchResult.isPresent()) {
+                response = buildFailureResponse("User with this username already exists");
+            } else {
+                try {
+                    userRole = UserRole.valueOf(request.getRole().toString());
+                    User newUser = new User(request.getUsername(), request.getFirstname(), request.getLastname(),
+                            request.getPassword(), userRole);
+
+                    if (request.hasGroup()) {
+                        Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
+                        if (groupResult.isPresent()) {
+                            newUser.setGroup(groupResult.get());
+                        } else {
+                            responseText = "Group {} doesn't match with existing types!";
+                            logger.warn(responseText);
+                            return buildFailureResponse(responseText);
+                        }
                     }
+
+                    newUser.setActiveStatus(true);
+                    newUser.setEmail(request.getEmail());
+                    newUser.setGender(Gender.valueOf(request.getGender().toString()));
+                    newUser.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
+
+                    userRepository.save(newUser);
+                    responseText = "User " + newUser.getUsername() + " created!";
+                    logger.debug(responseText);
+
+                    response = buildSuccessResponse(responseText);
+                } catch (IllegalArgumentException e) {
+                    responseText = "UserRole doesn't match with existing types!";
+                    logger.warn(responseText);
+                    response = buildFailureResponse(responseText);
                 }
-
-                newUser.setActiveStatus(true);
-                newUser.setEmail(request.getEmail());
-                newUser.setGender(Gender.valueOf(request.getGender().toString()));
-                newUser.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
-
-                userRepository.save(newUser);
-                responseText = "User " + newUser.getUsername() + " created!";
-                logger.debug(responseText);
-
-                response = buildSuccessResponse(responseText);
-            } catch (IllegalArgumentException e) {
-                responseText = "UserRole doesn't match with existing types!";
-                logger.warn(responseText);
-                response = buildFailureResponse(responseText);
             }
         } else {
             responseText = "Request to create a User is null";

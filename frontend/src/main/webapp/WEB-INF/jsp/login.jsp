@@ -176,10 +176,10 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <c:if test="${failure}">
-                                    <p align="center" style="color:red">Invalid username or login</p>
-                                </c:if>
                                 <form id="login-form" action="/login" method="post" role="form" style="display: block;">
+                                    <c:if test="${failure}">
+                                        <p align="center" style="color:red">Invalid username or login</p>
+                                    </c:if>
                                     <div class="form-group">
                                         <input type="text" name="username" id="username" tabindex="1"
                                                class="form-control" placeholder="Username" required="required"/>
@@ -206,48 +206,39 @@
                                         <p align="center" style="color:red">You logged out</p>
                                     </c:if>
                                 </form>
-                                <form id="register-form" action="/register" method="post" onsubmit="return validate()" role="form"
+                                <form:form id="register-form" action="/register" method="post" modelAttribute="createRequest" onsubmit="return validate()" role="form"
                                       style="display: none;">
+                                    <c:if test="${registerFailure}">
+                                        <p id="invalidUsername" style="color:red">username already exists, please choose another one</p>
+                                    </c:if>
                                     <div class="form-group">
-                                        <input type="text" name="username" id="newUsername" tabindex="1"
-                                               class="form-control" placeholder="Username" required>
+                                        <form:input type="text" name="username" id="newUsername" tabindex="1"
+                                               class="form-control" placeholder="Username" required="required" path="username"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="firstname" id="firstname" tabindex="2"
-                                               class="form-control" placeholder="First Name" required>
+                                        <form:input type="text" name="firstname" id="firstname" tabindex="2"
+                                               class="form-control" placeholder="First Name" required="required" path="firstname"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="lastname" id="lastname" tabindex="2"
-                                               class="form-control" placeholder="Last Name" required>
+                                        <form:input type="text" name="lastname" id="lastname" tabindex="2"
+                                               class="form-control" placeholder="Last Name" required="required" path="lastname"/>
                                     </div>
                                     <label>Gender</label>
                                     <div class="form-group">
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="male"
-                                                   name="gender" checked="checked">
-                                            <label class="custom-control-label" for="male">Male</label>
-                                        </div>
-                                        <div class="custom-control custom-radio custom-control-inline">
-                                            <input type="radio" class="custom-control-input" id="female"
-                                                   name="gender">
-                                            <label class="custom-control-label" for="female">Female</label>
-                                        </div>
+                                        <form:radiobuttons path="gender" items="${genders}" required="required"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" name="email" id="email" tabindex="1" class="form-control"
-                                               placeholder="Email Address" required>
+                                        <form:input type="email" name="email" id="email" tabindex="1" class="form-control"
+                                               placeholder="Email Address" required="required" path="email"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="password" id="newPassword" tabindex="2"
-                                               class="form-control" placeholder="Password" required>
+                                        <form:input type="password" name="password" id="newPassword" tabindex="2"
+                                               class="form-control" placeholder="Password" required="required" path="password"/>
                                     </div>
                                     <div class="form-group">
                                         <input type="password" name="passwordRepeat" id="newPasswordRepeat" tabindex="3"
                                                class="form-control" placeholder="Repeat Password" required>
                                     </div>
-                                    <c:if test="${registerFailure}">
-                                        <p id="invalidUsername" style="color:red">username already exists, please choose another one</p>
-                                    </c:if>
                                     <p id="error" style="color:red"></p>
                                     <div class="form-group">
                                         <div class="row">
@@ -258,7 +249,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </form>
+                                </form:form>
                             </div>
                         </div>
                     </div>
