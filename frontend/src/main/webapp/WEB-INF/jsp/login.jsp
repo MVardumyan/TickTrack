@@ -1,46 +1,31 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
-<html>
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<head>
+    <title>Welcome to T!ckTrack</title>
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <script>
-        $(function() {
-
-            $('#login-form-link').click(function(e) {
-                $("#login-form").delay(100).fadeIn(100);
-                $("#register-form").fadeOut(100);
-                $('#register-form-link').removeClass('active');
-                $(this).addClass('active');
-                e.preventDefault();
-            });
-            $('#register-form-link').click(function(e) {
-                $("#register-form").delay(100).fadeIn(100);
-                $("#login-form").fadeOut(100);
-                $('#login-form-link').removeClass('active');
-                $(this).addClass('active');
-                e.preventDefault();
-            });
-
-        });
-    </script>
-
     <style>
         .panel-login {
             border-color: #ccc;
-            -webkit-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-            -moz-box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
-            box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.2);
+            -webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+            box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
         }
-        .panel-login>.panel-heading {
+
+        .panel-login > .panel-heading {
             color: #F55C00;
             background-color: #fff;
             border-color: grey;
             padding-bottom: 20px;
-            text-align:center;
+            text-align: center;
         }
-        .panel-login>.panel-heading a{
+
+        .panel-login > .panel-heading a {
             text-decoration: none;
             color: #F55C00;
             font-weight: bold;
@@ -49,22 +34,25 @@
             -moz-transition: all 0.1s linear;
             transition: all 0.1s linear;
         }
-        .panel-login>.panel-heading a.active{
+
+        .panel-login > .panel-heading a.active {
             color: #F55C00;
             font-size: 18px;
         }
-        .panel-login>.panel-heading hr{
+
+        .panel-login > .panel-heading hr {
             margin-top: 10px;
             margin-bottom: 0px;
             clear: both;
             border: 0;
             height: 1px;
-            background-image: -webkit-linear-gradient(left,rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15),rgba(0, 0, 0, 0));
-            background-image: -moz-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-            background-image: -ms-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
-            background-image: -o-linear-gradient(left,rgba(0,0,0,0),rgba(0,0,0,0.15),rgba(0,0,0,0));
+            background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+            background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
         }
-        .panel-login input[type="text"],.panel-login input[type="email"],.panel-login input[type="password"] {
+
+        .panel-login input[type="text"], .panel-login input[type="email"], .panel-login input[type="password"] {
             height: 45px;
             border: 1px solid #ddd;
             font-size: 16px;
@@ -72,14 +60,16 @@
             -moz-transition: all 0.1s linear;
             transition: all 0.1s linear;
         }
+
         .panel-login input:hover,
         .panel-login input:focus {
-            outline:none;
+            outline: none;
             -webkit-box-shadow: none;
             -moz-box-shadow: none;
             box-shadow: none;
             border-color: #ccc;
         }
+
         .btn-login {
             background-color: #62CCE8;
             outline: none;
@@ -91,6 +81,7 @@
             text-transform: uppercase;
             border-color: #59B2E6;
         }
+
         .btn-login:hover,
         .btn-login:focus {
             color: #000000;
@@ -101,7 +92,7 @@
         .btn-register {
             background-color: #62CCE8;
             outline: none;
-            color: #62CCE8;
+            color: white;
             font-size: 14px;
             height: auto;
             font-weight: normal;
@@ -109,11 +100,12 @@
             text-transform: uppercase;
             border-color: #59B2E6;
         }
+
         .btn-register:hover,
         .btn-register:focus {
             color: #000000;
             background-color: #62CCE8;
-            border-color: #1CA347;
+            border-color: #53A3CD;
         }
 
         .container .row .col-md-6 .panel .panel-heading .row {
@@ -159,9 +151,7 @@
 
     </style>
 </head>
-<script>
 
-</script>
 <body>
 
 <div>
@@ -191,15 +181,18 @@
                                 </c:if>
                                 <form id="login-form" action="/login" method="post" role="form" style="display: block;">
                                     <div class="form-group">
-                                        <input type="text" name="username" id="username" tabindex="1" class="form-control" placeholder="Username" value="">
+                                        <input type="text" name="username" id="username" tabindex="1"
+                                               class="form-control" placeholder="Username" required="required"/>
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="password" id="password" tabindex="2" class="form-control" placeholder="Password">
+                                        <input type="password" name="password" id="password" tabindex="2"
+                                                    class="form-control" placeholder="Password" required="required"/>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-sm-6 col-sm-offset-3">
-                                                <input type="submit" name="login-submit" id="login-submit" tabindex="4" class="form-control btn btn-login" value="Log In">
+                                                <input type="submit" name="login-submit" id="login-submit" tabindex="4"
+                                                       class="form-control btn btn-login" value="Log In">
                                             </div>
                                         </div>
                                     </div>
@@ -213,31 +206,55 @@
                                         <p align="center" style="color:red">You logged out</p>
                                     </c:if>
                                 </form>
-                            <form id="register-form" action="https://phpoll.com/register/process" method="post" role="form" style="display: none;">
+                                <form id="register-form" action="/register" method="post" onsubmit="return validate()" role="form"
+                                      style="display: none;">
                                     <div class="form-group">
-                                        <input type="text" name="username" id="username1" tabindex="1" class="form-control" placeholder="Username" value="">
+                                        <input type="text" name="username" id="newUsername" tabindex="1"
+                                               class="form-control" placeholder="Username" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="first name" id="first name" tabindex="2" class="form-control" placeholder="First Name">
+                                        <input type="text" name="firstname" id="firstname" tabindex="2"
+                                               class="form-control" placeholder="First Name" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" name="last name" id="last name" tabindex="2" class="form-control" placeholder="Last Name">
+                                        <input type="text" name="lastname" id="lastname" tabindex="2"
+                                               class="form-control" placeholder="Last Name" required>
+                                    </div>
+                                    <label>Gender</label>
+                                    <div class="form-group">
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="male"
+                                                   name="gender" checked="checked">
+                                            <label class="custom-control-label" for="male">Male</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" class="custom-control-input" id="female"
+                                                   name="gender">
+                                            <label class="custom-control-label" for="female">Female</label>
+                                        </div>
                                     </div>
                                     <div class="form-group">
-                                        <input type="radio" name="gender" value="male"> Male
-                                        <input type="radio" name="gender" value="female"> Female
-
+                                        <input type="email" name="email" id="email" tabindex="1" class="form-control"
+                                               placeholder="Email Address" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="email" name="email" id="email" tabindex="1" class="form-control" placeholder="Email Address" value="">
+                                        <input type="password" name="password" id="newPassword" tabindex="2"
+                                               class="form-control" placeholder="Password" required>
                                     </div>
                                     <div class="form-group">
-                                        <input type="password" name="password" id="password1" tabindex="2" class="form-control" placeholder="Password">
+                                        <input type="password" name="passwordRepeat" id="newPasswordRepeat" tabindex="3"
+                                               class="form-control" placeholder="Repeat Password" required>
                                     </div>
+                                    <c:if test="${registerFailure}">
+                                        <p id="invalidUsername" style="color:red">username already exists, please choose another one</p>
+                                    </c:if>
+                                    <p id="error" style="color:red"></p>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-sm-6 col-sm-offset-3">
-                                                <input type="submit" name="register-submit" id="register-submit" tabindex="4" class="form-control btn btn-register" value="Register Now">
+                                                <input type="submit" name="register-submit" id="register-submit"
+                                                       tabindex="4" class="form-control btn btn-register"
+                                                       value="Register Now">
                                             </div>
                                         </div>
                                     </div>
@@ -252,3 +269,33 @@
 </div>
 </body>
 </html>
+
+<script>
+    $(function () {
+
+        $('#login-form-link').click(function (e) {
+            $("#login-form").delay(100).fadeIn(100);
+            $("#register-form").fadeOut(100);
+            $('#register-form-link').removeClass('active');
+            $(this).addClass('active');
+            e.preventDefault();
+        });
+        $('#register-form-link').click(function (e) {
+            $("#register-form").delay(100).fadeIn(100);
+            $("#login-form").fadeOut(100);
+            $('#login-form-link').removeClass('active');
+            $(this).addClass('active');
+            e.preventDefault();
+        });
+
+    });
+
+    function validate() {
+        var password = document.getElementById("newPassword").value;
+        var passwordRepeat = document.getElementById("newPasswordRepeat").value;
+        if(password !== passwordRepeat) {
+            document.getElementById("error").innerHTML = "Password value does not match";
+            return false;
+        }
+    }
+</script>
