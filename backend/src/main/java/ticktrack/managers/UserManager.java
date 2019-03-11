@@ -158,7 +158,8 @@ public class UserManager implements IUserManager {
             if (updateSuccess) {
                 userRepository.save(user);
                 logger.debug(responseText.toString());
-                response = buildSuccessResponse(responseText.toString());
+                //response = buildSuccessResponse(responseText.toString());
+                return wrapIntoMsg(buildUserInfo(user));
             } else {
                 logger.warn(responseText.toString());
                 response = buildFailureResponse(responseText.toString());
