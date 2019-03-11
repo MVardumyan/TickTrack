@@ -87,7 +87,7 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public CommonResponse update(UserOp.UserOpUpdateRequest request) {
+    public Msg update(UserOp.UserOpUpdateRequest request) {
         StringBuilder responseText = new StringBuilder();
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
@@ -158,7 +158,8 @@ public class UserManager implements IUserManager {
             if (updateSuccess) {
                 userRepository.save(user);
                 logger.debug(responseText.toString());
-                response = buildSuccessResponse(responseText.toString());
+                //response = buildSuccessResponse(responseText.toString());
+                return wrapIntoMsg(buildUserInfo(user));
             } else {
                 logger.warn(responseText.toString());
                 response = buildFailureResponse(responseText.toString());
@@ -169,24 +170,25 @@ public class UserManager implements IUserManager {
             logger.warn(responseText.toString());
             response = buildFailureResponse(responseText.toString());
         }
-        return response;
+        return wrapCommonResponseIntoMsg(response);
     }
 
     @Transactional
     @Override
-    public CommonResponse changePassword(UserOp.UserOpChangePassword request) {
+    public Msg changePassword(UserOp.UserOpChangePassword request) {
         String responseText;
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
+
         if (result.isPresent()) {
             User user = result.get();
+
             if (user.getPassword().equals(request.getOldPassword())) {
                 user.setPassword(request.getNewPassword());
                 userRepository.save(user);
                 responseText = "User " + user.getUsername() + "'s password is updated!";
                 logger.debug(responseText);
-
-                response = buildSuccessResponse(responseText);
+                return wrapIntoMsg(buildUserInfo(user));
             } else {
                 responseText = "User " + request.getUsername() + "'s old password doesn't match!";
                 logger.warn(responseText);
@@ -197,7 +199,15 @@ public class UserManager implements IUserManager {
             logger.warn(responseText);
             response = buildFailureResponse(responseText);
         }
-        return response;
+        return wrapCommonResponseIntoMsg(response);
+    }
+
+    private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
+        return  Msg.newBuilder()
+                .setUserOperation(Msg.UserOp.newBuilder()
+                        .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
+                                .addUserInfo(userInfo)))
+                .build();
     }
 
     @Transactional
