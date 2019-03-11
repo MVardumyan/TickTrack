@@ -178,15 +178,16 @@ public class UserManager implements IUserManager {
         String responseText;
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
+
         if (result.isPresent()) {
             User user = result.get();
+
             if (user.getPassword().equals(request.getOldPassword())) {
                 user.setPassword(request.getNewPassword());
                 userRepository.save(user);
                 responseText = "User " + user.getUsername() + "'s password is updated!";
                 logger.debug(responseText);
-
-                response = buildSuccessResponse(responseText);
+                return wrapIntoMsg(buildUserInfo(user));
             } else {
                 responseText = "User " + request.getUsername() + "'s old password doesn't match!";
                 logger.warn(responseText);
@@ -198,6 +199,14 @@ public class UserManager implements IUserManager {
             response = buildFailureResponse(responseText);
         }
         return wrapCommonResponseIntoMsg(response);
+    }
+
+    private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
+        return  Msg.newBuilder()
+                .setUserOperation(Msg.UserOp.newBuilder()
+                        .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
+                                .addUserInfo(userInfo)))
+                .build();
     }
 
     @Transactional
