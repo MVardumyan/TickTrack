@@ -4,6 +4,8 @@ import common.helpers.CustomJsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +23,7 @@ import static common.helpers.CustomJsonParser.jsonToProtobuf;
 @Controller
 public class PersonalInfoController {
     private final OkHttpClient httpClient;
+    private final Logger logger = LoggerFactory.getLogger(NewTicketController.class);
     private String backendURL = "http://localhost:9001/backend/v1/";
 
     @Autowired
@@ -67,11 +70,24 @@ public class PersonalInfoController {
 //            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
 //        }
 
-        OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)));
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
+                    showPersonalInfo(request,model);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
 
 
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
-        showPersonalInfo(request,model);
+
         return "personalInfo";
     }
 
@@ -103,11 +119,21 @@ public class PersonalInfoController {
             return "error";
         }
 
-        OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword",CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)));
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword",CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
+                    showPersonalInfo(request,model);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
 
-
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
-        showPersonalInfo(request,model);
         return "personalInfo";
     }
 
