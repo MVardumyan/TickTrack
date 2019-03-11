@@ -130,7 +130,7 @@
         <label>First name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="firstName"
-                   value="${firstName}">
+                   value=${firstName}>
         </div>
         <label>Last name</label>
         <div class="form-group">

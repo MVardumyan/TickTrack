@@ -31,14 +31,14 @@ public class PersonalInfoController {
     @RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
     public String displayPersonalInfoPage(ModelMap model, @SessionAttribute User user) {
 
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody("http://localhost:9001/backend/v1/users/getUser/" + user.getUsername());
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
     }
 
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser" + user.getUsername());
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
             model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
@@ -70,7 +70,7 @@ public class PersonalInfoController {
         OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)));
 
 
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "/users/getUser/" + user.getUsername());
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
     }
@@ -80,7 +80,7 @@ public class PersonalInfoController {
                 .build();
     }
 
-    //CHANGE PASSWORD
+    /////////////////////////////////////CHANGE PASSWORD
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     String displayChangePassword(ModelMap model, @SessionAttribute("user") User user) {
@@ -94,11 +94,10 @@ public class PersonalInfoController {
                           @RequestParam() String newPassword) {
 
         Msg.UserOp.UserOpChangePassword.Builder requestMessage = Msg.UserOp.UserOpChangePassword.newBuilder();
-        requestMessage.setUsername(user.getUsername())
-                .setOldPassword(oldPassword)
-                .setNewPassword(newPassword);
+        requestMessage.setUsername(user.getUsername());
 
         if(oldPassword!=null ){
+            requestMessage.setOldPassword(oldPassword);
             requestMessage.setNewPassword(newPassword);
         }else {
             return "error";

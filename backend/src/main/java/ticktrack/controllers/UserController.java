@@ -52,8 +52,8 @@ public class UserController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpUpdateRequest()) {
-                Msg.CommonResponse result = userManager.update(request.getUserOperation().getUserOpUpdateRequest());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
+                Msg result = userManager.update(request.getUserOperation().getUserOpUpdateRequest());
+                return protobufToJson(result);
             }
 
             logger.warn("No update user request found");
@@ -73,8 +73,8 @@ public class UserController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangePassword()) {
-                Msg.CommonResponse result = userManager.changePassword(request.getUserOperation().getUserOpChangePassword());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
+                Msg result = userManager.changePassword(request.getUserOperation().getUserOpChangePassword());
+                return protobufToJson(result);
             }
 
             logger.warn("No change password request found");

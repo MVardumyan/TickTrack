@@ -87,7 +87,7 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public CommonResponse update(UserOp.UserOpUpdateRequest request) {
+    public Msg update(UserOp.UserOpUpdateRequest request) {
         StringBuilder responseText = new StringBuilder();
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
@@ -169,12 +169,12 @@ public class UserManager implements IUserManager {
             logger.warn(responseText.toString());
             response = buildFailureResponse(responseText.toString());
         }
-        return response;
+        return wrapCommonResponseIntoMsg(response);
     }
 
     @Transactional
     @Override
-    public CommonResponse changePassword(UserOp.UserOpChangePassword request) {
+    public Msg changePassword(UserOp.UserOpChangePassword request) {
         String responseText;
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
@@ -197,7 +197,7 @@ public class UserManager implements IUserManager {
             logger.warn(responseText);
             response = buildFailureResponse(responseText);
         }
-        return response;
+        return wrapCommonResponseIntoMsg(response);
     }
 
     @Transactional
