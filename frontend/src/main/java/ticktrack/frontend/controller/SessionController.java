@@ -114,7 +114,7 @@ class SessionController {
                     session.setAttribute("user", user);
 
                     if(Admin.equals(user.getRole())) {
-                        return "adminMain";
+                        return "admin/main";
                     } else {
                         model.put("name", createRequest.getUsername());
                         return "regularUserMain";

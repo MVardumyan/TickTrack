@@ -16,6 +16,7 @@ import common.helpers.PasswordHandler;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
+import static ticktrack.util.ResponseHandler.buildFailureResponse;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -278,10 +279,13 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
-            if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
-                return buildSuccessResponse("Password is valid");
+            if(user.isActive()) {
+                if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
+                    return buildSuccessResponse("Password is valid");
+                }
+                return buildFailureResponse("Password is invalid");
             }
-            return buildFailureResponse("Password is invalid");
+            return buildFailureResponse("User is deactivated");
         }
         responseText = "User " + request.getUsername() + " not found";
         logger.debug(responseText);
