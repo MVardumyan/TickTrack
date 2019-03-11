@@ -11,10 +11,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import ticktrack.frontend.attributes.User;
+import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
 
 import java.io.IOException;
@@ -35,15 +34,13 @@ public class TicketInfoController {
 
     @RequestMapping(value = "/ticketInfo/{id}", method = RequestMethod.GET)
     public String displayTicketInfoPage(ModelMap model,@PathVariable("id") long id) {
-        Request request = new Request.Builder()
-                .url(backendURL + "Tickets/getTicket/" + id )
-                .build();
 
-            try (Response response = httpClient.newCall(request).execute()) {
+            try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "Tickets/getTicket/" + id)).execute()) {
                 if (response.code() == 200) {
                     Msg msg = jsonToProtobuf(response.body().string());
                     if (msg != null) {
                         model.put("info", msg.getTicketInfo());
+                        model.put("id", id);
                     }
                 } else {
                     logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -55,11 +52,112 @@ public class TicketInfoController {
         return "ticketInfo";
     }
 
-    private Msg wrapIntoMsg(Msg.TicketInfo.Builder requestMessage) {
-        return Msg.newBuilder()
-             .setTicketInfo(Msg.TicketInfo.newBuilder().setTicketID(requestMessage.getTicketID()))
+    @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
+    public String displayUpdateTicketPage(ModelMap model,@PathVariable("id") long id) {
+        Request requestCategory = new Request.Builder()
+                .url("http://localhost:9001/backend/v1/categories/getAll")
+                .build();
+        Request groupsRequest = new Request.Builder()
+                .url(backendURL + "userGroups/getAll")
+                .build();
+        try (Response categoryResponse = httpClient.newCall(requestCategory).execute();
+             Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
+            if (categoryResponse.code() == 200) {
+                Msg result = jsonToProtobuf(categoryResponse.body().string());
+
+                if (result != null) {
+                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryNameList());
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
+            }
+
+            if (groupResponse.code() == 200) {
+                Msg result = jsonToProtobuf(groupResponse.body().string());
+
+                if (result != null) {
+                    model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get categories list", e);
+        }
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "Tickets/getTicket/" + id)).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "updateTicketInfo";
+    }
+
+    @RequestMapping(value = "updateTicket/updateTheTicket/{id}", method = RequestMethod.POST)
+    String updateTicket(ModelMap model,@PathVariable("id") long id,
+                        @SessionAttribute("user") User user,
+                        @RequestParam() String summary,
+                        @RequestParam() String description,
+                        @RequestParam(required = false) String assignee,
+                        @RequestParam(required = false) String group,
+                        @RequestParam() String priority,
+                        @RequestParam() String category,
+                        @RequestParam(required = false) String deadline
+
+    ) {
+
+        Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
+
+        requestMessage
+                .setTicketID(id)
+                .setSummary(summary)
+                .setDescription(description)
+                .setPriority(Msg.TicketPriority.valueOf(priority))
+                .setCategory(category);
+        if(assignee != null){
+            requestMessage.setAssignee(assignee);
+        }
+        if(group != null){
+            requestMessage.setGroup(group);
+        }
+//        if(deadline != null && deadline.length() > 0){
+//            requestMessage.setDeadline(()deadline);
+//        }
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "ticketInfo";
+    }
+
+    private Msg wrapIntoMsg(Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage) {
+        return Msg.newBuilder().setTicketOperation(
+                Msg.TicketOp.newBuilder().setTicketOpUpdateRequest(requestMessage)
+        )
                 .build();
     }
+
     @RequestMapping(value = "/ticketInfoWithResolve", method = RequestMethod.GET)
     public String displayTicketInfoWithResolvePage(ModelMap model) {
         Request request = new Request.Builder()
