@@ -22,14 +22,14 @@ public class CategoryController {
         this.categoryManager = categoryManager;
     }
 
-    @RequestMapping(path = "/add", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(path = "/add", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     String addCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.createCategory(categoryName);
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
 
-    @RequestMapping(path = "/deactivate", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(path = "/deactivate", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     String deactivateCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.deactivateCategory(categoryName);
@@ -40,13 +40,6 @@ public class CategoryController {
     @ResponseBody
     String getAllCategories() {
         Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAll();
-        return protobufToJson(wrapIntoMsg(result));
-    }
-
-    @RequestMapping(path = "/getAllActive", method = RequestMethod.GET, produces = "application/json")
-    @ResponseBody
-    String getAllActiveCategories() {
-        Msg.CategoryOp.CategoryOpGetAllResponse result = categoryManager.getAllActiveCategories();
         return protobufToJson(wrapIntoMsg(result));
     }
 

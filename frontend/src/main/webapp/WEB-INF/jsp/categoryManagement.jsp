@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin: User Management</title>
+    <title>Admin: Category Management</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
@@ -93,6 +93,42 @@
             padding-left: 190px;
             padding-right: 50px;
         }
+
+        #popup-form {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -124,7 +160,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -133,166 +169,84 @@
 </div>
 
 <div class="body" align="left">
+    <button id="opener" class="btn btn-info" name="createCategory" style="margin-bottom:30px;margin-top:20px;">Create new Category</button>
+    <div id="popup-form">
+        <form id="createCategory" class="popup-content" method="post" action="/admin/createCategory">
+            <span class="close">&times;</span>
+            <div class="form-group">
+                <input type="text" name="newCategory" class="form-control" placeholder="Category name" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-info" name="submit" value="Create"/>
+            </div>
+        </form>
+    </div>
+
     <h4>Regular Users</h4>
     <table id="regularUserTable" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
-            <th class="th-sm">Username
+            <th class="th-sm">Category
             </th>
-            <th class="th-sm">First name
-            </th>
-            <th class="th-sm">Last name
-            </th>
-            <th class="th-sm">Email address
-            </th>
-            <th class="th-sm">Gender
-            </th>
-            <th class="th-sm">Deactivate user
+            <th class="th-sm">Deactivate
             </th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${regularUserInfo}" var="regularUser">
+        <c:forEach items="${categories}" var="category">
             <tr>
-                <td>${regularUser.username}</td>
-                <td>${regularUser.firstname}</td>
-                <td>${regularUser.lastname}</td>
-                <td>${regularUser.email}</td>
-                <td>${regularUser.gender}</td>
-                <td>
-                    <button onclick="/admin/deactivateUser/${regularUser.username}" type="button" class="btn">edit</button>
-                </td>
+                <td>${category.categoryName}</td>
+                <c:choose>
+                    <c:when test="${category.isDeactivated}">
+                        <td>Deactivated</td>
+                    </c:when>
+                    <c:otherwise>
+                        <td>
+                            <button onclick="location.href='/admin/deactivateCategory/${category.categoryName}'"
+                                    type="button" class="deactivate btn btn-info">Deactivate
+                            </button>
+                        </td>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </c:forEach>
         </tbody>
         <tfoot>
         <tr>
-            <th>Username
+            <th>Category
             </th>
-            <th>First name
-            </th>
-            <th>Last name
-            </th>
-            <th>Email address
-            </th>
-            <th>Gender
-            </th>
-            <th>Deactivate user
+            <th>Deactivate
             </th>
         </tr>
         </tfoot>
     </table>
-
-    <table id="businessUserTable" class="table table-striped table-bordered table-sm" width="100%">
-        <thead>
-        <tr>
-            <th class="th-sm">Username
-            </th>
-            <th class="th-sm">First name
-            </th>
-            <th class="th-sm">Last name
-            </th>
-            <th class="th-sm">Email address
-            </th>
-            <th class="th-sm">Gender
-            </th>
-            <th class="th-sm">Deactivate user
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${businessUserInfo}" var="businessUser">
-            <tr>
-                <td>${businessUser.username}</td>
-                <td>${businessUser.firstname}</td>
-                <td>${businessUser.lastname}</td>
-                <td>${businessUser.email}</td>
-                <td>${businessUser.gender}</td>
-                <td>
-                    <button onclick="/admin/deactivateUser/${businessUser.username}" type="button" class="btn">edit</button>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-        <tfoot>
-        <tr>
-            <th>Username
-            </th>
-            <th>First name
-            </th>
-            <th>Last name
-            </th>
-            <th>Email address
-            </th>
-            <th>Gender
-            </th>
-            <th>Deactivate user
-            </th>
-        </tr>
-        </tfoot>
-    </table>
-
-    <table id="adminTable" class="table table-striped table-bordered table-sm" width="100%">
-        <thead>
-        <tr>
-            <th class="th-sm">Username
-            </th>
-            <th class="th-sm">First name
-            </th>
-            <th class="th-sm">Last name
-            </th>
-            <th class="th-sm">Email address
-            </th>
-            <th class="th-sm">Gender
-            </th>
-            <th class="th-sm">Deactivate user
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${adminInfo}" var="adminUser">
-            <tr>
-                <td>${adminUser.username}</td>
-                <td>${adminUser.firstname}</td>
-                <td>${adminUser.lastname}</td>
-                <td>${adminUser.email}</td>
-                <td>${adminUser.gender}</td>
-                <td>
-                    <button onclick="/admin/deactivateUser/${adminUser.username}" type="button" class="btn">edit</button>
-                </td>
-            </tr>
-        </c:forEach>
-        </tbody>
-        <tfoot>
-        <tr>
-            <th>Username
-            </th>
-            <th>First name
-            </th>
-            <th>Last name
-            </th>
-            <th>Email address
-            </th>
-            <th>Gender
-            </th>
-            <th>Deactivate user
-            </th>
-        </tr>
-        </tfoot>
-    </table>
-
 </div>
-
-</body>
-</html>
 
 <script>
     $(document).ready(function () {
         $('#regularUserTable,#businessUserTable,#adminTable').DataTable();
         $('.dataTables_length').addClass('bs-select');
     });
-    
-    function displayDialog() {
 
+    var modal = document.getElementById("popup-form");
+    var btn = document.getElementById("opener");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+        modal.style.display = "block";
+    };
+
+    span.onclick = function () {
+        modal.style.display = "none";
+    };
+
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
     }
 </script>
+
+</body>
+</html>

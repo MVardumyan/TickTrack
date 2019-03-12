@@ -266,7 +266,12 @@ message Msg {
         }
 
         message CategoryOpGetAllResponse {
-            repeated string categoryName = 1;
+            repeated CategoryInfo categoryInfo = 1;
+            
+            message CategoryInfo {
+                required string categoryName = 1;
+                required bool isDeactivated = 2;
+            }
         }
     }
     //CATEGORY OPERATIONS END

@@ -94,7 +94,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">

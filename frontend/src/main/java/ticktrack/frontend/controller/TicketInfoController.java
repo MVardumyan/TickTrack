@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
+import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
@@ -66,7 +68,11 @@ public class TicketInfoController {
                 Msg result = jsonToProtobuf(categoryResponse.body().string());
 
                 if (result != null) {
-                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryNameList());
+                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryInfoList()
+                            .stream()
+                            .filter(categoryInfo -> !categoryInfo.getIsDeactivated())
+                            .map(CategoryInfo::getCategoryName)
+                            .collect(Collectors.toList()));
                 }
             } else {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
