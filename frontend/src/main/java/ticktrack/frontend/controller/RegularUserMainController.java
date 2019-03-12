@@ -1,5 +1,6 @@
 package ticktrack.frontend.controller;
 
+import common.enums.UserRole;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,10 @@ public class RegularUserMainController {
     }
 
     @RequestMapping(value = "/regUserMain", method = RequestMethod.GET)
-    public String displaySearchPage(ModelMap model, @SessionAttribute("user") User user) {
+    public String displayHomePage(ModelMap model, @SessionAttribute("user") User user) {
+        if(!user.getRole().equals(UserRole.RegularUser)) {
+            model.put("notRegular", true);
+        }
         model.put("name", user.getUsername());
         return "regularUserMain";
     }
