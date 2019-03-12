@@ -189,4 +189,76 @@ public class TicketInfoController {
         }
         return "ticketInfoWithResolve";
     }
+
+    @RequestMapping(value = "closeTicket/{id}", method = RequestMethod.POST)
+    String closeTicket(ModelMap model,@PathVariable("id") long id){
+
+        Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
+        requestMessage.setTicketID(id).setStatus(Msg.TicketStatus.Closed);
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "ticketInfo";
+    }
+
+    @RequestMapping(value = "cancelTicket/{id}", method = RequestMethod.POST)
+    String cancelTicket(ModelMap model,@PathVariable("id") long id){
+
+        Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
+        requestMessage.setTicketID(id).setStatus(Msg.TicketStatus.Canceled);
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "ticketInfo";
+    }
+
+    @RequestMapping(value = "inProgressTicket/{id}", method = RequestMethod.POST)
+    String inProgressTicket(ModelMap model,@PathVariable("id") long id){
+
+        Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
+        requestMessage.setTicketID(id).setStatus(Msg.TicketStatus.InProgress);
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "ticketInfo";
+    }
 }

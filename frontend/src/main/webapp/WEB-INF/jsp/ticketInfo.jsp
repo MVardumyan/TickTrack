@@ -234,10 +234,10 @@
             <form action="/updateTicket/${id}">
                 <button class="action-button">Edit</button>
             </form>
-            <form action="http://google.com">
+            <form action="/closeTicket/${id}">
                 <button class="action-button">Close</button>
             </form>
-            <form action="http://google.com">
+            <form action="/cancleTicket/${id}">
                 <button class="action-button">Cancel</button>
             </form>
         </div>
