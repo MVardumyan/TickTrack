@@ -6,6 +6,7 @@ System for ticket tracking
 | username  | password | role |
 | --- | --- | --- |
 | mikvar  | wordpass  |  admin  |
+| mikayel2  | veryhard  |  business user  |
 | Lusine  | cantsay  |  regular user  |
 
 ### Postman
