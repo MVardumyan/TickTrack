@@ -1,13 +1,15 @@
 package ticktrack.interfaces;
 
+import ticktrack.proto.Msg;
+
 import static ticktrack.proto.Msg.*;
 
 public interface IUserManager {
    CommonResponse create(UserOp.UserOpCreateRequest request);
 
-   CommonResponse update(UserOp.UserOpUpdateRequest request);
+   Msg update(UserOp.UserOpUpdateRequest request);
 
-   CommonResponse changePassword(UserOp.UserOpChangePassword request);
+   Msg changePassword(UserOp.UserOpChangePassword request);
 
    CommonResponse deactivate(String username);
 

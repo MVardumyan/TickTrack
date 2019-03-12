@@ -231,7 +231,7 @@
                         </div>
                     </div>
         <div class="button-group">
-            <form action="http://google.com">
+            <form action="/updateTicket/${id}">
                 <button class="action-button">Edit</button>
             </form>
             <form action="http://google.com">

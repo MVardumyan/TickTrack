@@ -123,68 +123,22 @@
 </div>
 
 <div class="container" align="left">
-    <h4 align="left" class="container__header">Update ticket ${info.ticketID}</h4>
+    <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="updateTheTicket/${id}" id="create_form">
-        <label>Summary</label>
+    <form method="post" action="changePassword" id="create_form">
+        <label>Old Password</label>
         <div class="form-group">
-            <input type="text" class="form-control" name="summary"
-                   value=${info.summary}>
+            <input type="password" class="form-control" name="oldPassword"
+                   placeholder="oldPassword">
         </div>
-        <label>Description</label>
+        <label>New Password</label>
         <div class="form-group">
-            <textarea type="text" class="form-control" name="description">${info.description}</textarea>
-        </div>
-        <label>Assignee</label>
-        <div class="form-group">
-            <div class="ui-widget">
-                <input type="text" class="form-control" name="assignee"
-                       value=${info.assignee}>
-            </div>
-        </div>
-
-        <label>Group</label>
-        <div class="form-group">
-            <select id="group" name="group" multiple class="form-control">
-                <c:forEach var="group" items="${groupList}">
-                    <option value="${group}">
-                            ${group}
-                    </option>
-                </c:forEach>
-            </select>
-        </div>
-
-        <label>Priority</label>
-        <div class="form-group">
-            <select name="priority" name="priority[]" class="form-control">
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Critical">Critical</option>
-            </select>
-        </div>
-
-        <label>Category</label>
-        <div class="form-group">
-            <select name="category" name="category[]" class="form-control">
-                <c:forEach var="category" items="${categoryList}">
-                    <option value="${category}">
-                            ${category}
-                    </option>
-                </c:forEach>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label>Deadline</label>
-            <div class="input-daterange input-group" name="deadline">
-                <input type="text" class="input-sm form-control" name="deadline"/>
-                <span class="input-group-addon"></span>
-            </div>
+            <input type="password" class="form-control" name="newPassword"
+                   placeholder="newPassword">
         </div>
         <div class="form-group">
-            <input type="submit" class="btn btn-info" name="submit" value="Edit"/>
+            <input type="submit" class="btn btn-info" name="submit" value="Done"/>
         </div>
     </form>
     <br/>

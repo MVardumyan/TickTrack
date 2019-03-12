@@ -204,10 +204,10 @@
         </div>
 
     <div class="button-group">
-        <form action="http://google.com">
+        <form action="/updateUserInfo">
             <button class="action-button">Edit</button>
         </form>
-        <form action="http://google.com">
+        <form action="/changePassword">
             <button class="action-button">Change Password</button>
         </form>
     </div>
