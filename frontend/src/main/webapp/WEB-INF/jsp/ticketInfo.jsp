@@ -186,9 +186,6 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Resolution:</div><div class="col-sm-7"> ${info.resolution}</div>
-                            <div class="clearfix"></div>
-                            <div class="bot-border"></div>
 
                             <div class="col-sm-5 col-xs-6 tital " >Status:</div><div class="col-sm-7"> ${info.status}</div>
                             <div class="clearfix"></div>
@@ -222,6 +219,10 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
+                            <div class="col-sm-5 col-xs-6 tital " >Resolution:</div><div class="col-sm-7"> ${info.resolution}</div>
+                            <div class="clearfix"></div>
+                            <div class="bot-border"></div>
+
                             <%--<div class="col-sm-5 col-xs-6 tital " >Comments:</div><div class="col-sm-7">${info.comments}</div>--%>
                             <%--<div class="clearfix"></div>--%>
                             <%--<div class="bot-border"></div>--%>
@@ -234,12 +235,20 @@
             <form action="/updateTicket/${id}">
                 <button class="action-button">Edit</button>
             </form>
+            <form action="/progressTicket/${id}">
+                <button class="action-button">In Progress</button>
+            </form>
             <form action="/closeTicket/${id}">
                 <button class="action-button">Close</button>
             </form>
-            <form action="/cancleTicket/${id}">
+            <form action="/cancelTicket/${id}">
                 <button class="action-button">Cancel</button>
             </form>
+            <c:if test="${resolve}">
+                <form action="/resolveTicket/${id}">
+                    <button class="action-button">Resolve</button>
+                </form>
+            </c:if>
         </div>
     </div>
 </div>
