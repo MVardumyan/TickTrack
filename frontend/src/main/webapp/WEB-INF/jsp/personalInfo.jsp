@@ -193,10 +193,11 @@
                             <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${regTime}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
-
+                        <c:if test="notRegular">
                             <div class="col-sm-5 col-xs-6 tital " >Member of following groups:</div><div class="col-sm-7">${groups}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
+                        </c:if>
                         </div>
                     </div>
                 </div>

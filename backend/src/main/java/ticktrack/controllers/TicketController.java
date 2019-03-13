@@ -73,8 +73,8 @@ public class TicketController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasTicketOperation() && request.getTicketOperation().hasTicketOpAddComment()) {
-                Msg.CommonResponse result = ticketManager.addComment(request.getTicketOperation().getTicketOpAddComment());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
+                Msg result = ticketManager.addComment(request.getTicketOperation().getTicketOpAddComment());
+                return protobufToJson(result);
             }
 
             logger.warn("No add comment request found");
