@@ -103,6 +103,14 @@
         .glyphicon-user {
             margin-right: 20px;
         }
+
+        .form-group .btn-group {
+            width: 100% !important;
+        }
+
+        .btn-group .multiselect {
+            width: 100% !important;
+        }
     </style>
 </head>
 <body>

@@ -45,6 +45,11 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    for(int i = 0; i < msg.getTicketInfo().getCommentList().size(); ++i) {
+                        model.put("commentUser", user.getUsername() + " ");
+                        model.put("commentList", msg.getTicketInfo().getCommentList().get(i).getTime() + "\n"
+                                                    + msg.getTicketInfo().getCommentList().get(i).getText() + "\n");
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -56,6 +61,44 @@ public class TicketInfoController {
         return "ticketInfo";
     }
 
+    @RequestMapping(value = "/addComment/{id}", method = RequestMethod.POST)
+    String addComment(ModelMap model, @PathVariable("id") long id,
+                        @SessionAttribute("user") User user,
+                        @RequestParam() String comment) {
+        Msg.TicketOp.TicketOpAddComment.Builder requestMessage = Msg.TicketOp.TicketOpAddComment.newBuilder();
+        requestMessage.setTicketId(id);
+        //requestMessage.setNewComment(comment); todo
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    if(user.getRole().equals(UserRole.BusinessUser)){
+                        model.put("resolve",true);
+                    }
+                    model.put("info", msg.getTicketInfo());
+                    model.put("id", id);
+                    for(int i = 0; i < msg.getTicketInfo().getCommentList().size(); ++i) {
+                        model.put("commentUser", user.getUsername() + " ");
+                        model.put("commentList", msg.getTicketInfo().getCommentList().get(i).getTime() + "\n"
+                                + msg.getTicketInfo().getCommentList().get(i).getText() + "\n");
+                    }
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+        return "ticketInfo";
+    }
+    private Msg wrapCommentIntoMsg(Msg.TicketOp.TicketOpAddComment.Builder comment) {
+        return Msg.newBuilder()
+                .setTicketOperation(Msg.TicketOp.newBuilder().setTicketOpAddComment(comment))
+                .build();
+    }
     @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
     public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id) {
         Request requestCategory = new Request.Builder()

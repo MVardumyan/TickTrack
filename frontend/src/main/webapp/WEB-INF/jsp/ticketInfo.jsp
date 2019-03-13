@@ -5,8 +5,11 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <style>
 
+        .col-md-7 {
+            width: 185.333333%;
+        }
     .sidnav {
-        height: 200%;
+        height: 250%;
         position: absolute;
         right: 86%;
         left: 0;
@@ -67,6 +70,7 @@
     }
 
     .body {
+        /*display: -webkit-inline-box;*/
         margin-left: 100px;
         margin-top: 50px;
         padding-left: 190px;
@@ -115,6 +119,8 @@
 
     .button-group {
         display: flex;
+        flex-direction: column;
+        margin: 0 -100px;
     }
 
     .action-button {
@@ -155,10 +161,6 @@
     </div>
     <div class="body">
         <div class="row">
-
-
-
-
             <div class="col-md-7 ">
 
                 <div class="panel panel-default">
@@ -223,14 +225,32 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <%--<div class="col-sm-5 col-xs-6 tital " >Comments:</div><div class="col-sm-7">${info.comments}</div>--%>
-                            <%--<div class="clearfix"></div>--%>
-                            <%--<div class="bot-border"></div>--%>
+                            <div class="col-sm-5 col-xs-6 tital " >Comments:
+                                <c:forEach var="user" items="${commentUser}">
+                                    <a href="/personalInfo/${user}">@${user}</a>
+                                </c:forEach>
+                            </div>
+                            </div><div class="col-sm-7">
+                            <c:forEach var="comment" items="${commentList}">
+                            ${comment}
+                            </c:forEach>
+                        </div>
+                            <div class="clearfix"></div>
+                            <div class="bot-border"></div>
                         </div>
                         </div>
                         </div>
+                            <form method="post" action="/addComment/${id}" id="create_form">
+                             <label>Comment here</label>
+                                   <div class="form-group">
+                                     <textarea type="text" class="form-control" name="comment" rows="6"
+                                                     placeholder="Comment..."></textarea></div>
+                                <div class="form-group">
+                                    <input type="submit" class="btn btn-info" name="submit" value="Add Comment"/>
+                                </div>
+                         </form>
                         </div>
-                    </div>
+        </div>
         <div class="button-group">
             <form action="/updateTicket/${id}">
                 <button class="action-button">Edit</button>

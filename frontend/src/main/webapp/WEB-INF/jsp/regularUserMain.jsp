@@ -193,15 +193,17 @@
         /*background: #3a3a3a;*/
         position: relative;
         animation: text 3s 1;
-        margin-left: 165px;
     }
 
     .title-two{
         font-size: 50px;
         color: brown;
         animation: text2 3s 1;
-        margin-left: 165px;
         margin-bottom: 100px;
+    }
+
+    .title-section {
+        margin-left: 165px;
     }
 
     @keyframes text {
@@ -340,7 +342,7 @@
         </defs>
     </svg>
     </div>
-    <section>
+    <section class="title-section">
         <span class="title-one">Hello!</span>
         <span class="title-two">${name}</span>
     </section>
