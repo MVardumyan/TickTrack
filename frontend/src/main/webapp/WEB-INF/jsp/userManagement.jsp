@@ -124,7 +124,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -147,7 +147,7 @@
             </th>
             <th class="th-sm">Gender
             </th>
-            <th class="th-sm">Deactivate user
+            <th class="th-sm">Edit user
             </th>
         </tr>
         </thead>
@@ -160,7 +160,7 @@
                 <td>${regularUser.email}</td>
                 <td>${regularUser.gender}</td>
                 <td>
-                    <button onclick="/admin/deactivateUser/${regularUser.username}" type="button" class="btn">edit</button>
+                    <button onclick="location.href='/updateUserInfo/${regularUser.username}'" type="button" class="btn btn-info">edit</button>
                 </td>
             </tr>
         </c:forEach>
@@ -177,12 +177,13 @@
             </th>
             <th>Gender
             </th>
-            <th>Deactivate user
+            <th>Edit user
             </th>
         </tr>
         </tfoot>
     </table>
 
+    <h4>Business Users</h4>
     <table id="businessUserTable" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
@@ -196,7 +197,7 @@
             </th>
             <th class="th-sm">Gender
             </th>
-            <th class="th-sm">Deactivate user
+            <th class="th-sm">Edit user
             </th>
         </tr>
         </thead>
@@ -209,7 +210,7 @@
                 <td>${businessUser.email}</td>
                 <td>${businessUser.gender}</td>
                 <td>
-                    <button onclick="/admin/deactivateUser/${businessUser.username}" type="button" class="btn">edit</button>
+                    <button onclick="location.href='/updateUserInfo/${businessUser.username}'" type="button" class="btn btn-info">edit</button>
                 </td>
             </tr>
         </c:forEach>
@@ -226,12 +227,13 @@
             </th>
             <th>Gender
             </th>
-            <th>Deactivate user
+            <th>Edit user
             </th>
         </tr>
         </tfoot>
     </table>
 
+    <h4>Administrators</h4>
     <table id="adminTable" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
@@ -245,7 +247,7 @@
             </th>
             <th class="th-sm">Gender
             </th>
-            <th class="th-sm">Deactivate user
+            <th class="th-sm">Edit user
             </th>
         </tr>
         </thead>
@@ -258,7 +260,7 @@
                 <td>${adminUser.email}</td>
                 <td>${adminUser.gender}</td>
                 <td>
-                    <button onclick="/admin/deactivateUser/${adminUser.username}" type="button" class="btn">edit</button>
+                    <button onclick="location.href='/updateUserInfo/${adminUser.username}'" type="button" class="btn btn-info">edit</button>
                 </td>
             </tr>
         </c:forEach>
@@ -275,7 +277,7 @@
             </th>
             <th>Gender
             </th>
-            <th>Deactivate user
+            <th>Edit user
             </th>
         </tr>
         </tfoot>
@@ -291,8 +293,4 @@
         $('#regularUserTable,#businessUserTable,#adminTable').DataTable();
         $('.dataTables_length').addClass('bs-select');
     });
-    
-    function displayDialog() {
-
-    }
 </script>

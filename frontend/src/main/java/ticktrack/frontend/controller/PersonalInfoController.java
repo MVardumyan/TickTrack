@@ -1,5 +1,6 @@
 package ticktrack.frontend.controller;
 import com.google.protobuf.util.JsonFormat;
+import common.enums.UserRole;
 import common.helpers.CustomJsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -36,31 +37,33 @@ public class PersonalInfoController {
         return "personalInfo";
     }
 
-    ////////////////////////Get user FOR ADMIN
-    @RequestMapping(value = "/personalInfo/{id}", method = RequestMethod.GET)
-    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username) {
-
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-        showPersonalInfo(request,model);
-        return "personalInfo";
-    }
-
     @RequestMapping(value = "/updateUserInfo/", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
-        try (Response response = httpClient.newCall(request).execute()) {
-            Msg result = jsonToProtobuf(response.body().string());
-            model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
-            model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
-            model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
-            model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "updateUserInfo";
+
+        return "redirect:/updateUserInfo/"+user.getUsername();
     }
 
-    @RequestMapping(value = "updateUsersInfo", method = RequestMethod.POST)
+    @RequestMapping(value = "/updateUserInfo/{username}", method = RequestMethod.GET)
+    String displayUpdateUserInfo(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user) {
+        if(user.getUsername().equals(username) || user.getRole().equals(UserRole.Admin)) {
+
+            Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+            try (Response response = httpClient.newCall(request).execute()) {
+                Msg result = jsonToProtobuf(response.body().string());
+                model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
+                model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
+                model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
+                model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return "updateUserInfo";
+        } else {
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/updateUsersInfo", method = RequestMethod.POST)
     String updateUserInfo(ModelMap model, @SessionAttribute("user") User user,
                           @RequestParam() String firstName,
                           @RequestParam() String lastName,
@@ -148,7 +151,7 @@ public class PersonalInfoController {
                 .build();
     }
 
-    void showPersonalInfo(Request request,ModelMap model){
+    private void showPersonalInfo(Request request, ModelMap model){
         try (Response response = httpClient.newCall(request).execute()) {
             Msg.Builder builder = Msg.newBuilder();
             JsonFormat.parser().merge(response.body().string(), builder);

@@ -58,7 +58,7 @@ public class AdminController {
             if(response.code()==200) {
                 Msg result = jsonToProtobuf(response.body().string());
 
-                if (result != null && result.hasSearchOperation() && result.getUserOperation().hasUserOpGetByRoleRequest()) {
+                if (result != null && result.hasUserOperation() && result.getUserOperation().hasUserOpGetResponse()) {
                     List<Msg.UserOp.UserOpGetResponse.UserInfo> userInfoList = result.getUserOperation().getUserOpGetResponse().getUserInfoList();
 
                     model.put("regularUserInfo", userInfoList
@@ -79,6 +79,7 @@ public class AdminController {
                     return "userManagement";
                 }
             }
+            logger.error("Received error from backend : code : {}; message : {}", response.code(), response.message());
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
@@ -106,7 +107,7 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "deactivateCategory/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "/deactivateCategory/{name}", method = RequestMethod.GET)
     String deactivateCategory(@PathVariable("name") String name) {
         Request request = buildRequestWithCategoryParam(backendURL + "categories/deactivate", name);
 
