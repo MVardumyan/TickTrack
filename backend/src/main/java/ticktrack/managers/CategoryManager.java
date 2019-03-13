@@ -1,6 +1,7 @@
 package ticktrack.managers;
 
 import ticktrack.entities.Category;
+import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 import ticktrack.repositories.CategoryRepository;
 import ticktrack.interfaces.ICategoryManager;
 import com.google.common.collect.Streams;
@@ -38,7 +39,7 @@ public class CategoryManager implements ICategoryManager {
             } else {
                 Category category = new Category(categoryName);
                 categoryRepository.save(category);
-                responseText = "Category" + categoryName + " created";
+                responseText = "Category " + categoryName + " created";
                 logger.debug(responseText);
 
                 return buildSuccessResponse(responseText);
@@ -66,7 +67,7 @@ public class CategoryManager implements ICategoryManager {
                 category.setDeactivated(true);
                 categoryRepository.save(category);
 
-                responseText = "Category" + categoryName + " deactivated";
+                responseText = "Category " + categoryName + " deactivated";
                 logger.debug("Category {} deactivated", responseText);
 
                 return buildSuccessResponse(responseText);
@@ -91,7 +92,7 @@ public class CategoryManager implements ICategoryManager {
             Category category = get(request.getOldName());
 
             if (category == null) {
-                responseText = "Category" + request.getOldName() + " not found";
+                responseText = "Category " + request.getOldName() + " not found";
             } else {
                 category.setName(request.getNewName());
                 categoryRepository.save(category);
@@ -124,19 +125,12 @@ public class CategoryManager implements ICategoryManager {
     @Override
     public CategoryOp.CategoryOpGetAllResponse getAll() {
         return CategoryOp.CategoryOpGetAllResponse.newBuilder()
-                .addAllCategoryName(
-                        Streams.stream(categoryRepository.findAll()).map(Category::getName).collect(Collectors.toList())
-                ).build();
-    }
-
-    @Override
-    public CategoryOp.CategoryOpGetAllResponse getAllActiveCategories() {
-        return CategoryOp.CategoryOpGetAllResponse.newBuilder()
-                .addAllCategoryName(
-                        Streams.stream(categoryRepository.findAll())
-                                .filter(category -> !category.isDeactivated())
-                                .map(Category::getName)
-                                .collect(Collectors.toList())
+                .addAllCategoryInfo(
+                        Streams.stream(categoryRepository.findAll()).map(category -> CategoryInfo.newBuilder()
+                                .setCategoryName(category.getName())
+                                .setIsDeactivated(category.isDeactivated())
+                                .build())
+                        .collect(Collectors.toList())
                 ).build();
     }
 }

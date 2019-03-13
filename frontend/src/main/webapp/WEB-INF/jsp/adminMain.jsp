@@ -90,15 +90,15 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">USER MENEGMENT</a>
+        <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">CATEGORY MENEGMENT</a>
+        <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">GROUP MENEGMENT</a>
+        <a href="#" class="sidnav-item">GROUP MANAGEMENT</a>
     </div>
 </div>
 </body>

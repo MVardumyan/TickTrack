@@ -9,12 +9,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class ErrorController {
-    private final OkHttpClient httpClient;
-
-    @Autowired
-    public ErrorController(OkHttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     @RequestMapping(value = "/error", method = RequestMethod.GET)
     public String displayErrorPage(ModelMap model) {

@@ -101,7 +101,7 @@ public class UserController {
         return protobufToJson(wrapIntoMsg(result));
     }
 
-    @RequestMapping(value = "/getUsersByRole", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/getUsersByRole", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     String getUsersByRole(@RequestBody String jsonRequest) {
         try {
