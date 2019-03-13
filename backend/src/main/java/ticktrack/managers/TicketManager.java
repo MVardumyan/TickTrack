@@ -247,9 +247,13 @@ public class TicketManager implements ITicketManager {
                     + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
             logger.debug(responseText);
 
-            return wrapCommentIntoMsg(Msg.Comment.newBuilder().setUsername(comment.getUsername())
-            .setText(comment.getText()));
-            //.setTime(comment.getTimestamp()));
+            return wrapCommentIntoMsg(Msg.Comment.newBuilder()
+                    .setUsername(comment.getUsername())
+                    .setText(comment.getText())
+                    .setTime(000000)
+            );
+
+
         }
         responseText = "Ticket " + request.getTicketId() + " not found!";
         logger.warn(responseText);

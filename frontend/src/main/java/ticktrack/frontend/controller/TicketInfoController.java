@@ -18,6 +18,7 @@ import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
 
 import java.io.IOException;
+import java.sql.Time;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
@@ -45,11 +46,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
-                    for(int i = 0; i < msg.getTicketInfo().getCommentList().size(); ++i) {
-                        model.put("commentUser", user.getUsername() + " ");
-                        model.put("commentList", msg.getTicketInfo().getCommentList().get(i).getTime() + "\n"
-                                                    + msg.getTicketInfo().getCommentList().get(i).getText() + "\n");
-                    }
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -65,11 +62,18 @@ public class TicketInfoController {
     String addComment(ModelMap model, @PathVariable("id") long id,
                         @SessionAttribute("user") User user,
                         @RequestParam() String comment) {
-        Msg.TicketOp.TicketOpAddComment.Builder requestMessage = Msg.TicketOp.TicketOpAddComment.newBuilder();
-        requestMessage.setTicketId(id);
-        //requestMessage.setNewComment(comment); todo
 
-        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(requestMessage)))
+        //if(comment!=null) {
+            Msg.Comment commentObj = Msg.Comment.newBuilder()
+                    .setUsername(user.getUsername())
+                    .setText(comment)
+                    .setTime(000000)
+                    .build();
+//        }else{
+//            logger.error("comment text is empty");
+//            return "error";
+//        }
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(commentObj,id)))
         ).execute()) {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
@@ -79,11 +83,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
-                    for(int i = 0; i < msg.getTicketInfo().getCommentList().size(); ++i) {
-                        model.put("commentUser", user.getUsername() + " ");
-                        model.put("commentList", msg.getTicketInfo().getCommentList().get(i).getTime() + "\n"
-                                + msg.getTicketInfo().getCommentList().get(i).getText() + "\n");
-                    }
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -94,10 +94,14 @@ public class TicketInfoController {
 
         return "ticketInfo";
     }
-    private Msg wrapCommentIntoMsg(Msg.TicketOp.TicketOpAddComment.Builder comment) {
+    private Msg wrapCommentIntoMsg(Msg.Comment comment,long id) {
         return Msg.newBuilder()
-                .setTicketOperation(Msg.TicketOp.newBuilder().setTicketOpAddComment(comment))
-                .build();
+                .setTicketOperation(Msg.TicketOp.newBuilder()
+                                .setTicketOpAddComment(Msg.TicketOp.TicketOpAddComment.newBuilder()
+                                        .setNewComment(comment)
+                                        .setTicketId(id)
+                            )
+                ).build();
     }
     @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
     public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id) {
@@ -138,6 +142,7 @@ public class TicketInfoController {
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -190,6 +195,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -233,6 +239,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -269,6 +276,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -305,6 +313,7 @@ public class TicketInfoController {
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -337,6 +346,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("resolve",true);
+                    model.put("commentList",msg.getTicketInfo().getCommentList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

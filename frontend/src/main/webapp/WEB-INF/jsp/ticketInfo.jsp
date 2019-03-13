@@ -5,9 +5,7 @@
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <style>
 
-        .col-md-7 {
-            width: 185.333333%;
-        }
+
     .sidnav {
         height: 250%;
         position: absolute;
@@ -61,7 +59,7 @@
 
     .sidnav-item:active {
         text-decoration: none;
-        color:  #f5821f;
+        color: #f5821f;
     }
 
     .glyphicon-search,
@@ -113,9 +111,18 @@
 
         width: 100px;
         height: 100px;
-        border:2px solid #03b1ce ;}
-    .tital{ font-size:16px; font-weight:500;}
-    .bot-border{ border-bottom:1px #f8f8f8 solid;  margin:5px 0  5px 0}
+        border: 2px solid #03b1ce;
+    }
+
+    .tital {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .bot-border {
+        border-bottom: 1px #f8f8f8 solid;
+        margin: 5px 0 5px 0
+    }
 
     .button-group {
         display: flex;
@@ -132,6 +139,10 @@
         width: 180px;
         height: 40px;
         font-size: 18px;
+    }
+
+    .comment-section {
+        width: 58%;
     }
 
 </style>
@@ -164,7 +175,7 @@
             <div class="col-md-7 ">
 
                 <div class="panel panel-default">
-                    <div class="panel-heading">  <h4 >Ticket Info</h4></div>
+                    <div class="panel-heading"><h4>Ticket Info</h4></div>
                     <div class="panel-body">
                         <div class="box box-info">
                             <div class="box-body">
@@ -179,98 +190,116 @@
                             <hr style="margin:5px 0 5px 0;">
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Summary:</div><div class="col-sm-7 col-xs-6 ">${info.summary}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Summary:</div>
+                            <div class="col-sm-7 col-xs-6 ">${info.summary}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Description:</div><div class="col-sm-7"> ${info.description}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Description:</div>
+                            <div class="col-sm-7"> ${info.description}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Status:</div><div class="col-sm-7"> ${info.status}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Status:</div>
+                            <div class="col-sm-7"> ${info.status}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Priority:</div><div class="col-sm-7"> ${info.priority}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Priority:</div>
+                            <div class="col-sm-7"> ${info.priority}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Category:</div><div class="col-sm-7"> ${info.category}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Category:</div>
+                            <div class="col-sm-7"> ${info.category}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Assignee:</div><div class="col-sm-7">${info.assignee}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Assignee:</div>
+                            <div class="col-sm-7">${info.assignee}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Group:</div><div class="col-sm-7">${info.group}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Group:</div>
+                            <div class="col-sm-7">${info.group}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Deadline:</div><div class="col-sm-7">${info.deadline}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Deadline:</div>
+                            <div class="col-sm-7">${info.deadline}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Open Date:</div><div class="col-sm-7">${info.openDate}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Open Date:</div>
+                            <div class="col-sm-7">${info.openDate}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Close Date:</div><div class="col-sm-7">${info.closeDate}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Close Date:</div>
+                            <div class="col-sm-7">${info.closeDate}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Resolution:</div><div class="col-sm-7"> ${info.resolution}</div>
+                            <div class="col-sm-5 col-xs-6 tital ">Resolution:</div>
+                            <div class="col-sm-7"> ${info.resolution}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Comments:
-                                <c:forEach var="user" items="${commentUser}">
-                                    <a href="/personalInfo/${user}">@${user}</a>
+                            <div class="col-xs-5 tital ">Comments:
+                            </div>
+                            <div class="col-xs-7 tital">
+                                <c:forEach var="comment" items="${commentList}">
+                                        <div class="col-xs-12">
+                                                <a href="/personalInfo/${comment.username}">@${comment.username}</a>
+                                                <span style="color: gray"> ${comment.time} </span>
+                                        </div>
+                                        <div class="col-xs-2"></div>
+                                        <div class="col-xs-10">
+                                            <p> ${comment.text} </p>
+                                        </div>
                                 </c:forEach>
                             </div>
-                            </div><div class="col-sm-7">
-                            <c:forEach var="comment" items="${commentList}">
-                            ${comment}
-                            </c:forEach>
+
                         </div>
-                            <div class="clearfix"></div>
-                            <div class="bot-border"></div>
-                        </div>
-                        </div>
-                        </div>
-                            <form method="post" action="/addComment/${id}" id="create_form">
-                             <label>Comment here</label>
-                                   <div class="form-group">
-                                     <textarea type="text" class="form-control" name="comment" rows="6"
-                                                     placeholder="Comment..."></textarea></div>
-                                <div class="form-group">
-                                    <input type="submit" class="btn btn-info" name="submit" value="Add Comment"/>
-                                </div>
-                         </form>
-                        </div>
-        </div>
-        <div class="button-group">
-            <form action="/updateTicket/${id}">
-                <button class="action-button">Edit</button>
-            </form>
-            <form action="/progressTicket/${id}">
-                <button class="action-button">In Progress</button>
-            </form>
-            <form action="/closeTicket/${id}">
-                <button class="action-button">Close</button>
-            </form>
-            <form action="/cancelTicket/${id}">
-                <button class="action-button">Cancel</button>
-            </form>
-            <c:if test="${resolve}">
-                <form action="/resolveTicket/${id}">
-                    <button class="action-button">Resolve</button>
+                        <div class="clearfix"></div>
+                        <div class="bot-border"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="button-group">
+                <form action="/updateTicket/${id}">
+                    <button class="action-button">Edit</button>
                 </form>
-            </c:if>
+                <form action="/progressTicket/${id}">
+                    <button class="action-button">In Progress</button>
+                </form>
+                <form action="/closeTicket/${id}">
+                    <button class="action-button">Close</button>
+                </form>
+                <form action="/cancelTicket/${id}">
+                    <button class="action-button">Cancel</button>
+                </form>
+                <c:if test="${resolve}">
+                    <form action="/resolveTicket/${id}">
+                        <button class="action-button">Resolve</button>
+                    </form>
+                </c:if>
+            </div>
         </div>
+        <form method="post" action="/addComment/${id}" id="create_form" class="comment-section">
+            <label>Comment here</label>
+            <div class="form-group">
+                                     <textarea type="text" class="form-control" name="comment" rows="6"
+                                               placeholder="Comment..."></textarea></div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-info" name="submit" value="Add Comment"/>
+            </div>
+        </form>
+
     </div>
+</div>
 </div>
 </div>
 </html>
