@@ -9,7 +9,7 @@ public interface ITicketManager {
 
     Msg updateTicket(TicketOp.TicketOpUpdateRequest request);
 
-    CommonResponse addComment(TicketOp.TicketOpAddComment request);
+    Msg addComment(TicketOp.TicketOpAddComment request);
 
     TicketInfo get(long ticket_id);
 

@@ -96,6 +96,10 @@
         width: 100% !important;
     }
 
+    .required {
+        color: red;
+    }
+
 </style>
 
 <body>
@@ -128,27 +132,31 @@
 
     <form method="post" action="createTicket" id="create_form">
         <label>Summary</label>
+        <span class="required">*</span>
         <div class="form-group">
             <input type="text" class="form-control" name="summary"
-                   placeholder="Summary">
+                   placeholder="Summary" required>
         </div>
         <label>Description</label>
+        <span class="required">*</span>
         <div class="form-group">
             <textarea type="text" class="form-control" name="description" rows="6"
-                      placeholder="Description"></textarea>
+                      placeholder="Description" required></textarea>
         </div>
         <label>Assignee</label>
-        <div class="form-group">
+        <div class="form-group"
+             oninput="document.getElementById('group').disabled=false">
             <div class="ui-widget">
                 <input type="text" class="form-control" name="assignee"
-                       placeholder="Assignee">
+                       placeholder="Assignee" id="assignee" >
             </div>
         </div>
 
         <label>Group</label>
         <div class="form-group">
-            <select id="group" name="group" multiple class="form-control">
-                <c:forEach var="group" items="${groupList}">
+            <select id="group" name="group" multiple class="form-control"
+                    oninput="document.getElementById('assignee').disabled=false" >
+                <c:forEach var="group" items="${groupList}" >
                     <option value="${group}">
                             ${group}
                     </option>
@@ -157,8 +165,9 @@
         </div>
 
         <label>Priority</label>
+        <span class="required">*</span>
         <div class="form-group">
-            <select name="priority" name="priority[]" class="form-control">
+            <select name="priority" name="priority[]" class="form-control" required>
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
@@ -167,8 +176,9 @@
         </div>
 
         <label>Category</label>
+        <span class="required">*</span>
         <div class="form-group">
-            <select name="category" name="category[]" class="form-control">
+            <select name="category" name="category[]" class="form-control" required>
                 <c:forEach var="category" items="${categoryList}">
                     <option value="${category}">
                             ${category}

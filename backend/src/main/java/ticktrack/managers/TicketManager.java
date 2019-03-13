@@ -2,7 +2,6 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
 import ticktrack.entities.*;
 import ticktrack.entities.Comment;
 import ticktrack.enums.TicketPriority;
@@ -231,8 +230,9 @@ public class TicketManager implements ITicketManager {
 
     @Transactional
     @Override
-    public CommonResponse addComment(TicketOp.TicketOpAddComment request) {
+    public Msg addComment(TicketOp.TicketOpAddComment request) {
         String responseText;
+        CommonResponse response;
         Optional<Ticket> result = ticketRepository.findById(request.getTicketId());
         if (result.isPresent()) {
             Ticket ticket = result.get();
@@ -247,11 +247,24 @@ public class TicketManager implements ITicketManager {
                     + request.getNewComment().getText() + " at " + request.getNewComment().getTime();
             logger.debug(responseText);
 
-            return buildSuccessResponse(responseText);
+            return wrapCommentIntoMsg(Msg.Comment.newBuilder()
+                    .setUsername(comment.getUsername())
+                    .setText(comment.getText())
+                    .setTime(000000)
+            );
+
+
         }
         responseText = "Ticket " + request.getTicketId() + " not found!";
         logger.warn(responseText);
-        return buildFailureResponse(responseText);
+        response = buildFailureResponse(responseText);
+        return wrapCommonResponseIntoMsg(response);
+    }
+
+    private Msg wrapCommentIntoMsg(Msg.Comment.Builder comment) {
+        return Msg.newBuilder()
+                .setComment(comment)
+                .build();
     }
 
     @Transactional

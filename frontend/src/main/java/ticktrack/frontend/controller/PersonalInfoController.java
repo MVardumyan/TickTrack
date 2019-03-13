@@ -31,7 +31,9 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/personalInfo", method = RequestMethod.GET)
     public String displayPersonalInfoPage(ModelMap model, @SessionAttribute User user) {
-
+        if(!user.getRole().equals(UserRole.RegularUser)) {
+            model.put("notRegular", true);
+        }
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
@@ -85,6 +87,9 @@ public class PersonalInfoController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
+                    if(!user.getRole().equals(UserRole.RegularUser)) {
+                        model.put("notRegular", true);
+                    }
                     Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
                     showPersonalInfo(request,model);
                 }

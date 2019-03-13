@@ -27,7 +27,7 @@
         }
 
         .sidnav {
-            height: 200%;
+            height: 400%;
             position: absolute;
             right: 86%;
             left: 0;
@@ -208,10 +208,10 @@
         <tbody>
         <c:forEach items="${ticketsCreatedByMe}" var="ticket">
             <tr>
-                <td>${ticket.ticketID}</td>
+                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
-                <td>${ticket.assignee}</td>
-                <td>${ticket.creator}</td>
+                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                 <td>${ticket.category}</td>
                 <td>${ticket.status}</td>
                 <td>${ticket.priority}</td>
