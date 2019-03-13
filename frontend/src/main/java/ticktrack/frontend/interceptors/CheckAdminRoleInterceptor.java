@@ -15,6 +15,7 @@ public class CheckAdminRoleInterceptor extends HandlerInterceptorAdapter {
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("user") == null) {
+//            response.sendRedirect(request.getContextPath() + "/login");
             return false;
         } else {
             User user = (User) session.getAttribute("user");

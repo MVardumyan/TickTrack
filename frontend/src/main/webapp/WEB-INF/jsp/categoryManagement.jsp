@@ -94,7 +94,7 @@
             padding-right: 50px;
         }
 
-        #popup-form {
+        #popup-form, #update-popup-form {
             display: none; /* Hidden by default */
             position: fixed; /* Stay in place */
             z-index: 1; /* Sit on top */
@@ -188,6 +188,8 @@
         <tr>
             <th class="th-sm">Category
             </th>
+            <th class="th-sm">Change name
+            </th>
             <th class="th-sm">Deactivate
             </th>
         </tr>
@@ -196,6 +198,23 @@
         <c:forEach items="${categories}" var="category">
             <tr>
                 <td>${category.categoryName}</td>
+                <td>
+                    <button id="updateOpener" class="btn btn-info">Change name</button>
+                    <div id="update-popup-form">
+                        <form id="updateCategory" class="popup-content" method="post" action="/admin/updateCategory">
+                            <span class="close">&times;</span>
+                            <div class="form-group">
+                                <input type="text" name="oldName" class="form-control" value="${category.categoryName}" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" name="newName" class="form-control" placeholder="New name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" class="btn btn-info" name="submit" value="Update"/>
+                            </div>
+                        </form>
+                    </div>
+                </td>
                 <c:choose>
                     <c:when test="${category.isDeactivated}">
                         <td>Deactivated</td>
@@ -214,6 +233,8 @@
         <tfoot>
         <tr>
             <th>Category
+            </th>
+            <th>Change name
             </th>
             <th>Deactivate
             </th>
@@ -241,7 +262,23 @@
         modal.style.display = "none";
     };
 
+    var updateModal = document.getElementById("update-popup-form");
+    var updateBtn = document.getElementById("updateOpener");
+
+    // var updateSpan = document.getElementsByClassName("close")[1];
+
+    updateBtn.onclick = function () {
+        updateModal.style.display = "block";
+    };
+
+    // updateSpan.onclick = function () {
+    //     updateModal.style.display = "none";
+    // };
+
     window.onclick = function (event) {
+        if (event.target === updateModal) {
+            updateModal.style.display = "none";
+        }
         if (event.target === modal) {
             modal.style.display = "none";
         }

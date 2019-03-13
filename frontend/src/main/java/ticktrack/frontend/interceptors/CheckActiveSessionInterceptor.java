@@ -24,7 +24,7 @@ public class CheckActiveSessionInterceptor extends HandlerInterceptorAdapter {
             } else {
                 User user = (User) session.getAttribute("user");
                 if(Admin.equals(user.getRole())) {
-                    response.sendRedirect(request.getContextPath() + "/adminMain");
+                    response.sendRedirect(request.getContextPath() + "/admin/main");
                 } else {
                     response.sendRedirect(request.getContextPath() + "/regUserMain");
                 }
