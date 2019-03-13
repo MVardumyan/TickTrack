@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
@@ -42,7 +39,16 @@ public class PersonalInfoController {
         return "personalInfo";
     }
 
-    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
+    ////////////////////////Get user FOR ADMIN
+    @RequestMapping(value = "/personalInfo/{id}", method = RequestMethod.GET)
+    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username) {
+
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        showPersonalInfo(request,model);
+        return "personalInfo";
+    }
+
+    @RequestMapping(value = "/updateUserInfo/", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         try (Response response = httpClient.newCall(request).execute()) {
