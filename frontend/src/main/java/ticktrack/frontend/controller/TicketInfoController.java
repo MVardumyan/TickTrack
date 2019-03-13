@@ -19,6 +19,7 @@ import ticktrack.proto.Msg;
 import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
