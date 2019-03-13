@@ -181,14 +181,27 @@
             </div>
         </form>
     </div>
+    <button id="updateOpener" class="btn btn-info" name="updateCategory" style="margin-bottom:30px;margin-top:20px;">Change name</button>
+    <div id="update-popup-form">
+        <form id="updateCategory" class="popup-content" method="post" action="/admin/updateCategory">
+            <span class="close">&times;</span>
+            <div class="form-group">
+                <input type="text" name="oldName" class="form-control" placeholder="Old name" required>
+            </div>
+            <div class="form-group">
+                <input type="text" name="newName" class="form-control" placeholder="New name" required>
+            </div>
+            <div class="form-group">
+                <input type="submit" class="btn btn-info" name="submit" value="Update"/>
+            </div>
+        </form>
+    </div>
 
     <h4>Regular Users</h4>
     <table id="regularUserTable" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
             <th class="th-sm">Category
-            </th>
-            <th class="th-sm">Change name
             </th>
             <th class="th-sm">Deactivate
             </th>
@@ -198,23 +211,6 @@
         <c:forEach items="${categories}" var="category">
             <tr>
                 <td>${category.categoryName}</td>
-                <td>
-                    <button id="updateOpener" class="btn btn-info">Change name</button>
-                    <div id="update-popup-form">
-                        <form id="updateCategory" class="popup-content" method="post" action="/admin/updateCategory">
-                            <span class="close">&times;</span>
-                            <div class="form-group">
-                                <input type="text" name="oldName" class="form-control" value="${category.categoryName}" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="text" name="newName" class="form-control" placeholder="New name" required>
-                            </div>
-                            <div class="form-group">
-                                <input type="submit" class="btn btn-info" name="submit" value="Update"/>
-                            </div>
-                        </form>
-                    </div>
-                </td>
                 <c:choose>
                     <c:when test="${category.isDeactivated}">
                         <td>Deactivated</td>
@@ -234,8 +230,6 @@
         <tr>
             <th>Category
             </th>
-            <th>Change name
-            </th>
             <th>Deactivate
             </th>
         </tr>
@@ -252,28 +246,29 @@
     var modal = document.getElementById("popup-form");
     var btn = document.getElementById("opener");
 
-    var span = document.getElementsByClassName("close")[0];
-
-    btn.onclick = function () {
-        modal.style.display = "block";
-    };
-
-    span.onclick = function () {
-        modal.style.display = "none";
-    };
-
     var updateModal = document.getElementById("update-popup-form");
     var updateBtn = document.getElementById("updateOpener");
 
-    // var updateSpan = document.getElementsByClassName("close")[1];
+    var span = document.getElementsByClassName("close")[0];
+    var updateSpan = document.getElementsByClassName("close")[1];
+
+    btn.onclick = function () {
+
+        modal.style.display = "block";
+    };
+    span.onclick = function () {
+
+        modal.style.display = "none";
+
+    };
 
     updateBtn.onclick = function () {
         updateModal.style.display = "block";
     };
 
-    // updateSpan.onclick = function () {
-    //     updateModal.style.display = "none";
-    // };
+    updateSpan.onclick = function () {
+        updateModal.style.display = "none";
+    };
 
     window.onclick = function (event) {
         if (event.target === updateModal) {
