@@ -39,6 +39,14 @@ public class PersonalInfoController {
         return "personalInfo";
     }
 
+    @RequestMapping(value = "/personalInfo/{id}", method = RequestMethod.GET)
+    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username) {
+
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        showPersonalInfo(request,model);
+        return "personalInfo";
+    }
+
     @RequestMapping(value = "/updateUserInfo/", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
 
