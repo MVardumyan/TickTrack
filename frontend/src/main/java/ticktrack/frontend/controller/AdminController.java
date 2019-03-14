@@ -33,7 +33,7 @@ import static ticktrack.proto.Msg.UserRole.*;
 public class AdminController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(AdminController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public AdminController(OkHttpClient httpClient) {

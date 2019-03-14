@@ -25,7 +25,7 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 public class SearchController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(SearchController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public SearchController(OkHttpClient httpClient) {
