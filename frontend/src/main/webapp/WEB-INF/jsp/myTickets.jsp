@@ -37,6 +37,9 @@
 
         .navigation {
             background-color: #f5821f;
+        <c:if test="${admin}">
+            background-color: brown;
+        </c:if>
             position: fixed;
             left: 0;
             right: 0;
@@ -179,6 +182,19 @@
     <div class="sidnav-item-conteiner">
         <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
+    <c:if test="${admin}">
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
+        </div>
+    </c:if>
 </div>
 <div class="body" align="left">
     <h4>Tickets created by me</h4>
@@ -274,10 +290,10 @@
         <tbody>
         <c:forEach items="${ticketsAssignedToMe}" var="ticket">
             <tr>
-                <td>${ticket.ticketID}</td>
+                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
-                <td>${ticket.assignee}</td>
-                <td>${ticket.creator}</td>
+                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                 <td>${ticket.category}</td>
                 <td>${ticket.status}</td>
                 <td>${ticket.priority}</td>
@@ -339,10 +355,10 @@
         <tbody>
         <c:forEach items="${ticketsAssignedToMyGroup}" var="ticket">
             <tr>
-                <td>${ticket.ticketID}</td>
+                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
-                <td>${ticket.assignee}</td>
-                <td>${ticket.creator}</td>
+                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                 <td>${ticket.category}</td>
                 <td>${ticket.status}</td>
                 <td>${ticket.priority}</td>

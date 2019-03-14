@@ -6,6 +6,9 @@
 <style>
     .navigation {
         background-color: #f5821f;
+    <c:if test="${admin}">
+        background-color: brown;
+    </c:if>
         position: fixed;
         left: 0;
         right: 0;

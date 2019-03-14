@@ -2,6 +2,7 @@ package ticktrack.frontend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.util.JsonFormat;
+import common.enums.UserRole;
 import common.helpers.CustomJsonParser;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -38,7 +39,7 @@ public class NewTicketController {
     }
 
     @RequestMapping(value = "/newTicket", method = RequestMethod.GET)
-    public String displayNewTicketPage(ModelMap model) {
+    public String displayNewTicketPage(ModelMap model,@SessionAttribute User user) {
         Request requestCategory = new Request.Builder()
                 .url(backendURL + "categories/getAll")
                 .build();
@@ -56,6 +57,9 @@ public class NewTicketController {
                             .filter(categoryInfo -> !categoryInfo.getIsDeactivated())
                             .map(CategoryInfo::getCategoryName)
                             .collect(Collectors.toList()));
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
@@ -124,6 +128,9 @@ public class NewTicketController {
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
                     //msg.getTicketInfo().getTicketID();
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

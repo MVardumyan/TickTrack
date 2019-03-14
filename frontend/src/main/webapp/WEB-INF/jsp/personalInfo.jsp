@@ -16,6 +16,9 @@
 
     .navigation {
         background-color: #f5821f;
+    <c:if test="${admin}">
+        background-color: brown;
+    </c:if>
         position: fixed;
         left: 0;
         right: 0;
@@ -151,6 +154,19 @@
     <div class="sidnav-item-conteiner">
         <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
+    <c:if test="${admin}">
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
+        </div>
+    </c:if>
 </div>
 <div class="body">
     <div class="row">

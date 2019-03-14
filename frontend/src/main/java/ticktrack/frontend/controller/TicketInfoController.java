@@ -44,6 +44,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -77,6 +79,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -100,14 +104,19 @@ public class TicketInfoController {
                             )
                 ).build();
     }
+
+
     @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
-    public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id) {
+    public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user) {
         Request requestCategory = new Request.Builder()
                 .url(backendURL + "categories/getAll")
                 .build();
         Request groupsRequest = new Request.Builder()
                 .url(backendURL + "userGroups/getAll")
                 .build();
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         try (Response categoryResponse = httpClient.newCall(requestCategory).execute();
              Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
             if (categoryResponse.code() == 200) {
@@ -193,6 +202,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -216,11 +227,14 @@ public class TicketInfoController {
     }
 
     @RequestMapping(value = "/closeTicket/{id}", method = RequestMethod.GET)
-    String displayCloseTicket(ModelMap model, @PathVariable("id") long id) {
+    String displayCloseTicket(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user) {
         model.put("id", id);
         model.put("close",true);
         model.put("cancel",false);
         model.put("progress",false);
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "message";
     }
 
@@ -237,6 +251,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -253,11 +269,14 @@ public class TicketInfoController {
     }
 
     @RequestMapping(value = "/progressTicket/{id}", method = RequestMethod.GET)
-    String displayInProgressTicket(ModelMap model, @PathVariable("id") long id) {
+    String displayInProgressTicket(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user) {
         model.put("id", id);
         model.put("close",false);
         model.put("cancel",false);
         model.put("progress",true);
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "message";
     }
 
@@ -274,6 +293,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -290,11 +311,14 @@ public class TicketInfoController {
     }
 
     @RequestMapping(value = "/cancelTicket/{id}", method = RequestMethod.GET)
-    String displayCancelTicket(ModelMap model, @PathVariable("id") long id) {
+    String displayCancelTicket(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user) {
         model.put("id", id);
         model.put("close",false);
         model.put("cancel",true);
         model.put("progress",false);
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "message";
     }
 
@@ -311,6 +335,8 @@ public class TicketInfoController {
                 if (msg != null) {
                     if(user.getRole().equals(UserRole.BusinessUser)){
                         model.put("resolve",true);
+                    }else if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
@@ -328,13 +354,13 @@ public class TicketInfoController {
 
 
     @RequestMapping(value = "/resolveTicket/{id}", method = RequestMethod.GET)
-    String displayResolveTicket(ModelMap model, @PathVariable("id") long id) {
+    String displayResolveTicket(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user) {
         model.put("id", id);
         return "resolveTicket";
     }
 
     @RequestMapping(value = "resolveTicket/resolveTheTicket/{id}", method = RequestMethod.POST)
-    String resolveTicket(ModelMap model, @PathVariable("id") long id,@RequestParam(required = false) String resolution) {
+    String resolveTicket(ModelMap model, @PathVariable("id") long id,@SessionAttribute User user,@RequestParam(required = false) String resolution) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
         requestMessage.setTicketID(id).setResolution(resolution).setStatus(Msg.TicketStatus.Resolved);
@@ -348,6 +374,9 @@ public class TicketInfoController {
                     model.put("id", id);
                     model.put("resolve",true);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
