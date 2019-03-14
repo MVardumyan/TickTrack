@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
+import static ticktrack.proto.Msg.UserGroupOp.*;
 import static ticktrack.proto.Msg.UserRole.*;
 
 @Controller
@@ -87,6 +88,8 @@ public class AdminController {
         }
     }
 
+    //  CATEGORIES
+
     @RequestMapping(value = "/categoryManagement", method = RequestMethod.GET)
     String displayCategoryManagementPage(ModelMap model) {
         Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAll");
@@ -102,7 +105,7 @@ public class AdminController {
             }
             return "error";
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
+            logger.error("Internal error, unable to get categories list", e);
             return "error";
         }
     }
@@ -134,6 +137,56 @@ public class AdminController {
         return processCategoryRequest(request);
     }
 
+    // GROUPS
+
+    @RequestMapping(value = "/groupManagement", method = RequestMethod.GET)
+    String displayGroupManagementPage(ModelMap model) {
+        Request request = buildRequestWithoutBody(backendURL + "userGroups/getAll");
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            if(response.code()==200) {
+                Msg result = jsonToProtobuf(response.body().string());
+
+                if(result!=null && result.hasUserGroupOperation() && result.getUserGroupOperation().hasUserGroupOpGetAllResponse()) {
+                    model.put("groups", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+                    return "groupManagement";
+                }
+            }
+            return "error";
+
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get response from server", e);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/createGroup", method = RequestMethod.POST)
+    String createGroup(@RequestParam(name = "newGroup") String groupName) {
+        Request request = buildRequestWithoutBody(backendURL + "userGroups/add/" + groupName);
+
+        return processGroupRequest(request);
+    }
+
+    @RequestMapping(value = "/deleteGroup/{groupName}", method = RequestMethod.GET)
+    String deleteGroup(@PathVariable("groupName") String groupName) {
+        Request request = buildRequestWithoutBody(backendURL + "userGroups/delete/" + groupName);
+
+        return processGroupRequest(request);
+    }
+
+    @RequestMapping(value = "/updateGroup", method = RequestMethod.POST)
+    String updateGroup(@RequestParam(name = "oldName") String oldName, @RequestParam(name = "newName") String newName) {
+        UserGroupOpUpdateRequest message = UserGroupOpUpdateRequest.newBuilder()
+                .setOldName(oldName)
+                .setNewName(newName)
+                .build();
+
+        Request request = buildRequestWithBody(backendURL + "userGroups/changeName",
+                protobufToJson(wrapIntoMsg(message)));
+
+        return processGroupRequest(request);
+    }
+
     @NotNull
     private String processCategoryRequest(Request request) {
         try(Response response = httpClient.newCall(request).execute()) {
@@ -146,7 +199,26 @@ public class AdminController {
             }
             return "error";
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
+            logger.error("Internal error, unable to get response from server", e);
+            return "error";
+        }
+    }
+
+    @NotNull
+    private String processGroupRequest(Request request) {
+        try (Response response = httpClient.newCall(request).execute()) {
+            if(response.code()==200) {
+                Msg result = jsonToProtobuf(response.body().string());
+
+                if(result!=null && result.hasCommonResponse()) {
+                    logger.debug(result.getCommonResponse().getResponseText());
+                    return "redirect:/admin/groupManagement";
+                }
+            }
+            return "error";
+
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get response from server", e);
             return "error";
         }
     }
@@ -164,6 +236,14 @@ public class AdminController {
                 .setCategoryOperation(
                         Msg.CategoryOp.newBuilder()
                             .setCategoryOpUpdateRequest(request)
+                ).build();
+    }
+
+    private Msg wrapIntoMsg(UserGroupOpUpdateRequest message) {
+        return Msg.newBuilder()
+                .setUserGroupOperation(
+                        Msg.UserGroupOp.newBuilder()
+                            .setUserGroupOpUpdateRequest(message)
                 ).build();
     }
 
