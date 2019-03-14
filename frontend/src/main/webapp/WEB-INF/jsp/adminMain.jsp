@@ -98,7 +98,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="#" class="sidnav-item">GROUP MANAGEMENT</a>
+        <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
     </div>
 </div>
 </body>

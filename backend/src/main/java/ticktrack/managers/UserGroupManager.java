@@ -42,7 +42,7 @@ public class UserGroupManager implements IUserGroupManager {
                 UserGroup group = new UserGroup();
                 group.setName(groupName);
                 groupRepository.save(group);
-                responseText = "Group" + groupName + " created";
+                responseText = "Group " + groupName + " created";
                 logger.debug(responseText);
 
                 return buildSuccessResponse(responseText);
@@ -62,7 +62,7 @@ public class UserGroupManager implements IUserGroupManager {
             UserGroup group = get(groupName);
 
             if (group == null) {
-                responseText = "Group" + groupName + " not found";
+                responseText = "Group " + groupName + " not found";
                 logger.warn(responseText);
             } else {
                 if (group.getMembers().size() == 0) {
@@ -73,7 +73,7 @@ public class UserGroupManager implements IUserGroupManager {
 
                     return buildSuccessResponse(responseText);
                 } else {
-                    responseText = "Group" + groupName + "cannot be deleted : group contains users";
+                    responseText = "Group" + groupName + " cannot be deleted : group contains users";
                     logger.warn(responseText);
                 }
             }
@@ -94,12 +94,12 @@ public class UserGroupManager implements IUserGroupManager {
             UserGroup group = get(request.getOldName());
 
             if (group == null) {
-                responseText = "Group" + request.getOldName() + " not found";
+                responseText = "Group " + request.getOldName() + " not found";
             } else {
                 group.setName(request.getNewName());
                 groupRepository.save(group);
 
-                responseText = "Group name" + request.getOldName() + "updated to " + request.getNewName();
+                responseText = "Group name " + request.getOldName() + " updated to " + request.getNewName();
                 logger.debug(responseText);
                 return buildSuccessResponse(responseText);
             }

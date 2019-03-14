@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin: Category Management</title>
+    <title>Admin: Group Management</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.css">
@@ -169,21 +169,21 @@
 </div>
 
 <div class="body" align="left">
-    <button id="opener" class="btn btn-info" name="createCategory" style="margin-bottom:30px;margin-top:20px;">Create new Category</button>
+    <button id="opener" class="btn btn-info" name="createGroup" style="margin-bottom:30px;margin-top:20px;">Create new Group</button>
     <div id="popup-form">
-        <form id="createCategory" class="popup-content" method="post" action="/admin/createCategory">
+        <form id="createGroup" class="popup-content" method="post" action="/admin/createGroup">
             <span class="close">&times;</span>
             <div class="form-group">
-                <input type="text" name="newCategory" class="form-control" placeholder="Category name" required>
+                <input type="text" name="newGroup" class="form-control" placeholder="Group name" required>
             </div>
             <div class="form-group">
                 <input type="submit" class="btn btn-info" name="submit" value="Create"/>
             </div>
         </form>
     </div>
-    <button id="updateOpener" class="btn btn-info" name="updateCategory" style="margin-bottom:30px;margin-top:20px;">Change name</button>
+    <button id="updateOpener" class="btn btn-info" name="updateGroup" style="margin-bottom:30px;margin-top:20px;">Change name</button>
     <div id="update-popup-form">
-        <form id="updateCategory" class="popup-content" method="post" action="/admin/updateCategory">
+        <form id="updateGroup" class="popup-content" method="post" action="/admin/updateGroup">
             <span class="close">&times;</span>
             <div class="form-group">
                 <input type="text" name="oldName" class="form-control" placeholder="Old name" required>
@@ -197,38 +197,31 @@
         </form>
     </div>
 
-    <h4>Categories</h4>
-    <table id="categoriesTable" class="table table-striped table-bordered table-sm" width="100%">
+    <h4>User Groups</h4>
+    <table id="groupsTable" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
         <tr>
-            <th class="th-sm">Category
+            <th class="th-sm">Group
             </th>
             <th class="th-sm">Deactivate
             </th>
         </tr>
         </thead>
         <tbody>
-        <c:forEach items="${categories}" var="category">
+        <c:forEach items="${groups}" var="group">
             <tr>
-                <td>${category.categoryName}</td>
-                <c:choose>
-                    <c:when test="${category.isDeactivated}">
-                        <td>Deactivated</td>
-                    </c:when>
-                    <c:otherwise>
-                        <td>
-                            <button onclick="location.href='/admin/deactivateCategory/${category.categoryName}'"
-                                    type="button" class="deactivate btn btn-info">Deactivate
-                            </button>
-                        </td>
-                    </c:otherwise>
-                </c:choose>
+                <td>${group}</td>
+                <td>
+                    <button onclick="location.href='/admin/deleteGroup/${group}'"
+                            type="button" class="btn btn-info">Delete
+                    </button>
+                </td>
             </tr>
         </c:forEach>
         </tbody>
         <tfoot>
         <tr>
-            <th>Category
+            <th>Group
             </th>
             <th>Deactivate
             </th>

@@ -24,16 +24,16 @@ public class UserGroupController {
         this.userGroupManager = userGroupManager;
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/add/{groupName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String addUserGroup(@RequestParam("name") String groupName) {
+    String addUserGroup(@PathVariable("groupName") String groupName) {
         Msg.CommonResponse result = userGroupManager.createUserGroup(groupName);
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
 
-    @RequestMapping(path = "/delete", method = RequestMethod.DELETE, produces = "application/json")
+    @RequestMapping(path = "/delete/{groupName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String deleteUserGroup(@RequestParam("name") String groupName) {
+    String deleteUserGroup(@PathVariable("groupName") String groupName) {
         Msg.CommonResponse result = userGroupManager.deleteUserGroup(groupName);
         return protobufToJson(wrapCommonResponseIntoMsg(result));
     }
