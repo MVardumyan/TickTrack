@@ -22,7 +22,7 @@ import static common.helpers.CustomJsonParser.jsonToProtobuf;
 public class PersonalInfoController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(NewTicketController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public PersonalInfoController(OkHttpClient httpClient) {
@@ -35,6 +35,14 @@ public class PersonalInfoController {
             model.put("notRegular", true);
         }
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
+        showPersonalInfo(request,model);
+        return "personalInfo";
+    }
+
+    @RequestMapping(value = "/personalInfo/{id}", method = RequestMethod.GET)
+    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username) {
+
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         showPersonalInfo(request,model);
         return "personalInfo";
     }
