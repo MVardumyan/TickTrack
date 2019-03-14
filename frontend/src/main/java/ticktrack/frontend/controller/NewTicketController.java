@@ -15,11 +15,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
+import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithoutBody;
@@ -28,7 +30,7 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithoutBo
 public class NewTicketController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(NewTicketController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public NewTicketController(OkHttpClient httpClient) {
@@ -49,7 +51,11 @@ public class NewTicketController {
                 Msg result = jsonToProtobuf(categoryResponse.body().string());
 
                 if (result != null) {
-                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryNameList());
+                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryInfoList()
+                            .stream()
+                            .filter(categoryInfo -> !categoryInfo.getIsDeactivated())
+                            .map(CategoryInfo::getCategoryName)
+                            .collect(Collectors.toList()));
                 }
             } else {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());

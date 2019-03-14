@@ -16,6 +16,7 @@ import common.helpers.PasswordHandler;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
+import static ticktrack.util.ResponseHandler.buildFailureResponse;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
@@ -288,10 +289,13 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
-            if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
-                return buildSuccessResponse("Password is valid");
+            if(user.isActive()) {
+                if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
+                    return buildSuccessResponse("Password is valid");
+                }
+                return buildFailureResponse("Password is invalid");
             }
-            return buildFailureResponse("Password is invalid");
+            return buildFailureResponse("User is deactivated");
         }
         responseText = "User " + request.getUsername() + " not found";
         logger.debug(responseText);
@@ -307,7 +311,7 @@ public class UserManager implements IUserManager {
                 .setGender(UserOp.Gender.valueOf(user.getGender().toString()))
                 .setIsActive(user.isActive())
                 .setEmail(user.getEmail())
-                .setRegistrationTime(user.getRegistrationTime().getTime())
+                .setRegistrationTime(user.getRegistrationTime().toString())
                 .setRole(Msg.UserRole.valueOf(user.getRole().toString()));
 
         if (user.getGroup() != null) {
@@ -315,7 +319,7 @@ public class UserManager implements IUserManager {
         }
 
         if (user.getDeactivationTime() != null) {
-            userInfo.setDeactivationTime(user.getDeactivationTime().getTime());
+            userInfo.setDeactivationTime(user.getDeactivationTime().toString());
         }
 
         return userInfo.build();

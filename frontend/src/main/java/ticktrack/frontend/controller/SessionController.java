@@ -27,7 +27,7 @@ import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
 class SessionController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(SessionController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public SessionController(OkHttpClient httpClient) {
@@ -114,7 +114,7 @@ class SessionController {
                     session.setAttribute("user", user);
 
                     if(Admin.equals(user.getRole())) {
-                        return "adminMain";
+                        return "admin/main";
                     } else {
                         model.put("name", createRequest.getUsername());
                         return "regularUserMain";

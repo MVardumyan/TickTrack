@@ -223,8 +223,8 @@ message Msg {
                 required bool isActive = 7;
                 optional string group = 8;
                 required Gender gender = 9;
-                required int64 registrationTime = 10;
-                optional int64 deactivationTime = 11;
+                required string registrationTime = 10;
+                optional string deactivationTime = 11;
             }
         }
 
@@ -266,7 +266,12 @@ message Msg {
         }
 
         message CategoryOpGetAllResponse {
-            repeated string categoryName = 1;
+            repeated CategoryInfo categoryInfo = 1;
+            
+            message CategoryInfo {
+                required string categoryName = 1;
+                required bool isDeactivated = 2;
+            }
         }
     }
     //CATEGORY OPERATIONS END

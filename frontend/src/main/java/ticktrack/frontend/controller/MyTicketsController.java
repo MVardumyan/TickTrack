@@ -27,7 +27,7 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithBody;
 @Controller
 public class MyTicketsController {
     private final OkHttpClient httpClient;
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
     private final Logger logger = LoggerFactory.getLogger(MyTicketsController.class);
 
     @Autowired
