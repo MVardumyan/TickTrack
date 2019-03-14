@@ -1,5 +1,6 @@
 package ticktrack.frontend.controller;
 
+import common.enums.UserRole;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -63,6 +64,9 @@ public class MyTicketsController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

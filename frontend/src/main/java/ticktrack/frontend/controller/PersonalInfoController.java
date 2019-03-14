@@ -34,22 +34,30 @@ public class PersonalInfoController {
         if(!user.getRole().equals(UserRole.RegularUser)) {
             model.put("notRegular", true);
         }
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
         showPersonalInfo(request,model);
         return "personalInfo";
     }
 
     @RequestMapping(value = "/personalInfo/{id}", method = RequestMethod.GET)
-    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username) {
+    public String displayPersonalInfoPage(ModelMap model, @PathVariable("id") String username,@SessionAttribute User user) {
 
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         showPersonalInfo(request,model);
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "personalInfo";
     }
 
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
-
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "redirect:/updateUserInfo/"+user.getUsername();
     }
 
@@ -64,6 +72,9 @@ public class PersonalInfoController {
                 model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
                 model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
                 model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
+                if(user.getRole().equals(UserRole.Admin)){
+                    model.put("admin",true);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -97,6 +108,9 @@ public class PersonalInfoController {
                 if (msg != null) {
                     if(!user.getRole().equals(UserRole.RegularUser)) {
                         model.put("notRegular", true);
+                        if(user.getRole().equals(UserRole.Admin)){
+                            model.put("admin",true);
+                        }
                     }
                     Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
                     showPersonalInfo(request,model);
@@ -122,7 +136,9 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     String displayChangePassword(ModelMap model, @SessionAttribute("user") User user) {
-
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         return "changePassword";
     }
 
