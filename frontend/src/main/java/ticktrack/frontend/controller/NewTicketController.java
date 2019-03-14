@@ -40,7 +40,7 @@ public class NewTicketController {
     @RequestMapping(value = "/newTicket", method = RequestMethod.GET)
     public String displayNewTicketPage(ModelMap model) {
         Request requestCategory = new Request.Builder()
-                .url("http://localhost:9001/backend/v1/categories/getAll")
+                .url(backendURL + "categories/getAll")
                 .build();
         Request groupsRequest = new Request.Builder()
                 .url(backendURL + "userGroups/getAll")

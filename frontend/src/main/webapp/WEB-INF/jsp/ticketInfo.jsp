@@ -292,7 +292,7 @@
             <label>Comment here</label>
             <div class="form-group">
                                      <textarea type="text" class="form-control" name="comment" rows="6"
-                                               placeholder="Comment..."></textarea></div>
+                                               placeholder="Comment..." required></textarea></div>
             <div class="form-group">
                 <input type="submit" class="btn btn-info" name="submit" value="Add Comment"/>
             </div>

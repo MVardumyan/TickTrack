@@ -64,16 +64,12 @@ public class TicketInfoController {
                         @SessionAttribute("user") User user,
                         @RequestParam() String comment) {
 
-        //if(comment!=null) {
             Msg.Comment commentObj = Msg.Comment.newBuilder()
                     .setUsername(user.getUsername())
                     .setText(comment)
                     .setTime(000000)
                     .build();
-//        }else{
-//            logger.error("comment text is empty");
-//            return "error";
-//        }
+
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(commentObj,id)))
         ).execute()) {
             if (response.code() == 200) {
@@ -93,7 +89,7 @@ public class TicketInfoController {
             logger.error("Internal error, unable to get users list", e);
         }
 
-        return "ticketInfo";
+        return "redirect:/ticketInfo/"+id;
     }
     private Msg wrapCommentIntoMsg(Msg.Comment comment,long id) {
         return Msg.newBuilder()
@@ -107,7 +103,7 @@ public class TicketInfoController {
     @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
     public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id) {
         Request requestCategory = new Request.Builder()
-                .url("http://localhost:9001/backend/v1/categories/getAll")
+                .url(backendURL + "categories/getAll")
                 .build();
         Request groupsRequest = new Request.Builder()
                 .url(backendURL + "userGroups/getAll")
