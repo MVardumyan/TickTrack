@@ -47,7 +47,7 @@ public class PersonalInfoController {
         return "personalInfo";
     }
 
-    @RequestMapping(value = "/updateUserInfo/", method = RequestMethod.GET)
+    @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
 
         return "redirect:/updateUserInfo/"+user.getUsername();

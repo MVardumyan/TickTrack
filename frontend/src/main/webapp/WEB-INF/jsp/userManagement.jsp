@@ -154,7 +154,7 @@
         <tbody>
         <c:forEach items="${regularUserInfo}" var="regularUser">
             <tr>
-                <td>${regularUser.username}</td>
+                <td><a href="/personalInfo/${regularUser.username}">${regularUser.username}</a></td>
                 <td>${regularUser.firstname}</td>
                 <td>${regularUser.lastname}</td>
                 <td>${regularUser.email}</td>
@@ -204,7 +204,7 @@
         <tbody>
         <c:forEach items="${businessUserInfo}" var="businessUser">
             <tr>
-                <td>${businessUser.username}</td>
+                <td><a href="/personalInfo/${businessUser.username}">${businessUser.username}</a></td>
                 <td>${businessUser.firstname}</td>
                 <td>${businessUser.lastname}</td>
                 <td>${businessUser.email}</td>
@@ -254,7 +254,7 @@
         <tbody>
         <c:forEach items="${adminInfo}" var="adminUser">
             <tr>
-                <td>${adminUser.username}</td>
+                <td><a href="/personalInfo/${adminUser.username}">${adminUser.username}</a></td>
                 <td>${adminUser.firstname}</td>
                 <td>${adminUser.lastname}</td>
                 <td>${adminUser.email}</td>
