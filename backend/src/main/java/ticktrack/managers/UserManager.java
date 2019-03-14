@@ -311,7 +311,7 @@ public class UserManager implements IUserManager {
                 .setGender(UserOp.Gender.valueOf(user.getGender().toString()))
                 .setIsActive(user.isActive())
                 .setEmail(user.getEmail())
-                .setRegistrationTime(user.getRegistrationTime().getTime())
+                .setRegistrationTime(user.getRegistrationTime().toString())
                 .setRole(Msg.UserRole.valueOf(user.getRole().toString()));
 
         if (user.getGroup() != null) {
@@ -319,7 +319,7 @@ public class UserManager implements IUserManager {
         }
 
         if (user.getDeactivationTime() != null) {
-            userInfo.setDeactivationTime(user.getDeactivationTime().getTime());
+            userInfo.setDeactivationTime(user.getDeactivationTime().toString());
         }
 
         return userInfo.build();

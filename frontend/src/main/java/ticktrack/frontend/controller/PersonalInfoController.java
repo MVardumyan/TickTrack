@@ -22,7 +22,7 @@ import static common.helpers.CustomJsonParser.jsonToProtobuf;
 public class PersonalInfoController {
     private final OkHttpClient httpClient;
     private final Logger logger = LoggerFactory.getLogger(NewTicketController.class);
-    private String backendURL = "http://localhost:9001/backend/v1/";
+    private String backendURL = "http://localhost:9201/backend/v1/";
 
     @Autowired
     public PersonalInfoController(OkHttpClient httpClient) {
