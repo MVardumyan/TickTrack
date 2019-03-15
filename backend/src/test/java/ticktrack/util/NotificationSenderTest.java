@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @BeforeEach
      void steUp(){
-        validEmails.add("armine2001@mail.ru");
+        validEmails.add("davetisyan24106@gmail.com");
         validEmails.add("davetisyan114@gmail.com");
         validEmails.add("email@domain.name");
 
