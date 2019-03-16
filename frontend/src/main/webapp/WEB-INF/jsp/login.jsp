@@ -9,6 +9,14 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script type="text/javascript">
+        var onloadCallback = function() {
+            grecaptcha.render('login-form', {
+                'sitekey' : '6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd'
+            });
+        };
+    </script>
     <style>
         .panel-login {
             border-color: #ccc;
@@ -177,6 +185,7 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <form id="login-form" action="/login" method="post" role="form" style="display: block;">
+                                    <div class="g-recaptcha" data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     <c:if test="${failure}">
                                         <p align="center" style="color:red">Invalid username or login</p>
                                     </c:if>
@@ -211,6 +220,7 @@
                                     <c:if test="${registerFailure}">
                                         <p id="invalidUsername" style="color:red">username already exists, please choose another one</p>
                                     </c:if>
+                                    <div class="g-recaptcha" data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     <div class="form-group">
                                         <form:input type="text" name="username" id="newUsername" tabindex="1"
                                                class="form-control" placeholder="Username" required="required" path="username"/>
@@ -258,6 +268,9 @@
         </div>
     </div>
 </div>
+<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
+        async defer>
+</script>
 </body>
 </html>
 
