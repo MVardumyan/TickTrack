@@ -285,9 +285,11 @@
                 </div>
             </div>
             <div class="button-group">
+                <c:if test="${notClosed}">
                 <form action="/updateTicket/${id}">
                     <button class="action-button">Edit</button>
                 </form>
+                </c:if>
                 <form action="/progressTicket/${id}">
                     <button class="action-button">In Progress</button>
                 </form>
