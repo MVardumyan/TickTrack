@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 public class NotificationSender {
 
     private static final Configuration configuration = new Configuration()
-            .domain("sandboxb037af6653fe4ca5b104396e3728d39f.mailgun.org")
-            .apiKey("36388af3b63eb7de8880661ec402ef01-9ce9335e-27fdf95e")
+            .domain("sandbox4ae2ffd66e7b4ee28828c8f8e525cca5.mailgun.org")
+            .apiKey("")
             .from("TickTrack", "TickTrack@gmail.com");
 
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
