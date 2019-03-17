@@ -108,10 +108,9 @@ public class NewTicketController {
         if(group != null){
             requestMessage.setGroup(group);
         }
-//        if(deadline != null && deadline.length() > 0){
-//            requestMessage.setDeadline(()deadline);
-//        }
-
+        if(!"".equals(deadline)){
+            requestMessage.setDeadline(deadline);
+        }
 
         Request request = new Request.Builder()
                 .url(backendURL + "Tickets/add")
