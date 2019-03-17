@@ -146,16 +146,16 @@
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="/updateUsersInfo" id="create_form">
+    <form method="post" action="/updateUsersInfo/${info.username}" id="create_form">
         <label>First name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="firstName"
-                   value=${firstName}>
+                   value=${info.firstname}>
         </div>
         <label>Last name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="lastName"
-                   value="${lastName}">
+                   value="${info.lastname}">
         </div>
         <label>Gender</label>
         <div class="form-group">
@@ -165,8 +165,18 @@
         <label>Email</label>
         <div class="form-group">
             <input type="text" class="form-control" name="email"
-                   value="${email}">
+                   value="${info.email}">
         </div>
+        <c:if test="${show}">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" name="role[]" class="form-control" required>
+                        <option value="Admin">Admin</option>
+                        <option value="RegularUser">Regular user</option>
+                        <option value="BusinessUser">Business user</option>
+                    </select>
+                </div>
+           </c:if>
 
         <div class="form-group">
             <input type="submit" class="btn btn-info" name="submit" value="Done"/>

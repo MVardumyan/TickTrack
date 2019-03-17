@@ -50,6 +50,9 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    if(!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                        model.put("notClosed", true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -85,6 +88,9 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    if(!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                        model.put("notClosed", true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -257,6 +263,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    model.put("notClosed", false);
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -299,6 +306,9 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    if(!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                        model.put("notClosed", true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -341,6 +351,9 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList",msg.getTicketInfo().getCommentList());
+                    if(!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                        model.put("notClosed", true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -376,6 +389,9 @@ public class TicketInfoController {
                     model.put("commentList",msg.getTicketInfo().getCommentList());
                     if(user.getRole().equals(UserRole.Admin)){
                         model.put("admin",true);
+                    }
+                    if(!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                        model.put("notClosed", true);
                     }
                 }
             } else {

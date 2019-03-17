@@ -16,12 +16,17 @@ import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 import ticktrack.proto.Msg.UserOp.UserOpCreateRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+
 import static common.enums.UserRole.*;
 import static common.helpers.CustomJsonParser.*;
+import static ticktrack.frontend.util.CaptchaValidation.isCaptchaValid;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
+
+import ticktrack.frontend.util.CaptchaValidation;
 
 @Controller
 class SessionController {
@@ -44,7 +49,12 @@ class SessionController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    String login(ModelMap model, HttpSession httpSession, @RequestParam String username, @RequestParam String password) {
+    String login(ModelMap model, HttpServletRequest _request,
+                 @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
+                 HttpSession httpSession, @RequestParam String username, @RequestParam String password) {
+
+        if(isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))){
+            //valid
         Msg requestMessage = buildLoginValidationRequest(username, PasswordHandler.encode(password));
 
         Request request = buildRequestWithBody(backendURL + "users/validateLogin",
@@ -90,46 +100,55 @@ class SessionController {
             logger.error("Internal error, unable to get login validation", e);
             return "error";
         }
+        }
+        else {
+            return "error";
+        }
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    String register(@ModelAttribute UserOpCreateRequest.Builder createRequest, ModelMap model, HttpSession session, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
-            bindingResult.getFieldErrors().forEach(error -> {
-                logger.error("{} : {}", error.getField(), error.getDefaultMessage());
-            });
-            return "error";
-        }
-
-        createRequest.setRole(Msg.UserRole.RegularUser);
-        Request request = buildRequestWithBody(backendURL + "users/add",
-                protobufToJson(buildCreateUserRequest(createRequest)));
-
-        try(Response response = httpClient.newCall(request).execute()) {
-            Msg result = jsonToProtobuf(response.body().string());
-            if(result!=null && result.hasCommonResponse()) {
-                Msg.CommonResponse commonResponse = result.getCommonResponse();
-                if(commonResponse.getResponseType().equals(Success)) {
-                    User user = new User(createRequest.getUsername(), RegularUser);
-                    session.setAttribute("user", user);
-
-                    if(Admin.equals(user.getRole())) {
-                        return "admin/main";
-                    } else {
-                        model.put("name", createRequest.getUsername());
-                        return "regularUserMain";
-                    }
-                } else {
-                    model.put("registerFailure", true);
-                    fillLoginPage(model);
-                    return "login";
-                }
-
-            } else {
+    String register(@ModelAttribute UserOpCreateRequest.Builder createRequest, ModelMap model, HttpServletRequest _request,
+                    @RequestParam(name="g-recaptcha-response") String recaptchaResponse, HttpSession session, BindingResult bindingResult) {
+        if(isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))) {
+            if (bindingResult.hasErrors()) {
+                bindingResult.getFieldErrors().forEach(error -> {
+                    logger.error("{} : {}", error.getField(), error.getDefaultMessage());
+                });
                 return "error";
             }
-        } catch (IOException e) {
-            logger.error("Internal error, unable to create new user", e);
+
+            createRequest.setRole(Msg.UserRole.RegularUser);
+            Request request = buildRequestWithBody(backendURL + "users/add",
+                    protobufToJson(buildCreateUserRequest(createRequest)));
+
+            try (Response response = httpClient.newCall(request).execute()) {
+                Msg result = jsonToProtobuf(response.body().string());
+                if (result != null && result.hasCommonResponse()) {
+                    Msg.CommonResponse commonResponse = result.getCommonResponse();
+                    if (commonResponse.getResponseType().equals(Success)) {
+                        User user = new User(createRequest.getUsername(), RegularUser);
+                        session.setAttribute("user", user);
+
+                        if (Admin.equals(user.getRole())) {
+                            return "admin/main";
+                        } else {
+                            model.put("name", createRequest.getUsername());
+                            return "regularUserMain";
+                        }
+                    } else {
+                        model.put("registerFailure", true);
+                        fillLoginPage(model);
+                        return "login";
+                    }
+
+                } else {
+                    return "error";
+                }
+            } catch (IOException e) {
+                logger.error("Internal error, unable to create new user", e);
+                return "error";
+            }
+        }else{
             return "error";
         }
     }
