@@ -182,8 +182,8 @@
                                 <!-- /input-group -->
                             </div>
                             <div class="col-sm-6">
-                                <h4 style="color:#00b1b1;"><c> ${username} </c></h4></span>
-                                <span><p>${role}</p></span>
+                                <h4 style="color:#00b1b1;"><c> ${username} <h6 style="color: gray"><c:if test="${active}" >active</c:if><c:if test="${deactivated}">deactivated</c:if></h6></c></h4></span>
+                                <span ><p>${role}</p></span>
                             </div>
                             <div class="clearfix"></div>
                             <hr style="margin:5px 0 5px 0;">
@@ -209,7 +209,7 @@
                             <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${regTime}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
-                        <c:if test="notRegular">
+                        <c:if test="${notRegular}">
                             <div class="col-sm-5 col-xs-6 tital " >Member of following groups:</div><div class="col-sm-7">${groups}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>

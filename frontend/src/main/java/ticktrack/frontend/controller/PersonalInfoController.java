@@ -177,6 +177,36 @@ public class PersonalInfoController {
                 .build();
     }
 
+    /////////////////////////////////////DEACTIVATE
+
+    @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.GET)
+    String deactivate(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user
+    ) {
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/deactivate/" + username)
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    if(!user.getRole().equals(UserRole.RegularUser)) {
+                        model.put("notRegular", true);
+                        if(user.getRole().equals(UserRole.Admin)){
+                            model.put("admin",true);
+                        }
+                    }
+                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+                    showPersonalInfo(request,model);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+
+
+        return "personalInfo";
+    }
     /////////////////////////////////////CHANGE PASSWORD
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
@@ -238,6 +268,13 @@ public class PersonalInfoController {
             model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
             model.put("regTime", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRegistrationTime());
             model.put("groups", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
+            if(result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getIsActive()){
+                model.put("active",true);
+                model.put("deactivated",false);
+            }else{
+                model.put("active",false);
+                model.put("deactivated",true);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

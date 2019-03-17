@@ -85,7 +85,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     String deactivate(@PathVariable("username") String username) {
         Msg.CommonResponse result = userManager.deactivate(username);
