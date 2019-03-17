@@ -85,6 +85,35 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/generateChangePasswordLink/{username}", method = RequestMethod.GET)
+    @ResponseBody
+    String generateChangePasswordLink(@PathVariable("username") String username) {
+        Msg.CommonResponse result = userManager.generateChangePasswordLink(username);
+
+        return protobufToJson(wrapCommonResponseIntoMsg(result));
+    }
+
+    @RequestMapping(value = "/validatePasswordLink", method = RequestMethod.POST, produces = "application/json")
+    @ResponseBody
+    String validatePasswordLink(@RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
+
+            if (request == null) {
+                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpValidatePasswordLink()) {
+                Msg.CommonResponse response = userManager.validatePasswordLink(request.getUserOperation().getUserOpValidatePasswordLink());
+                return protobufToJson(wrapCommonResponseIntoMsg(response));
+            }
+
+            logger.warn("No validate password link request found");
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No validate password link request found")));
+        } catch (Throwable t) {
+            logger.error("Exception appear while handling change password request", t);
+            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        }
+    }
+
     @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
     String deactivate(@PathVariable("username") String username) {
@@ -130,7 +159,7 @@ public class UserController {
 
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if(request.hasLoginRequest()) {
+            } else if (request.hasLoginRequest()) {
                 Msg.CommonResponse result = userManager.validateLoginInformation(request.getLoginRequest());
                 return protobufToJson(wrapCommonResponseIntoMsg(result));
             }

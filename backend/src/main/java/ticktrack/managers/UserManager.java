@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import common.helpers.PasswordHandler;
+import ticktrack.util.NotificationSender;
 
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
@@ -21,17 +22,20 @@ import static ticktrack.util.ResponseHandler.buildFailureResponse;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service("userMng")
 public class UserManager implements IUserManager {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
+    private final NotificationSender notificationSender;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
     @Autowired
-    public UserManager(UserRepository userRepository, GroupRepository groupRepository) {
+    public UserManager(UserRepository userRepository, GroupRepository groupRepository, NotificationSender notificationSender) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.notificationSender = notificationSender;
     }
 
     @Transactional
@@ -186,7 +190,9 @@ public class UserManager implements IUserManager {
 
             if (user.getPassword().equals(request.getOldPassword())) {
                 user.setPassword(request.getNewPassword());
+                user.setPasswordChangeLink(null);
                 userRepository.save(user);
+
                 responseText = "User " + user.getUsername() + "'s password is updated!";
                 logger.debug(responseText);
                 return wrapIntoMsg(buildUserInfo(user));
@@ -201,6 +207,57 @@ public class UserManager implements IUserManager {
             response = buildFailureResponse(responseText);
         }
         return wrapCommonResponseIntoMsg(response);
+    }
+
+    @Transactional
+    @Override
+    public CommonResponse generateChangePasswordLink(String username) {
+        String responseText;
+        Optional<User> result = userRepository.findById(username);
+
+        if (result.isPresent()) {
+            User user = result.get();
+
+            if(user.getPasswordChangeLink() == null) {
+                responseText = "Link for password change is already generated";
+                logger.debug(responseText);
+                return buildFailureResponse(responseText);
+            } else {
+                String link = UUID.randomUUID().toString().replace("-", "");
+                user.setPasswordChangeLink(link);
+                userRepository.save(user);
+
+                logger.debug("Change password link generated for user {}", username);
+                return buildSuccessResponse("Change password link generated. Notification sent");
+            }
+        } else {
+            responseText = "There is no user with username " + username;
+            logger.warn(responseText);
+            return buildFailureResponse(responseText);
+        }
+    }
+
+    @Transactional
+    @Override
+    public CommonResponse validatePasswordLink(UserOp.UserOpValidatePasswordLink request) {
+        String responseText;
+        Optional<User> result = userRepository.findById(request.getUsername());
+
+        if (result.isPresent()) {
+            User user = result.get();
+
+            if(request.getLink().equals(user.getPasswordChangeLink())) {
+                return buildSuccessResponse("Password Change Link is valid");
+            }
+
+            responseText = "Invalid Password Change Link";
+            logger.debug(responseText);
+            return buildFailureResponse(responseText);
+        } else {
+            responseText = "There is no user with username " + request.getUsername();
+            logger.warn(responseText);
+            return buildFailureResponse(responseText);
+        }
     }
 
     private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
@@ -282,6 +339,7 @@ public class UserManager implements IUserManager {
         return responseBuilder.build();
     }
 
+    @Transactional
     @Override
     public CommonResponse validateLoginInformation(LoginRequest request) {
         String responseText;

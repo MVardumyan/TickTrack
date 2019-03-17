@@ -11,6 +11,10 @@ public interface IUserManager {
 
    Msg changePassword(UserOp.UserOpChangePassword request);
 
+   CommonResponse generateChangePasswordLink(String username);
+
+   CommonResponse validatePasswordLink(UserOp.UserOpValidatePasswordLink request);
+
    CommonResponse deactivate(String username);
 
     UserOp.UserOpGetResponse get(String username);
