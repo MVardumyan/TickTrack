@@ -72,7 +72,6 @@ public class TicketInfoController {
             Msg.Comment commentObj = Msg.Comment.newBuilder()
                     .setUsername(user.getUsername())
                     .setText(comment)
-                    .setTime(000000)
                     .build();
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(commentObj,id)))

@@ -1,5 +1,7 @@
 package ticktrack.managers;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.Gender;
@@ -69,7 +71,7 @@ public class UserManager implements IUserManager {
                     newUser.setActiveStatus(true);
                     newUser.setEmail(request.getEmail());
                     newUser.setGender(Gender.valueOf(request.getGender().toString()));
-                    newUser.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
+                    newUser.setRegistrationTime(new Timestamp(getCurrentTimeInMillis()));
 
                     userRepository.save(newUser);
                     responseText = "User " + newUser.getUsername() + " created!";
@@ -272,7 +274,7 @@ public class UserManager implements IUserManager {
             User user = result.get();
             if (user.isActive()) {
                 user.setActiveStatus(false);
-                user.setDeactivationTime(new Timestamp(System.currentTimeMillis()));
+                user.setDeactivationTime(new Timestamp(getCurrentTimeInMillis()));
                 userRepository.save(user);
                 responseText = "User " + user.getUsername() + " is deactivated.";
                 logger.warn(responseText);
@@ -353,6 +355,10 @@ public class UserManager implements IUserManager {
         logger.debug(responseText);
         return buildFailureResponse(responseText);
 
+    }
+
+    private long getCurrentTimeInMillis() {
+        return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).getMillis();
     }
 
     private UserOp.UserOpGetResponse.UserInfo buildUserInfo(User user) {

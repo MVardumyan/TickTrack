@@ -237,7 +237,7 @@ public class TicketManager implements ITicketManager {
         if (result.isPresent()) {
             Ticket ticket = result.get();
             Comment comment = new Comment(request.getNewComment().getUsername(),
-                    new Timestamp(request.getNewComment().getTime()),
+                    new Timestamp(getCurrentTimeInMillis()),
                     request.getNewComment().getText());
 
             comment.setTicket(ticket);
@@ -250,10 +250,8 @@ public class TicketManager implements ITicketManager {
             return wrapCommentIntoMsg(Msg.Comment.newBuilder()
                     .setUsername(comment.getUsername())
                     .setText(comment.getText())
-                    .setTime(000000)
+                    .setTime(comment.getTimestamp().toString())
             );
-
-
         }
         responseText = "Ticket " + request.getTicketId() + " not found!";
         logger.warn(responseText);
