@@ -59,6 +59,11 @@ public class PersonalInfoController {
             } else {
                 logger.error("User info is null!");
             }
+            if (user.getRole().equals(UserRole.Admin)) {
+                model.put("admin", true);
+            } else {
+                model.put("admin", false);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
