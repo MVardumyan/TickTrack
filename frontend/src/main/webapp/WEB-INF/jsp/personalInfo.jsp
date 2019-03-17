@@ -225,7 +225,7 @@
             <button class="action-button">Edit</button>
         </form>
         <c:if test="${showPass}">
-        <form action="/changePassword">
+        <form action="/getChangePasswordLink">
             <button class="action-button">Change Password</button>
         </form>
         </c:if>

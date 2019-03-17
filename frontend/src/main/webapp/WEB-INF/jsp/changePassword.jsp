@@ -143,7 +143,7 @@
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="changePassword" id="create_form">
+    <form method="post" action="/changePassword" id="create_form">
         <label>Old Password</label>
         <div class="form-group">
             <input type="password" class="form-control" name="oldPassword"
