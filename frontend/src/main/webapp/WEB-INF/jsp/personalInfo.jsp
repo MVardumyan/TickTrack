@@ -221,7 +221,7 @@
         </div>
 
     <div class="button-group">
-        <form action="/updateUserInfo">
+        <form action="/updateUserInfo/${username}">
             <button class="action-button">Edit</button>
         </form>
         <form action="/changePassword">
