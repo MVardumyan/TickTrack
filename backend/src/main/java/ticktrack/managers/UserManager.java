@@ -224,6 +224,8 @@ public class UserManager implements IUserManager {
                 userRepository.save(user);
 
                 logger.debug("Change password link generated for user {}", username);
+                notificationSender.sendMail(user.getEmail(),
+                        "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
                 return buildSuccessResponse("Change password link generated. Notification sent");
             } else {
                 responseText = "Link for password change is already generated";
@@ -258,14 +260,6 @@ public class UserManager implements IUserManager {
             logger.warn(responseText);
             return buildFailureResponse(responseText);
         }
-    }
-
-    private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
-        return  Msg.newBuilder()
-                .setUserOperation(Msg.UserOp.newBuilder()
-                        .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
-                                .addUserInfo(userInfo)))
-                .build();
     }
 
     @Transactional
@@ -381,5 +375,13 @@ public class UserManager implements IUserManager {
         }
 
         return userInfo.build();
+    }
+
+    private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
+        return  Msg.newBuilder()
+                .setUserOperation(Msg.UserOp.newBuilder()
+                        .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
+                                .addUserInfo(userInfo)))
+                .build();
     }
 }

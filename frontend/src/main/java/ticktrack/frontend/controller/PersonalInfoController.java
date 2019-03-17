@@ -196,7 +196,7 @@ public class PersonalInfoController {
         }
     }
 
-    @RequestMapping(value = "changePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     String changePassword(ModelMap model, @SessionAttribute("user") User user,
                           @RequestParam() String oldPassword,
                           @RequestParam() String newPassword) {
