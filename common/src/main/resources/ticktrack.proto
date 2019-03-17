@@ -169,6 +169,7 @@ message Msg {
             CommonResponse userOpCommonResponse = 12;
             UserOpUpdateRequest userOpUpdateRequest = 13;
             UserOpChangePassword userOpChangePassword = 14;
+            UserOpValidatePasswordLink userOpValidatePasswordLink = 15;
             UserOpGetByRoleRequest userOpGetByRoleRequest = 18;
             UserOpGetResponse userOpGetResponse = 19;
         }
@@ -192,6 +193,11 @@ message Msg {
             optional string group = 5;
             optional UserRole role = 6;
             optional Gender gender = 7;
+        }
+
+        message UserOpValidatePasswordLink {
+            required string username = 1;
+            required string link = 2;
         }
 
         message UserOpChangePassword {

@@ -29,6 +29,9 @@
 
     .navigation {
         background-color: #f5821f;
+    <c:if test="${admin}">
+        background-color: brown;
+    </c:if>
         position: fixed;
         left: 0;
         right: 0;
@@ -120,13 +123,27 @@
     <div class="sidnav-item-conteiner">
         <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
+
+    <c:if test="${admin}">
+    <div class="sidnav-item-conteiner">
+        <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
+    </div>
+
+    <div class="sidnav-item-conteiner">
+        <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
+    </div>
+    </c:if>
 </div>
 
 <div class="container" align="left">
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="changePassword" id="create_form">
+    <form method="post" action="/changePassword" id="create_form">
         <label>Old Password</label>
         <div class="form-group">
             <input type="password" class="form-control" name="oldPassword"

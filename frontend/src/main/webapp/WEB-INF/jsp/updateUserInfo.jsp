@@ -32,6 +32,9 @@
 
         .navigation {
             background-color: #f5821f;
+        <c:if test="${admin}">
+            background-color: brown;
+        </c:if>
             position: fixed;
             left: 0;
             right: 0;
@@ -124,22 +127,35 @@
     <div class="sidnav-item-conteiner">
         <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
+    <c:if test="${admin}">
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
+        </div>
+
+        <div class="sidnav-item-conteiner">
+            <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
+        </div>
+    </c:if>
 </div>
 
 <div class="container" align="left">
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="/updateUsersInfo" id="create_form">
+    <form method="post" action="/updateUsersInfo/${info.username}" id="create_form">
         <label>First name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="firstName"
-                   value=${firstName}>
+                   value=${info.firstname}>
         </div>
         <label>Last name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="lastName"
-                   value="${lastName}">
+                   value="${info.lastname}">
         </div>
         <label>Gender</label>
         <div class="form-group">
@@ -149,8 +165,18 @@
         <label>Email</label>
         <div class="form-group">
             <input type="text" class="form-control" name="email"
-                   value="${email}">
+                   value="${info.email}">
         </div>
+        <c:if test="${show}">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" name="role[]" class="form-control" required>
+                        <option value="Admin">Admin</option>
+                        <option value="RegularUser">Regular user</option>
+                        <option value="BusinessUser">Business user</option>
+                    </select>
+                </div>
+           </c:if>
 
         <div class="form-group">
             <input type="submit" class="btn btn-info" name="submit" value="Done"/>

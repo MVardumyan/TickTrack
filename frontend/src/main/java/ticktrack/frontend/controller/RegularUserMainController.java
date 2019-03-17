@@ -25,6 +25,9 @@ public class RegularUserMainController {
         if(!user.getRole().equals(UserRole.RegularUser)) {
             model.put("notRegular", true);
         }
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         model.put("name", user.getUsername());
         return "regularUserMain";
     }

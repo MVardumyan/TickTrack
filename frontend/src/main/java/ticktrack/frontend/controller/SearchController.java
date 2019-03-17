@@ -1,6 +1,7 @@
 package ticktrack.frontend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import common.enums.UserRole;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
@@ -33,10 +35,13 @@ public class SearchController {
     }
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    String displaySearchPage(ModelMap model) {
+    String displaySearchPage(ModelMap model,@SessionAttribute User user) {
         Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAllActive");
         Request groupsRequest = buildRequestWithoutBody(backendURL + "userGroups/getAll");
 
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
+        }
         try (Response categoryResponse = httpClient.newCall(categoriesRequest).execute();
              Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
             if (categoryResponse.code() == 200) {
@@ -70,7 +75,7 @@ public class SearchController {
     }
 
     @RequestMapping(value = "searchTickets", method = RequestMethod.POST)
-    String searchTickets(ModelMap model,
+    String searchTickets(ModelMap model,@SessionAttribute User user,
                          @RequestParam(required = false) String summaryOrDescription,
                          @RequestParam(required = false) String ticket_id,
                          @RequestParam(required = false) String assignee,
@@ -179,6 +184,9 @@ public class SearchController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("tickets", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
+                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

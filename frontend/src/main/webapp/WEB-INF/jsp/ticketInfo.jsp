@@ -17,6 +17,9 @@
 
     .navigation {
         background-color: #f5821f;
+        <c:if test="${admin}">
+        background-color: brown;
+    </c:if>
         position: fixed;
         left: 0;
         right: 0;
@@ -169,6 +172,19 @@
         <div class="sidnav-item-conteiner">
             <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
         </div>
+        <c:if test="${admin}">
+            <div class="sidnav-item-conteiner">
+                <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+            </div>
+
+            <div class="sidnav-item-conteiner">
+                <a href="/admin/categoryManagement" class="sidnav-item">CATEGORY MANAGEMENT</a>
+            </div>
+
+            <div class="sidnav-item-conteiner">
+                <a href="/admin/groupManagement" class="sidnav-item">GROUP MANAGEMENT</a>
+            </div>
+        </c:if>
     </div>
     <div class="body">
         <div class="row">
@@ -269,9 +285,11 @@
                 </div>
             </div>
             <div class="button-group">
+                <c:if test="${notClosed}">
                 <form action="/updateTicket/${id}">
                     <button class="action-button">Edit</button>
                 </form>
+                </c:if>
                 <form action="/progressTicket/${id}">
                     <button class="action-button">In Progress</button>
                 </form>
@@ -292,7 +310,7 @@
             <label>Comment here</label>
             <div class="form-group">
                                      <textarea type="text" class="form-control" name="comment" rows="6"
-                                               placeholder="Comment..."></textarea></div>
+                                               placeholder="Comment..." required></textarea></div>
             <div class="form-group">
                 <input type="submit" class="btn btn-info" name="submit" value="Add Comment"/>
             </div>
