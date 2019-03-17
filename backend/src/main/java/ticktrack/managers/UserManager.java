@@ -219,16 +219,16 @@ public class UserManager implements IUserManager {
             User user = result.get();
 
             if(user.getPasswordChangeLink() == null) {
-                responseText = "Link for password change is already generated";
-                logger.debug(responseText);
-                return buildFailureResponse(responseText);
-            } else {
                 String link = UUID.randomUUID().toString().replace("-", "");
                 user.setPasswordChangeLink(link);
                 userRepository.save(user);
 
                 logger.debug("Change password link generated for user {}", username);
                 return buildSuccessResponse("Change password link generated. Notification sent");
+            } else {
+                responseText = "Link for password change is already generated";
+                logger.debug(responseText);
+                return buildFailureResponse(responseText);
             }
         } else {
             responseText = "There is no user with username " + username;

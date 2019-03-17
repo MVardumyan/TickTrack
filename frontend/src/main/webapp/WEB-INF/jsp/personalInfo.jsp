@@ -224,7 +224,7 @@
         <form action="/updateUserInfo">
             <button class="action-button">Edit</button>
         </form>
-        <form action="/changePassword">
+        <form action="/getChangePasswordLink">
             <button class="action-button">Change Password</button>
         </form>
     </div>
