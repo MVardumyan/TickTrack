@@ -182,35 +182,35 @@
                                 <!-- /input-group -->
                             </div>
                             <div class="col-sm-6">
-                                <h4 style="color:#00b1b1;"><c> ${username} <h6 style="color: gray"><c:if test="${active}" >active</c:if><c:if test="${deactivated}">deactivated</c:if></h6></c></h4></span>
+                                <h4 style="color:#00b1b1;"><c> ${info.username} <h6 style="color: gray"><c:if test="${active}" >active</c:if><c:if test="${deactivated}">deactivated</c:if></h6></c></h4></span>
                                 <span ><p>${role}</p></span>
                             </div>
                             <div class="clearfix"></div>
                             <hr style="margin:5px 0 5px 0;">
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >First Name:</div><div class="col-sm-7 col-xs-6 ">${firstName}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >First Name:</div><div class="col-sm-7 col-xs-6 ">${info.firstname}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
 
-                            <div class="col-sm-5 col-xs-6 tital " >Last Name:</div><div class="col-sm-7"> ${lastName}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Last Name:</div><div class="col-sm-7"> ${info.lastname}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Gender:</div><div class="col-sm-7"> ${gender}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Gender:</div><div class="col-sm-7"> ${info.gender}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Email:</div><div class="col-sm-7"> ${email}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Email:</div><div class="col-sm-7"> ${info.email}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
 
-                            <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${regTime}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Registration time:</div><div class="col-sm-7"> ${info.registrationTime}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         <c:if test="${notRegular}">
-                            <div class="col-sm-5 col-xs-6 tital " >Member of following groups:</div><div class="col-sm-7">${groups}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Member of following group:</div><div class="col-sm-7">${info.group}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         </c:if>
@@ -219,15 +219,18 @@
                 </div>
             </div>
         </div>
-
+    <c:if test="${show}">
     <div class="button-group">
-        <form action="/updateUserInfo/${username}">
+        <form action="/updateUserInfo/${info.username}">
             <button class="action-button">Edit</button>
         </form>
+        <c:if test="${showPass}">
         <form action="/changePassword">
             <button class="action-button">Change Password</button>
         </form>
+        </c:if>
     </div>
+    </c:if>
 </div>
 </div>
 </html>
