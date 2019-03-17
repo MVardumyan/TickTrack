@@ -30,7 +30,7 @@ public final class ResponseHandler {
          ticketMessage.addAllComment(
                  ticket.getCommentList().stream().map(
                          comment -> Msg.Comment.newBuilder()
-                                 .setTime(comment.getTimestamp().getTime())
+                                 .setTime(comment.getTimestamp().toString())
                                  .setText(comment.getText())
                                  .setUsername(comment.getUsername())
                                  .build()

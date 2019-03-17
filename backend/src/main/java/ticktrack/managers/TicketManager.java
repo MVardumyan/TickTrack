@@ -21,6 +21,7 @@ import static ticktrack.util.ResponseHandler.*;
 
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ public class TicketManager implements ITicketManager {
     private final CategoryRepository categoryRepository;
     private final GroupRepository groupRepository;
     private Logger logger = LoggerFactory.getLogger(TicketManager.class);
+    private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
     @Autowired
     public TicketManager(TicketRepository ticketRepository, UserRepository userRepository, CommentRepository commentRepository, CategoryRepository categoryRepository, GroupRepository groupRepository) {
@@ -77,7 +79,8 @@ public class TicketManager implements ITicketManager {
                 newTicket.setOpenDate(new Timestamp(getCurrentTimeInMillis()));
 
                 if (request.hasDeadline()) {
-                    newTicket.setDeadline(new Timestamp(request.getDeadline()));
+                    DateTime deadline = new DateTime(request.getDeadline());
+                    newTicket.setDeadline(new Timestamp(deadline.getMillis()));
                 }
 
                 if (request.hasAssignee()) {
@@ -169,7 +172,9 @@ public class TicketManager implements ITicketManager {
                 updateSuccess = true;
             }
             if (request.hasDeadline()) {
-                ticket.setDeadline(new Timestamp(request.getDeadline()));
+                DateTime deadline = new DateTime(request.getDeadline());
+                ticket.setDeadline(new Timestamp(deadline.getMillis()));
+
                 responseText.append("Ticket ").append(request.getTicketID()).append("'s Deadline updated!\n");
                 updateSuccess = true;
             }
@@ -237,7 +242,7 @@ public class TicketManager implements ITicketManager {
         if (result.isPresent()) {
             Ticket ticket = result.get();
             Comment comment = new Comment(request.getNewComment().getUsername(),
-                    new Timestamp(request.getNewComment().getTime()),
+                    new Timestamp(getCurrentTimeInMillis()),
                     request.getNewComment().getText());
 
             comment.setTicket(ticket);
@@ -250,21 +255,13 @@ public class TicketManager implements ITicketManager {
             return wrapCommentIntoMsg(Msg.Comment.newBuilder()
                     .setUsername(comment.getUsername())
                     .setText(comment.getText())
-                    .setTime(000000)
+                    .setTime(comment.getTimestamp().toString())
             );
-
-
         }
         responseText = "Ticket " + request.getTicketId() + " not found!";
         logger.warn(responseText);
         response = buildFailureResponse(responseText);
         return wrapCommonResponseIntoMsg(response);
-    }
-
-    private Msg wrapCommentIntoMsg(Msg.Comment.Builder comment) {
-        return Msg.newBuilder()
-                .setComment(comment)
-                .build();
     }
 
     @Transactional
@@ -284,6 +281,12 @@ public class TicketManager implements ITicketManager {
     @Override
     public SearchOp.SearchOpResponse getAll() {
         return buildTicketResponseFromQueryResult(Streams.stream(ticketRepository.findAll()).collect(Collectors.toList()));
+    }
+
+    private Msg wrapCommentIntoMsg(Msg.Comment.Builder comment) {
+        return Msg.newBuilder()
+                .setComment(comment)
+                .build();
     }
 
     private long getCurrentTimeInMillis() {
