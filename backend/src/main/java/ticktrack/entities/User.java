@@ -32,6 +32,8 @@ public class User{
    private boolean activeStatus;
    @Column
    private Timestamp deactivationTime;
+   @Column
+   private String passwordChangeLink;
 
    @ManyToOne
    private UserGroup group;
@@ -94,6 +96,10 @@ public class User{
       this.deactivationTime = deactivationTime;
    }
 
+   public void setPasswordChangeLink(String passwordChangeLink) {
+      this.passwordChangeLink = passwordChangeLink;
+   }
+
    public void setGroup(UserGroup group) {
       this.group = group;
    }
@@ -140,6 +146,10 @@ public class User{
 
    public Timestamp getDeactivationTime() {
       return deactivationTime;
+   }
+
+   public String getPasswordChangeLink() {
+      return passwordChangeLink;
    }
 
    public Set<Ticket> getCreatedTicketList() {

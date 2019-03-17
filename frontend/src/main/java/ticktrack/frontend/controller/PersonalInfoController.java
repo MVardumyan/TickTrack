@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
+import ticktrack.proto.Msg.UserOp.UserOpValidatePasswordLink;
 
 import java.io.IOException;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
+import static common.helpers.CustomJsonParser.protobufToJson;
+import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithoutBody;
+import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
 
 @Controller
 public class PersonalInfoController {
@@ -38,7 +42,7 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/personalInfo/{username}", method = RequestMethod.GET)
     public String displayPersonalInfoPage(ModelMap model, @PathVariable("username") String username, @SessionAttribute User user) {
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         showPersonalInfo(request, model, user);
         return "personalInfo";
     }
@@ -50,7 +54,7 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/updateUserInfo/{username}", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user) {
-        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
             model.put("username", username);
@@ -63,6 +67,7 @@ public class PersonalInfoController {
             e.printStackTrace();
         }
         return "updateUserInfo";
+
     }
 
     @RequestMapping(value = "/updateUsersInfo/{username}", method = RequestMethod.POST)
@@ -71,8 +76,7 @@ public class PersonalInfoController {
                           @RequestParam() String firstName,
                           @RequestParam() String lastName,
                           @RequestParam() String email,
-                          @RequestParam(required = false) String role
-    ) {
+                          @RequestParam(required = false) String role) {
 
         Msg.UserOp.UserOpUpdateRequest.Builder requestMessage = Msg.UserOp.UserOpUpdateRequest.newBuilder();
         requestMessage.setUsername(username)
@@ -111,7 +115,7 @@ public class PersonalInfoController {
                         model.put("admin", true);
                     }
                 }
-                Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+                Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
                 showPersonalInfo(request, model, user);
             }
         } else {
@@ -139,17 +143,67 @@ public class PersonalInfoController {
 
         return "personalInfo";
     }
-    /////////////////////////////////////CHANGE PASSWORD
 
-    @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
-    String displayChangePassword(ModelMap model, @SessionAttribute("user") User user) {
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
+    /////////////////////////////////////CHANGE PASSWORD
+    @RequestMapping(value = "/getChangePasswordLink", method = RequestMethod.GET)
+    String getChangePasswordLink(ModelMap model, @SessionAttribute User user) {
+        Request request = buildRequestWithoutBody(
+                backendURL + "users/generateChangePasswordLink/" + user.getUsername()
+        );
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            Msg result = jsonToProtobuf(response.body().string());
+
+            if (result != null && result.hasCommonResponse()) {
+                if (result.getCommonResponse().getResponseType().equals(Success)) {
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
+                    } else {
+                        model.put("admin", false);
+                    }
+
+                    return "passwordSuccess";
+                }
+            }
+
+            return "error";
+
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get change password link", e);
+            return "error";
         }
-        return "changePassword";
     }
 
-    @RequestMapping(value = "changePassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/changePassword/{link}", method = RequestMethod.GET)
+    String displayChangePassword(ModelMap model, @SessionAttribute("user") User user, @PathVariable("link") String link) {
+        UserOpValidatePasswordLink requestMessage = UserOpValidatePasswordLink.newBuilder()
+                .setUsername(user.getUsername())
+                .setLink(link)
+                .build();
+
+        Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/validatePasswordLink",
+                protobufToJson(wrapIntoMsg(requestMessage)));
+
+        try (Response response = httpClient.newCall(request).execute()) {
+            Msg result = jsonToProtobuf(response.body().string());
+
+            if (result != null && result.hasCommonResponse()
+                    && result.getCommonResponse().getResponseType().equals(Success)) {
+
+                if (user.getRole().equals(UserRole.Admin)) {
+                    model.put("admin", true);
+                }
+                return "changePassword";
+            }
+
+            return "error";
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get password validation response", e);
+            return "error";
+        }
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     String changePassword(ModelMap model, @SessionAttribute("user") User user,
                           @RequestParam() String oldPassword,
                           @RequestParam() String newPassword) {
@@ -169,7 +223,7 @@ public class PersonalInfoController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
+                    Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
                     showPersonalInfo(request, model, user);
                 }
             } else {
@@ -180,6 +234,14 @@ public class PersonalInfoController {
         }
 
         return "personalInfo";
+    }
+
+    private Msg wrapIntoMsg(UserOpValidatePasswordLink message) {
+        return Msg.newBuilder()
+                .setUserOperation(
+                        Msg.UserOp.newBuilder()
+                                .setUserOpValidatePasswordLink(message)
+                ).build();
     }
 
     private Msg wrapPasswordIntoMsg(Msg.UserOp.UserOpChangePassword.Builder requestMessage) {
