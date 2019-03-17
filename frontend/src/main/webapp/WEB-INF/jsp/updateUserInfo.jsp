@@ -167,6 +167,18 @@
             <input type="text" class="form-control" name="email"
                    value="${email}">
         </div>
+        <c:if test="${admin}">
+            <c:if test="${otherUsers}">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select name="role" name="role[]" class="form-control" required>
+                        <option value="Admin">Admin</option>
+                        <option value="RegularUser">Regular user</option>
+                        <option value="BusinessUser">Business user</option>
+                    </select>
+                </div>
+            </c:if>
+           </c:if>
 
         <div class="form-group">
             <input type="submit" class="btn btn-info" name="submit" value="Done"/>

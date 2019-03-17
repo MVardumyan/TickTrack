@@ -76,6 +76,9 @@ public class PersonalInfoController {
                 if(user.getRole().equals(UserRole.Admin)){
                     model.put("admin",true);
                 }
+                if(!user.getUsername().equals(username)){
+                    model.put("otherUsers",true);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -133,13 +136,15 @@ public class PersonalInfoController {
                           @SessionAttribute("user") User user,
                           @RequestParam() String firstName,
                           @RequestParam() String lastName,
-                          @RequestParam() String email
+                          @RequestParam() String email,
+                          @RequestParam() String role
     ) {
 
         Msg.UserOp.UserOpUpdateRequest.Builder requestMessage = Msg.UserOp.UserOpUpdateRequest.newBuilder();
         requestMessage.setUsername(username)
                 .setFirstName(firstName)
                 .setLastName(lastName)
+                .setRole(Msg.UserRole.valueOf(role))
                 .setEmail(email);
 //        if (gender!=null){
 //            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
