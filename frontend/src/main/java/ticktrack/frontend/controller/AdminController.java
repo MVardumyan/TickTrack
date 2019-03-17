@@ -79,9 +79,11 @@ public class AdminController {
                 }
             }
             logger.error("Received error from backend : code : {}; message : {}", response.code(), response.message());
+            model.put("error","500 error from backend");
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error","Internal error, unable to get users list");
             return "error";
         }
     }
@@ -101,9 +103,11 @@ public class AdminController {
                     return "categoryManagement";
                 }
             }
+            model.put("error","couldn't display category management page");
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
+            model.put("error","Internal error, unable to get categories list");
             return "error";
         }
     }
@@ -150,10 +154,12 @@ public class AdminController {
                     return "groupManagement";
                 }
             }
+            model.put("error","couldn't get all groups");
             return "error";
 
         } catch (IOException e) {
             logger.error("Internal error, unable to get response from server", e);
+            model.put("error","Internal error, unable to get response from server");
             return "error";
         }
     }

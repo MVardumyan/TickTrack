@@ -175,6 +175,7 @@ public class PersonalInfoController {
 
         } catch (IOException e) {
             logger.error("Internal error, unable to get change password link", e);
+            model.put("error","Internal error, unable to get change password link");
             return "error";
         }
     }
@@ -198,12 +199,13 @@ public class PersonalInfoController {
                 if (user.getRole().equals(UserRole.Admin)) {
                     model.put("admin", true);
                 }
+                model.put("error",result.getCommonResponse().getResponseText());
                 return "changePassword";
             }
-
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get password validation response", e);
+            model.put("error","Internal error, unable to get password validation response");
             return "error";
         }
     }
@@ -220,6 +222,7 @@ public class PersonalInfoController {
             requestMessage.setOldPassword(oldPassword);
             requestMessage.setNewPassword(newPassword);
         } else {
+            model.put("error","old password is empty");
             return "error";
         }
 

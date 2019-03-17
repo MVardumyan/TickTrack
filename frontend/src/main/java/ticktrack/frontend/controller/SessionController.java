@@ -50,70 +50,73 @@ class SessionController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     String login(ModelMap model, HttpServletRequest _request,
-                 @RequestParam(name="g-recaptcha-response") String recaptchaResponse,
+                 @RequestParam(name = "g-recaptcha-response") String recaptchaResponse,
                  HttpSession httpSession, @RequestParam String username, @RequestParam String password) {
 
-        if(isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))){
+        if (isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))) {
             //valid
-        Msg requestMessage = buildLoginValidationRequest(username, PasswordHandler.encode(password));
+            Msg requestMessage = buildLoginValidationRequest(username, PasswordHandler.encode(password));
 
-        Request request = buildRequestWithBody(backendURL + "users/validateLogin",
-                protobufToJson(requestMessage));
+            Request request = buildRequestWithBody(backendURL + "users/validateLogin",
+                    protobufToJson(requestMessage));
 
-        try (Response response = httpClient.newCall(request).execute()) {
-            Msg result = jsonToProtobuf(response.body().string());
-            if (result != null) {
-                if (result.getCommonResponse().getResponseType().equals(Success)) {
-                    Request roleRequest = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-                    Response roleResponse = httpClient.newCall(roleRequest).execute();
-                    Msg roleResult = jsonToProtobuf(roleResponse.body().string());
+            try (Response response = httpClient.newCall(request).execute()) {
+                Msg result = jsonToProtobuf(response.body().string());
+                if (result != null) {
+                    if (result.getCommonResponse().getResponseType().equals(Success)) {
+                        Request roleRequest = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+                        Response roleResponse = httpClient.newCall(roleRequest).execute();
+                        Msg roleResult = jsonToProtobuf(roleResponse.body().string());
 
-                    if(roleResult!=null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount()==1) {
-                        User user = new User(username,
-                                valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
-                                );
+                        if (roleResult != null && roleResult.getUserOperation().getUserOpGetResponse().getUserInfoCount() == 1) {
+                            User user = new User(username,
+                                    valueOf(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRole().name())
+                            );
 
-                        user.setUserGroup(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
+                            user.setUserGroup(roleResult.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
 
-                        httpSession.setAttribute("user", user);
+                            httpSession.setAttribute("user", user);
 
-                        model.put("name", username);
-                        if(Admin.equals(user.getRole())) {
-                            return "adminMain";
+                            model.put("name", username);
+                            if (Admin.equals(user.getRole())) {
+                                return "adminMain";
+                            } else {
+                                return "regularUserMain";
+                            }
                         } else {
-                            return "regularUserMain";
+                            model.put("error", "User not found");
+                            return "error";
                         }
                     } else {
-                        return "error";
+                        model.put("failure", true);
+                        model.put("logout", false);
+                        model.put("registerFailure", false);
+                        fillLoginPage(model);
+                        return "login";
                     }
                 } else {
-                    model.put("failure", true);
-                    model.put("logout", false);
-                    model.put("registerFailure", false);
-                    fillLoginPage(model);
-                    return "login";
+                    model.put("error", "User not found");
+                    return "error";
                 }
-            } else {
+            } catch (IOException e) {
+                logger.error("Internal error, unable to get login validation", e);
                 return "error";
             }
-        } catch (IOException e) {
-            logger.error("Internal error, unable to get login validation", e);
-            return "error";
-        }
-        }
-        else {
+        } else {
+            model.put("error","reCaptcha is not valid");
             return "error";
         }
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     String register(@ModelAttribute UserOpCreateRequest.Builder createRequest, ModelMap model, HttpServletRequest _request,
-                    @RequestParam(name="g-recaptcha-response") String recaptchaResponse, HttpSession session, BindingResult bindingResult) {
-        if(isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))) {
+                    @RequestParam(name = "g-recaptcha-response") String recaptchaResponse, HttpSession session, BindingResult bindingResult) {
+        if (isCaptchaValid("6LeMC5gUAAAAAKqvqDtTyuY-q3u5YXSHRw-7QiNH", _request.getParameter("g-recaptcha-response"))) {
             if (bindingResult.hasErrors()) {
                 bindingResult.getFieldErrors().forEach(error -> {
                     logger.error("{} : {}", error.getField(), error.getDefaultMessage());
                 });
+                model.put("error","binding result has errors");
                 return "error";
             }
 
@@ -142,13 +145,16 @@ class SessionController {
                     }
 
                 } else {
+                    model.put("error","not valid registration");
                     return "error";
                 }
             } catch (IOException e) {
                 logger.error("Internal error, unable to create new user", e);
+                model.put("error","Internal error, unable to create new user");
                 return "error";
             }
-        }else{
+        } else {
+            model.put("error","reCaptcha is not valid");
             return "error";
         }
     }
@@ -177,7 +183,7 @@ class SessionController {
         return Msg.newBuilder()
                 .setUserOperation(
                         Msg.UserOp.newBuilder()
-                            .setUserOpCreateRequest(createRequest)
+                                .setUserOpCreateRequest(createRequest)
                 ).build();
     }
 
