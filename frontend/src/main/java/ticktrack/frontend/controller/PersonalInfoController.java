@@ -1,4 +1,5 @@
 package ticktrack.frontend.controller;
+
 import com.google.protobuf.util.JsonFormat;
 import common.enums.UserRole;
 import common.helpers.CustomJsonParser;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.frontend.util.OkHttpRequestHandler;
 import ticktrack.proto.Msg;
+
 import java.io.IOException;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
@@ -35,33 +37,33 @@ public class PersonalInfoController {
     }
 
     @RequestMapping(value = "/personalInfo/{username}", method = RequestMethod.GET)
-    public String displayPersonalInfoPage(ModelMap model, @PathVariable("username") String username,@SessionAttribute User user) {
+    public String displayPersonalInfoPage(ModelMap model, @PathVariable("username") String username, @SessionAttribute User user) {
         Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-        showPersonalInfo(request,model,user);
+        showPersonalInfo(request, model, user);
         return "personalInfo";
     }
 
     @RequestMapping(value = "/updateUserInfo", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @SessionAttribute("user") User user) {
-        return "redirect:/updateUserInfo/"+user.getUsername();
+        return "redirect:/updateUserInfo/" + user.getUsername();
     }
 
     @RequestMapping(value = "/updateUserInfo/{username}", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user) {
-            Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-            try (Response response = httpClient.newCall(request).execute()) {
-                Msg result = jsonToProtobuf(response.body().string());
-                model.put("username", username);
-                if(result!=null) {
-                    model.put("info", result.getUserOperation().getUserOpGetResponse().getUserInfoList());
-                }else{
-                    logger.error("User info is null!");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+        Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        try (Response response = httpClient.newCall(request).execute()) {
+            Msg result = jsonToProtobuf(response.body().string());
+            model.put("username", username);
+            if (result != null) {
+                model.put("info", result.getUserOperation().getUserOpGetResponse().getUserInfo(0));
+            } else {
+                logger.error("User info is null!");
             }
-            return "updateUserInfo";
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return "updateUserInfo";
+    }
 
     @RequestMapping(value = "/updateUsersInfo/{username}", method = RequestMethod.POST)
     String updateUserInfo(ModelMap model, @PathVariable("username") String username,
@@ -69,26 +71,31 @@ public class PersonalInfoController {
                           @RequestParam() String firstName,
                           @RequestParam() String lastName,
                           @RequestParam() String email,
-                          @RequestParam() String role
+                          @RequestParam(required = false) String role
     ) {
 
         Msg.UserOp.UserOpUpdateRequest.Builder requestMessage = Msg.UserOp.UserOpUpdateRequest.newBuilder();
         requestMessage.setUsername(username)
                 .setFirstName(firstName)
                 .setLastName(lastName)
-                .setRole(Msg.UserRole.valueOf(role))
                 .setEmail(email);
+        if (role != null) {
+            try {
+                requestMessage.setRole(Msg.UserRole.valueOf(role));
+            } catch (IllegalArgumentException e) {
+                logger.error("There is no role input!");
+            }
+        }
 //        if (gender!=null){
 //            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
 //        }
 
-        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
         }
-
 
 
         return "personalInfo";
@@ -98,14 +105,14 @@ public class PersonalInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                if(!user.getRole().equals(UserRole.RegularUser)) {
+                if (!user.getRole().equals(UserRole.RegularUser)) {
                     model.put("notRegular", true);
-                    if(user.getRole().equals(UserRole.Admin)){
-                        model.put("admin",true);
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
                     }
                 }
                 Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
-                showPersonalInfo(request,model,user);
+                showPersonalInfo(request, model, user);
             }
         } else {
             logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -130,15 +137,14 @@ public class PersonalInfoController {
         }
 
 
-
         return "personalInfo";
     }
     /////////////////////////////////////CHANGE PASSWORD
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
     String displayChangePassword(ModelMap model, @SessionAttribute("user") User user) {
-        if(user.getRole().equals(UserRole.Admin)){
-            model.put("admin",true);
+        if (user.getRole().equals(UserRole.Admin)) {
+            model.put("admin", true);
         }
         return "changePassword";
     }
@@ -151,20 +157,20 @@ public class PersonalInfoController {
         Msg.UserOp.UserOpChangePassword.Builder requestMessage = Msg.UserOp.UserOpChangePassword.newBuilder();
         requestMessage.setUsername(user.getUsername());
 
-        if(oldPassword!=null ){
+        if (oldPassword != null) {
             requestMessage.setOldPassword(oldPassword);
             requestMessage.setNewPassword(newPassword);
-        }else {
+        } else {
             return "error";
         }
 
-        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword",CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)))
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword", CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)))
         ).execute()) {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + user.getUsername());
-                    showPersonalInfo(request,model,user);
+                    showPersonalInfo(request, model, user);
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -181,36 +187,36 @@ public class PersonalInfoController {
                 .build();
     }
 
-    private void showPersonalInfo(Request request, ModelMap model,@SessionAttribute User user){
+    private void showPersonalInfo(Request request, ModelMap model, @SessionAttribute User user) {
         try (Response response = httpClient.newCall(request).execute()) {
             Msg.Builder builder = Msg.newBuilder();
             JsonFormat.parser().merge(response.body().string(), builder);
             Msg result = builder.build();
             model.put("info", result.getUserOperation().getUserOpGetResponse().getUserInfo(0));
-            if(user.getRole().equals(UserRole.Admin) || user.getUsername().equals(result.getUserOperation()
+            if (user.getRole().equals(UserRole.Admin) || user.getUsername().equals(result.getUserOperation()
                     .getUserOpGetResponse()
                     .getUserInfo(0)
-                    .getUsername())){
-                model.put("show",true);
-                model.put("showPass",true);
+                    .getUsername())) {
+                model.put("show", true);
+                model.put("showPass", true);
             }
-            if(user.getRole().equals(UserRole.Admin) && !user.getUsername().equals(result.getUserOperation()
+            if (user.getRole().equals(UserRole.Admin) && !user.getUsername().equals(result.getUserOperation()
                     .getUserOpGetResponse()
                     .getUserInfo(0)
-                    .getUsername())){
-                model.put("showPass",false);
+                    .getUsername())) {
+                model.put("showPass", false);
             }
-            if(user.getRole().equals(UserRole.Admin)){
-                model.put("admin",true);
-            }else{
-                model.put("admin",false);
+            if (user.getRole().equals(UserRole.Admin)) {
+                model.put("admin", true);
+            } else {
+                model.put("admin", false);
             }
-            if(result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getIsActive()){
-                model.put("active",true);
-                model.put("deactivated",false);
-            }else{
-                model.put("active",false);
-                model.put("deactivated",true);
+            if (result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getIsActive()) {
+                model.put("active", true);
+                model.put("deactivated", false);
+            } else {
+                model.put("active", false);
+                model.put("deactivated", true);
             }
         } catch (IOException e) {
             e.printStackTrace();

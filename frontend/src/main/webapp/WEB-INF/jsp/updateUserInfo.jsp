@@ -150,12 +150,12 @@
         <label>First name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="firstName"
-                   value=${info.firstName}>
+                   value=${info.firstname}>
         </div>
         <label>Last name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="lastName"
-                   value="${info.lastName}">
+                   value="${info.lastname}">
         </div>
         <label>Gender</label>
         <div class="form-group">
