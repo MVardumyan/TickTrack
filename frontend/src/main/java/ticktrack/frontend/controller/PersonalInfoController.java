@@ -68,6 +68,7 @@ public class PersonalInfoController {
             Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
             try (Response response = httpClient.newCall(request).execute()) {
                 Msg result = jsonToProtobuf(response.body().string());
+                model.put("username", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getUsername());
                 model.put("firstName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getFirstname());
                 model.put("lastName", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getLastname());
                 model.put("gender", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGender());
@@ -127,11 +128,85 @@ public class PersonalInfoController {
         return "personalInfo";
     }
 
+    @RequestMapping(value = "/updateUsersInfo/{username}", method = RequestMethod.POST)
+    String updateUserInfo(ModelMap model, @PathVariable("username") String username,
+                          @SessionAttribute("user") User user,
+                          @RequestParam() String firstName,
+                          @RequestParam() String lastName,
+                          @RequestParam() String email
+    ) {
+
+        Msg.UserOp.UserOpUpdateRequest.Builder requestMessage = Msg.UserOp.UserOpUpdateRequest.newBuilder();
+        requestMessage.setUsername(username)
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setEmail(email);
+//        if (gender!=null){
+//            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
+//        }
+
+
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/update",CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    if(!user.getRole().equals(UserRole.RegularUser)) {
+                        model.put("notRegular", true);
+                        if(user.getRole().equals(UserRole.Admin)){
+                            model.put("admin",true);
+                        }
+                    }
+                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+                    showPersonalInfo(request,model);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+
+
+        return "personalInfo";
+    }
+
     private Msg wrapIntoMsg(Msg.UserOp.UserOpUpdateRequest.Builder requestMessage) {
         return Msg.newBuilder().setUserOperation(Msg.UserOp.newBuilder().setUserOpUpdateRequest(requestMessage))
                 .build();
     }
 
+    /////////////////////////////////////DEACTIVATE
+
+    @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.GET)
+    String deactivate(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user
+    ) {
+        try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/deactivate/" + username)
+        ).execute()) {
+            if (response.code() == 200) {
+                Msg msg = jsonToProtobuf(response.body().string());
+                if (msg != null) {
+                    if(!user.getRole().equals(UserRole.RegularUser)) {
+                        model.put("notRegular", true);
+                        if(user.getRole().equals(UserRole.Admin)){
+                            model.put("admin",true);
+                        }
+                    }
+                    Request request = OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+                    showPersonalInfo(request,model);
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get users list", e);
+        }
+
+
+
+        return "personalInfo";
+    }
     /////////////////////////////////////CHANGE PASSWORD
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.GET)
@@ -193,6 +268,13 @@ public class PersonalInfoController {
             model.put("email", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getEmail());
             model.put("regTime", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getRegistrationTime());
             model.put("groups", result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getGroup());
+            if(result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getIsActive()){
+                model.put("active",true);
+                model.put("deactivated",false);
+            }else{
+                model.put("active",false);
+                model.put("deactivated",true);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

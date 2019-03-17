@@ -146,7 +146,7 @@
     <h4 align="left" class="container__header">Edit User Information</h4>
 
 
-    <form method="post" action="/updateUsersInfo" id="create_form">
+    <form method="post" action="/updateUsersInfo/${username}" id="create_form">
         <label>First name</label>
         <div class="form-group">
             <input type="text" class="form-control" name="firstName"
