@@ -77,10 +77,10 @@ class SessionController {
 
                         httpSession.setAttribute("user", user);
 
+                        model.put("name", username);
                         if(Admin.equals(user.getRole())) {
                             return "adminMain";
                         } else {
-                            model.put("name", username);
                             return "regularUserMain";
                         }
                     } else {
