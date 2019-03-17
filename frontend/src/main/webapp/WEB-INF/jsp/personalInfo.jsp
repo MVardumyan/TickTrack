@@ -183,7 +183,7 @@
                             </div>
                             <div class="col-sm-6">
                                 <h4 style="color:#00b1b1;"><c> ${info.username} <h6 style="color: gray"><c:if test="${active}" >active</c:if><c:if test="${deactivated}">deactivated</c:if></h6></c></h4></span>
-                                <span ><p>${role}</p></span>
+                                <span ><p>${info.role}</p></span>
                             </div>
                             <div class="clearfix"></div>
                             <hr style="margin:5px 0 5px 0;">
