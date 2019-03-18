@@ -151,7 +151,7 @@ public class PersonalInfoController {
 
     /////////////////////////////////////CHANGE PASSWORD
     @RequestMapping(value = "/getChangePasswordLink", method = RequestMethod.GET)
-    String getChangePasswordLink(ModelMap model, @SessionAttribute User user) {
+    String getChangePasswordLink(ModelMap model, @SessionAttribute("user") User user) {
         Request request = buildRequestWithoutBody(
                 backendURL + "users/generateChangePasswordLink/" + user.getUsername()
         );
@@ -159,11 +159,6 @@ public class PersonalInfoController {
             Msg result = jsonToProtobuf(response.body().string());
             if (result != null && result.hasCommonResponse()) {
                 if (result.getCommonResponse().getResponseType().equals(Success)) {
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    } else {
-                        model.put("admin", false);
-                    }
                     return "passwordSuccess";
                 }
             }
@@ -174,6 +169,36 @@ public class PersonalInfoController {
             logger.error("Internal error, unable to get change password link", e);
             model.put("error", "Internal error, unable to get change password link");
             return "error";
+        }
+    }
+
+    @RequestMapping(value = "/getChangePasswordLinkFromLogin", method = RequestMethod.GET)
+    String getChangePasswordLinkFromLogin(ModelMap model, @RequestParam String username) {
+        Request request = buildRequestWithoutBody(
+                backendURL + "users/generateChangePasswordLink/" + username
+        );
+        try (Response response = httpClient.newCall(request).execute()) {
+            Msg result = jsonToProtobuf(response.body().string());
+            if (result != null && result.hasCommonResponse()) {
+                if (result.getCommonResponse().getResponseType().equals(Success)) {
+                    model.put("forgotPasswordResponse", "Link for password change is sent to your mail address");
+                    model.put("genders", Msg.UserOp.Gender.values());
+                    model.put("createRequest", Msg.UserOp.UserOpCreateRequest.newBuilder());
+                    return "login";
+                }
+            }
+
+            logger.error("Unable to generate Change Password Link");
+            model.put("forgotPasswordResponse", "Unable to generate Change Password Link");
+            model.put("genders", Msg.UserOp.Gender.values());
+            model.put("createRequest", Msg.UserOp.UserOpCreateRequest.newBuilder());
+            return "login";
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get change password link", e);
+            model.put("forgotPasswordResponse", "Internal error, unable to get change password link");
+            model.put("genders", Msg.UserOp.Gender.values());
+            model.put("createRequest", Msg.UserOp.UserOpCreateRequest.newBuilder());
+            return "login";
         }
     }
 
