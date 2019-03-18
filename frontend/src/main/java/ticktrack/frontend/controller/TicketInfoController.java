@@ -72,7 +72,6 @@ public class TicketInfoController {
             Msg.Comment commentObj = Msg.Comment.newBuilder()
                     .setUsername(user.getUsername())
                     .setText(comment)
-                    .setTime(000000)
                     .build();
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/addComment", CustomJsonParser.protobufToJson(wrapCommentIntoMsg(commentObj,id)))
@@ -197,9 +196,9 @@ public class TicketInfoController {
         if (group != null) {
             requestMessage.setGroup(group);
         }
-//        if(deadline != null && deadline.length() > 0){
-//            requestMessage.setDeadline(()deadline);
-//        }
+        if(!"".equals(deadline)){
+            requestMessage.setDeadline(deadline);
+        }
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
