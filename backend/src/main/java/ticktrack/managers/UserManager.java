@@ -49,7 +49,7 @@ public class UserManager implements IUserManager {
         if (request != null) {
             Optional<User> searchResult = userRepository.findByUsername(request.getUsername());
 
-            if(searchResult.isPresent()) {
+            if (searchResult.isPresent()) {
                 response = buildFailureResponse("User with this username already exists");
             } else {
                 try {
@@ -220,20 +220,14 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if(user.getPasswordChangeLink() == null) {
-                String link = UUID.randomUUID().toString().replace("-", "");
-                user.setPasswordChangeLink(link);
-                userRepository.save(user);
+            String link = UUID.randomUUID().toString().replace("-", "");
+            user.setPasswordChangeLink(link);
+            userRepository.save(user);
 
-                logger.debug("Change password link generated for user {}", username);
-                notificationSender.sendMail(user.getEmail(),
-                        "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
-                return buildSuccessResponse("Change password link generated. Notification sent");
-            } else {
-                responseText = "Link for password change is already generated";
-                logger.debug(responseText);
-                return buildFailureResponse(responseText);
-            }
+            logger.debug("Change password link generated for user {}", username);
+            notificationSender.sendMail(user.getEmail(),
+                    "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
+            return buildSuccessResponse("Change password link generated. Notification sent");
         } else {
             responseText = "There is no user with username " + username;
             logger.warn(responseText);
@@ -250,7 +244,7 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if(request.getLink().equals(user.getPasswordChangeLink())) {
+            if (request.getLink().equals(user.getPasswordChangeLink())) {
                 return buildSuccessResponse("Password Change Link is valid");
             }
 
@@ -343,7 +337,7 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
-            if(user.isActive()) {
+            if (user.isActive()) {
                 if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
                     return buildSuccessResponse("Password is valid");
                 }
@@ -384,7 +378,7 @@ public class UserManager implements IUserManager {
     }
 
     private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
-        return  Msg.newBuilder()
+        return Msg.newBuilder()
                 .setUserOperation(Msg.UserOp.newBuilder()
                         .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
                                 .addUserInfo(userInfo)))
