@@ -103,7 +103,7 @@ class SessionController {
                 return "error";
             }
         } else {
-            model.put("error","reCaptcha is not valid");
+            model.put("error", "reCAPTCHA is not valid");
             return "error";
         }
     }
@@ -116,7 +116,7 @@ class SessionController {
                 bindingResult.getFieldErrors().forEach(error -> {
                     logger.error("{} : {}", error.getField(), error.getDefaultMessage());
                 });
-                model.put("error","binding result has errors");
+                model.put("error", "binding result has errors");
                 return "error";
             }
 
@@ -145,16 +145,16 @@ class SessionController {
                     }
 
                 } else {
-                    model.put("error","not valid registration");
+                    model.put("error", "not valid registration");
                     return "error";
                 }
             } catch (IOException e) {
                 logger.error("Internal error, unable to create new user", e);
-                model.put("error","Internal error, unable to create new user");
+                model.put("error", "Internal error, unable to create new user");
                 return "error";
             }
         } else {
-            model.put("error","reCaptcha is not valid");
+            model.put("error", "reCAPTCHA is not valid");
             return "error";
         }
     }

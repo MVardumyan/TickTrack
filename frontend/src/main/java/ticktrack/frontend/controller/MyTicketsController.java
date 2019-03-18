@@ -37,7 +37,7 @@ public class MyTicketsController {
     }
 
     @RequestMapping(value = "/myTickets", method = RequestMethod.GET)
-    String displayMyTickets(ModelMap model,@SessionAttribute("user") User user) {
+    String displayMyTickets(ModelMap model, @SessionAttribute("user") User user) {
 
         Msg.SearchOp.SearchOpRequest.Builder requestCreatedByMe = Msg.SearchOp.SearchOpRequest.newBuilder();
         Msg.SearchOp.SearchOpRequest.Builder requestAssignedToMe = Msg.SearchOp.SearchOpRequest.newBuilder();
@@ -47,7 +47,7 @@ public class MyTicketsController {
         requestAssignedToMe.setAssignee(user.getUsername());
 
         if (user.getUserGroup() != null) {
-           requestAssignedToMyGroups.setGroup(user.getUserGroup());
+            requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
         Request reqCreatedByMe = buildRequestWithBody(backendURL + "search",
@@ -64,15 +64,17 @@ public class MyTicketsController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
-                    if(user.getRole().equals(UserRole.Admin)){
-                        model.put("admin",true);
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
                     }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
 
         try (Response response = httpClient.newCall(reqAssignedToMe).execute()) {
@@ -83,11 +85,12 @@ public class MyTicketsController {
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
-
         try (Response response = httpClient.newCall(reqAssignedToMyGroups).execute()) {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
@@ -96,12 +99,12 @@ public class MyTicketsController {
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
-
-
         return "myTickets";
     }
 

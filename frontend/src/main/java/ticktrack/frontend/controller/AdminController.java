@@ -39,7 +39,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
-    String displaySearchPage(ModelMap model,@SessionAttribute("user") User user) {
+    String displaySearchPage(ModelMap model, @SessionAttribute("user") User user) {
         model.put("name", user.getUsername());
         return "adminMain";
     }
@@ -54,7 +54,7 @@ public class AdminController {
                 protobufToJson(wrapIntoMsg(message)));
 
         try (Response response = httpClient.newCall(request).execute()) {
-            if(response.code()==200) {
+            if (response.code() == 200) {
                 Msg result = jsonToProtobuf(response.body().string());
 
                 if (result != null && result.hasUserOperation() && result.getUserOperation().hasUserOpGetResponse()) {
@@ -79,11 +79,11 @@ public class AdminController {
                 }
             }
             logger.error("Received error from backend : code : {}; message : {}", response.code(), response.message());
-            model.put("error","500 error from backend");
+            model.put("error", "500 Received error from backend");
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
-            model.put("error","Internal error, unable to get users list");
+            model.put("error", "Internal error, unable to get users list");
             return "error";
         }
     }
@@ -94,20 +94,20 @@ public class AdminController {
     String displayCategoryManagementPage(ModelMap model) {
         Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAll");
 
-        try(Response response = httpClient.newCall(categoriesRequest).execute()) {
-            if(response.code()==200) {
+        try (Response response = httpClient.newCall(categoriesRequest).execute()) {
+            if (response.code() == 200) {
                 Msg result = jsonToProtobuf(response.body().string());
 
-                if(result!=null && result.hasCategoryOperation() && result.getCategoryOperation().hasCategoryOpGetAllResponse()) {
+                if (result != null && result.hasCategoryOperation() && result.getCategoryOperation().hasCategoryOpGetAllResponse()) {
                     model.put("categories", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryInfoList());
                     return "categoryManagement";
                 }
             }
-            model.put("error","couldn't display category management page");
+            model.put("error", "couldn't display category management page");
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
-            model.put("error","Internal error, unable to get categories list");
+            model.put("error", "Internal error, unable to get categories list");
             return "error";
         }
     }
@@ -132,10 +132,8 @@ public class AdminController {
                 .setOldName(oldName)
                 .setNewName(newName)
                 .build();
-
         Request request = buildRequestWithBody(backendURL + "categories/changeName",
                 protobufToJson(wrapIntoMsg(message)));
-
         return processCategoryRequest(request);
     }
 
@@ -146,20 +144,20 @@ public class AdminController {
         Request request = buildRequestWithoutBody(backendURL + "userGroups/getAll");
 
         try (Response response = httpClient.newCall(request).execute()) {
-            if(response.code()==200) {
+            if (response.code() == 200) {
                 Msg result = jsonToProtobuf(response.body().string());
 
-                if(result!=null && result.hasUserGroupOperation() && result.getUserGroupOperation().hasUserGroupOpGetAllResponse()) {
+                if (result != null && result.hasUserGroupOperation() && result.getUserGroupOperation().hasUserGroupOpGetAllResponse()) {
                     model.put("groups", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
                     return "groupManagement";
                 }
             }
-            model.put("error","couldn't get all groups");
+            model.put("error", "couldn't get all groups");
             return "error";
 
         } catch (IOException e) {
             logger.error("Internal error, unable to get response from server", e);
-            model.put("error","Internal error, unable to get response from server");
+            model.put("error", "Internal error, unable to get response from server");
             return "error";
         }
     }
@@ -193,10 +191,10 @@ public class AdminController {
 
     @NotNull
     private String processCategoryRequest(Request request) {
-        try(Response response = httpClient.newCall(request).execute()) {
-            if(response.code()==200) {
+        try (Response response = httpClient.newCall(request).execute()) {
+            if (response.code() == 200) {
                 Msg result = jsonToProtobuf(response.body().string());
-                if(result!=null && result.hasCommonResponse()) {
+                if (result != null && result.hasCommonResponse()) {
                     logger.debug(result.getCommonResponse().getResponseText());
                     return "redirect:/admin/categoryManagement";
                 }
@@ -211,10 +209,10 @@ public class AdminController {
     @NotNull
     private String processGroupRequest(Request request) {
         try (Response response = httpClient.newCall(request).execute()) {
-            if(response.code()==200) {
+            if (response.code() == 200) {
                 Msg result = jsonToProtobuf(response.body().string());
 
-                if(result!=null && result.hasCommonResponse()) {
+                if (result != null && result.hasCommonResponse()) {
                     logger.debug(result.getCommonResponse().getResponseText());
                     return "redirect:/admin/groupManagement";
                 }
@@ -231,7 +229,7 @@ public class AdminController {
         return Msg.newBuilder()
                 .setUserOperation(
                         Msg.UserOp.newBuilder()
-                            .setUserOpGetByRoleRequest(request)
+                                .setUserOpGetByRoleRequest(request)
                 ).build();
     }
 
@@ -239,7 +237,7 @@ public class AdminController {
         return Msg.newBuilder()
                 .setCategoryOperation(
                         Msg.CategoryOp.newBuilder()
-                            .setCategoryOpUpdateRequest(request)
+                                .setCategoryOpUpdateRequest(request)
                 ).build();
     }
 
@@ -247,7 +245,7 @@ public class AdminController {
         return Msg.newBuilder()
                 .setUserGroupOperation(
                         Msg.UserGroupOp.newBuilder()
-                            .setUserGroupOpUpdateRequest(message)
+                                .setUserGroupOpUpdateRequest(message)
                 ).build();
     }
 
