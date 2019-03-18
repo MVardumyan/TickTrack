@@ -35,20 +35,46 @@ public class SearchController {
     }
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
-    String displaySearchPage(ModelMap model, @SessionAttribute User user) {
-        Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAllActive");
+    String displaySearchPage(ModelMap model,@SessionAttribute User user) {
+        Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAll");
         Request groupsRequest = buildRequestWithoutBody(backendURL + "userGroups/getAll");
 
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
+        if(user.getRole().equals(UserRole.Admin)){
+            model.put("admin",true);
         }
-        TicketInfoController.categoryResponseUtil(model, categoriesRequest, groupsRequest, httpClient, logger);
+        try (Response categoryResponse = httpClient.newCall(categoriesRequest).execute();
+             Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
+            if (categoryResponse.code() == 200) {
+                Msg result = jsonToProtobuf(categoryResponse.body().string());
+
+                if (result != null) {
+                    model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryInfoList()
+                            .stream()
+                            .map(CategoryInfo::getCategoryName)
+                            .collect(Collectors.toList()));
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
+            }
+
+            if (groupResponse.code() == 200) {
+                Msg result = jsonToProtobuf(groupResponse.body().string());
+
+                if (result != null) {
+                    model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+                }
+            } else {
+                logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
+            }
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get categories list", e);
+        }
 
         return "searchTicket";
     }
 
     @RequestMapping(value = "searchTickets", method = RequestMethod.POST)
-    String searchTickets(ModelMap model, @SessionAttribute User user,
+    String searchTickets(ModelMap model,@SessionAttribute User user,
                          @RequestParam(required = false) String summaryOrDescription,
                          @RequestParam(required = false) String ticket_id,
                          @RequestParam(required = false) String assignee,
@@ -157,8 +183,8 @@ public class SearchController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("tickets", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
+                    if(user.getRole().equals(UserRole.Admin)){
+                        model.put("admin",true);
                     }
                 }
             } else {
