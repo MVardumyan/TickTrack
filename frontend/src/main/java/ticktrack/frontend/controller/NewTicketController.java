@@ -59,11 +59,13 @@ public class NewTicketController {
                 }
             } else {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
+                model.put("error","Error received from backend, unable to get categories list");
             }
 
             TicketInfoController.groupListResultUtil(model, logger, groupResponse);
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
+            model.put("error","Internal error, unable to get categories list");
         }
 
         return "newTicket";
@@ -121,9 +123,11 @@ public class NewTicketController {
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error","Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error","Internal error, unable to get users list");
         }
 
         return "ticketInfo";
