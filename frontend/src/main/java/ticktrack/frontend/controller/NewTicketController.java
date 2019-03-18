@@ -1,7 +1,6 @@
 package ticktrack.frontend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.protobuf.util.JsonFormat;
+
 import common.enums.UserRole;
 import common.helpers.CustomJsonParser;
 import okhttp3.MediaType;
@@ -19,13 +18,9 @@ import ticktrack.proto.Msg;
 import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
-import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithoutBody;
 
 @Controller
 public class NewTicketController {
@@ -39,7 +34,7 @@ public class NewTicketController {
     }
 
     @RequestMapping(value = "/newTicket", method = RequestMethod.GET)
-    public String displayNewTicketPage(ModelMap model,@SessionAttribute User user) {
+    public String displayNewTicketPage(ModelMap model, @SessionAttribute User user) {
         Request requestCategory = new Request.Builder()
                 .url(backendURL + "categories/getAll")
                 .build();
@@ -57,23 +52,16 @@ public class NewTicketController {
                             .filter(categoryInfo -> !categoryInfo.getIsDeactivated())
                             .map(CategoryInfo::getCategoryName)
                             .collect(Collectors.toList()));
-                    if(user.getRole().equals(UserRole.Admin)){
-                        model.put("admin",true);
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
                     }
+                    model.put("notClosed",true);
                 }
             } else {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
             }
 
-            if (groupResponse.code() == 200) {
-                Msg result = jsonToProtobuf(groupResponse.body().string());
-
-                if (result != null) {
-                    model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
-                }
-            } else {
-                logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
-            }
+            TicketInfoController.groupListResultUtil(model, logger, groupResponse);
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
         }
@@ -84,13 +72,13 @@ public class NewTicketController {
     @RequestMapping(value = "createTicket", method = RequestMethod.POST)
     String createTicket(ModelMap model,
                         @SessionAttribute("user") User user,
-                         @RequestParam() String summary,
-                         @RequestParam() String description,
-                         @RequestParam(required = false) String assignee,
-                         @RequestParam(required = false) String group,
-                         @RequestParam() String priority,
-                         @RequestParam() String category,
-                         @RequestParam(required = false) String deadline
+                        @RequestParam() String summary,
+                        @RequestParam() String description,
+                        @RequestParam(required = false) String assignee,
+                        @RequestParam(required = false) String group,
+                        @RequestParam() String priority,
+                        @RequestParam() String category,
+                        @RequestParam(required = false) String deadline
 
     ) {
 
@@ -102,13 +90,13 @@ public class NewTicketController {
                 .setDescription(description)
                 .setPriority(priority)
                 .setCategory(category);
-        if(assignee != null){
+        if (assignee != null) {
             requestMessage.setAssignee(assignee);
         }
-        if(group != null){
+        if (group != null) {
             requestMessage.setGroup(group);
         }
-        if(!"".equals(deadline)){
+        if (!"".equals(deadline)) {
             requestMessage.setDeadline(deadline);
         }
 
@@ -127,8 +115,8 @@ public class NewTicketController {
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
                     //msg.getTicketInfo().getTicketID();
-                    if(user.getRole().equals(UserRole.Admin)){
-                        model.put("admin",true);
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
                     }
                 }
             } else {
@@ -143,8 +131,8 @@ public class NewTicketController {
 
     private Msg wrapIntoMsg(Msg.TicketOp.TicketOpCreateRequest.Builder requestMessage) {
         return Msg.newBuilder().setTicketOperation(
-                        Msg.TicketOp.newBuilder().setTicketOpCreateRequest(requestMessage)
-                )
+                Msg.TicketOp.newBuilder().setTicketOpCreateRequest(requestMessage)
+        )
                 .build();
     }
 }

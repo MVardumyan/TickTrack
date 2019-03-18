@@ -61,7 +61,7 @@ public class PersonalInfoController {
             if (result != null) {
                 model.put("info", result.getUserOperation().getUserOpGetResponse().getUserInfo(0));
             } else {
-                logger.error("User info is null!");
+                logger.error("User not found");
             }
             if (user.getRole().equals(UserRole.Admin)) {
                 model.put("admin", true);
@@ -93,6 +93,7 @@ public class PersonalInfoController {
                 requestMessage.setRole(Msg.UserRole.valueOf(role));
             } catch (IllegalArgumentException e) {
                 logger.error("There is no role input!");
+                model.put("error", "There is no role input!");
             }
         }
 //        if (gender!=null){
@@ -104,9 +105,8 @@ public class PersonalInfoController {
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
-
-
         return "personalInfo";
     }
 
@@ -125,6 +125,7 @@ public class PersonalInfoController {
             }
         } else {
             logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            model.put("error", "Error received from backend, unable to get search result");
         }
     }
 
@@ -143,9 +144,8 @@ public class PersonalInfoController {
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
-
-
         return "personalInfo";
     }
 
@@ -155,10 +155,8 @@ public class PersonalInfoController {
         Request request = buildRequestWithoutBody(
                 backendURL + "users/generateChangePasswordLink/" + user.getUsername()
         );
-
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
-
             if (result != null && result.hasCommonResponse()) {
                 if (result.getCommonResponse().getResponseType().equals(Success)) {
                     if (user.getRole().equals(UserRole.Admin)) {
@@ -166,15 +164,15 @@ public class PersonalInfoController {
                     } else {
                         model.put("admin", false);
                     }
-
                     return "passwordSuccess";
                 }
             }
-
+            logger.error("Unable to generate Change Password Link");
+            model.put("error", "Unable to generate Change Password Link");
             return "error";
-
         } catch (IOException e) {
             logger.error("Internal error, unable to get change password link", e);
+            model.put("error", "Internal error, unable to get change password link");
             return "error";
         }
     }
@@ -185,10 +183,8 @@ public class PersonalInfoController {
                 .setUsername(user.getUsername())
                 .setLink(link)
                 .build();
-
         Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/validatePasswordLink",
                 protobufToJson(wrapIntoMsg(requestMessage)));
-
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
 
@@ -198,12 +194,14 @@ public class PersonalInfoController {
                 if (user.getRole().equals(UserRole.Admin)) {
                     model.put("admin", true);
                 }
+                model.put("error", result.getCommonResponse().getResponseText());
                 return "changePassword";
             }
-
+            model.put("error", "Unable to change password");
             return "error";
         } catch (IOException e) {
             logger.error("Internal error, unable to get password validation response", e);
+            model.put("error", "Internal error, unable to get password validation response");
             return "error";
         }
     }
@@ -212,17 +210,15 @@ public class PersonalInfoController {
     String changePassword(ModelMap model, @SessionAttribute("user") User user,
                           @RequestParam() String oldPassword,
                           @RequestParam() String newPassword) {
-
         Msg.UserOp.UserOpChangePassword.Builder requestMessage = Msg.UserOp.UserOpChangePassword.newBuilder();
         requestMessage.setUsername(user.getUsername());
-
         if (oldPassword != null) {
             requestMessage.setOldPassword(oldPassword);
             requestMessage.setNewPassword(newPassword);
         } else {
+            model.put("error", "old password is empty");
             return "error";
         }
-
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/changePassword", CustomJsonParser.protobufToJson(wrapPasswordIntoMsg(requestMessage)))
         ).execute()) {
             if (response.code() == 200) {
@@ -233,11 +229,12 @@ public class PersonalInfoController {
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
+            model.put("error", "Internal error, unable to get users list");
         }
-
         return "personalInfo";
     }
 
