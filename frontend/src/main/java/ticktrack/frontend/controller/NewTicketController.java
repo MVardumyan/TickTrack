@@ -118,6 +118,7 @@ public class NewTicketController {
                     if (user.getRole().equals(UserRole.Admin)) {
                         model.put("admin", true);
                     }
+                    model.put("id",msg.getTicketInfo().getTicketID());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
