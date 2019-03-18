@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
+<html>
 <head>
     <title>Welcome to T!ckTrack</title>
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
@@ -11,18 +12,18 @@
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script type="text/javascript">
-        var onloadCallback = function() {
+        var onloadCallback = function () {
             grecaptcha.render('login-form', {
-                'sitekey' : '6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd'
+                'sitekey': '6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd'
             });
         };
     </script>
     <style>
         .panel-login {
             border-color: #ccc;
-            -webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
-            -moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
-            box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.2);
+            -webkit-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.2);
         }
 
         .panel-login > .panel-heading {
@@ -50,7 +51,7 @@
 
         .panel-login > .panel-heading hr {
             margin-top: 10px;
-            margin-bottom: 0px;
+            margin-bottom: 0;
             clear: both;
             border: 0;
             height: 1px;
@@ -138,7 +139,7 @@
             position: fixed;
             left: 0;
             right: 0;
-            top: 0px;
+            top: 0;
             z-index: 9999;
             height: 34px;
             display: flex;
@@ -153,8 +154,40 @@
             margin-left: 20px;
         }
 
-        .navigation-action-button {
-            margin-right: 20px;
+        #popup-form {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 130px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0, 0, 0); /* Fallback color */
+            background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        }
+
+        .popup-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 35%;
+        }
+
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
         }
 
     </style>
@@ -185,7 +218,6 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <form id="login-form" action="/login" method="post" role="form" style="display: block;">
-                                    <div class="g-recaptcha" data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     <c:if test="${failure}">
                                         <p align="center" style="color:red">Invalid username or login</p>
                                     </c:if>
@@ -195,7 +227,11 @@
                                     </div>
                                     <div class="form-group">
                                         <input type="password" name="password" id="password" tabindex="2"
-                                                    class="form-control" placeholder="Password" required="required"/>
+                                               class="form-control" placeholder="Password" required="required"/>
+                                    </div>
+                                    <div class="form-group" align="center">
+                                        <div class="g-recaptcha"
+                                             data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
@@ -215,39 +251,49 @@
                                         <p align="center" style="color:red">You logged out</p>
                                     </c:if>
                                 </form>
-                                <form:form id="register-form" action="/register" method="post" modelAttribute="createRequest" onsubmit="return validate()" role="form"
-                                      style="display: none;">
+                                <form:form id="register-form" action="/register" method="post"
+                                           modelAttribute="createRequest" onsubmit="return validate()" role="form"
+                                           style="display: none;">
                                     <c:if test="${registerFailure}">
-                                        <p id="invalidUsername" style="color:red">username already exists, please choose another one</p>
+                                        <p id="invalidUsername" style="color:red">username already exists, please choose
+                                            another one</p>
                                     </c:if>
-                                    <div class="g-recaptcha" data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     <div class="form-group">
                                         <form:input type="text" name="username" id="newUsername" tabindex="1"
-                                               class="form-control" placeholder="Username" required="required" path="username"/>
+                                                    class="form-control" placeholder="Username" required="required"
+                                                    path="username"/>
                                     </div>
                                     <div class="form-group">
                                         <form:input type="text" name="firstname" id="firstname" tabindex="2"
-                                               class="form-control" placeholder="First Name" required="required" path="firstname"/>
+                                                    class="form-control" placeholder="First Name" required="required"
+                                                    path="firstname"/>
                                     </div>
                                     <div class="form-group">
                                         <form:input type="text" name="lastname" id="lastname" tabindex="2"
-                                               class="form-control" placeholder="Last Name" required="required" path="lastname"/>
+                                                    class="form-control" placeholder="Last Name" required="required"
+                                                    path="lastname"/>
                                     </div>
                                     <label>Gender</label>
                                     <div class="form-group">
                                         <form:radiobuttons path="gender" items="${genders}" required="required"/>
                                     </div>
                                     <div class="form-group">
-                                        <form:input type="email" name="email" id="email" tabindex="1" class="form-control"
-                                               placeholder="Email Address" required="required" path="email"/>
+                                        <form:input type="email" name="email" id="email" tabindex="1"
+                                                    class="form-control"
+                                                    placeholder="Email Address" required="required" path="email"/>
                                     </div>
                                     <div class="form-group">
                                         <form:input type="password" name="password" id="newPassword" tabindex="2"
-                                               class="form-control" placeholder="Password" required="required" path="password"/>
+                                                    class="form-control" placeholder="Password" required="required"
+                                                    path="password"/>
                                     </div>
                                     <div class="form-group">
                                         <input type="password" name="passwordRepeat" id="newPasswordRepeat" tabindex="3"
                                                class="form-control" placeholder="Repeat Password" required>
+                                    </div>
+                                    <div class="form-group" align="center">
+                                        <div class="g-recaptcha"
+                                             data-sitekey="6LeMC5gUAAAAALDZ8NiyzD7MopL0Pt9NMsNvRFUd"></div>
                                     </div>
                                     <p id="error" style="color:red"></p>
                                     <div class="form-group">
@@ -260,6 +306,25 @@
                                         </div>
                                     </div>
                                 </form:form>
+                                <div id="popup-form">
+                                    <form id="changePassword" class="popup-content" method="get"
+                                          action="/getChangePasswordLinkFromLogin">
+                                        <span class="close">&times;</span>
+                                        <div class="form-group">
+                                            <input type="text" name="username" class="form-control"
+                                                   placeholder="Your username" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" class="btn btn-info" name="submit" value="Get link"/>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div align="center">
+                                    <button id="opener" class="btn btn-info" name="createCategory"
+                                            style="margin-bottom:30px;margin-top:20px;">Forgot password?
+                                    </button>
+                                    <p style="color:blue">${forgotPasswordResponse}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -297,9 +362,30 @@
     function validate() {
         var password = document.getElementById("newPassword").value;
         var passwordRepeat = document.getElementById("newPasswordRepeat").value;
-        if(password !== passwordRepeat) {
+        if (password !== passwordRepeat) {
             document.getElementById("error").innerHTML = "Password value does not match";
             return false;
+        }
+    }
+
+    var modal = document.getElementById("popup-form");
+    var btn = document.getElementById("opener");
+
+    var span = document.getElementsByClassName("close")[0];
+
+    btn.onclick = function () {
+
+        modal.style.display = "block";
+    };
+    span.onclick = function () {
+
+        modal.style.display = "none";
+
+    };
+
+    window.onclick = function (event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
         }
     }
 </script>

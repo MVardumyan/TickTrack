@@ -12,7 +12,7 @@ public class NotificationSender {
 
     private final Configuration configuration = new Configuration()
             .domain("sandboxc83b27d7d2594ec09b6f6219d9ca8142.mailgun.org")
-            .apiKey("57abafda584c725bfad3b6a590d52eed-de7062c6-4abd3140")
+            .apiKey("")
             .from("TickTrack", "Info@TickTrack.am");
 
     private final Pattern VALID_EMAIL_ADDRESS_REGEX =
