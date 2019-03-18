@@ -64,14 +64,14 @@ public class TicketInfoController {
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
 
-//                List commentList = msg.getTicketInfo().getCommentList();
-//                commentList.sort((Comparator<Msg.Comment>) (o1, o2) -> {
-//                    if (o1.getTime() == null || o2.getTime() == null)
-//                        return 0;
-//                    return o1.getTime().compareTo(o2.getTime());
-//                });
-//
-                model.put("commentList", msg.getTicketInfo().getCommentList());
+                List<Msg.Comment> commentList = new ArrayList<Msg.Comment>(msg.getTicketInfo().getCommentList());
+                commentList.sort((Comparator<Msg.Comment>) (o1, o2) -> {
+                    if (o1.getTime() == null || o2.getTime() == null)
+                        return 0;
+                    return o1.getTime().compareTo(o2.getTime());
+                });
+
+                model.put("commentList", commentList);
                 if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
                     model.put("notClosed", true);
                 }
