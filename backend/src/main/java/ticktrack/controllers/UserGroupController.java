@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ticktrack.interfaces.IUserGroupManager;
 import ticktrack.managers.UserGroupManager;
 import ticktrack.proto.Msg;
 
@@ -16,11 +17,11 @@ import static ticktrack.util.ResponseHandler.wrapCommonResponseIntoMsg;
 @Controller
 @RequestMapping(value = "backend/v1/userGroups")
 public class UserGroupController {
-    private final UserGroupManager userGroupManager;
+    private final IUserGroupManager userGroupManager;
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserGroupController(UserGroupManager userGroupManager) {
+    public UserGroupController(IUserGroupManager userGroupManager) {
         this.userGroupManager = userGroupManager;
     }
 

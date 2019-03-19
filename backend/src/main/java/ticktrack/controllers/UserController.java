@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ticktrack.interfaces.IUserManager;
 import ticktrack.managers.UserManager;
 import ticktrack.proto.Msg;
 
@@ -14,11 +15,11 @@ import static ticktrack.util.ResponseHandler.*;
 @Controller
 @RequestMapping(value = "backend/v1/users")
 public class UserController {
-    private final UserManager userManager;
+    private final IUserManager userManager;
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    public UserController(UserManager userManager) {
+    public UserController(IUserManager userManager) {
         this.userManager = userManager;
     }
 

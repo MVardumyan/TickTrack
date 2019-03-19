@@ -222,12 +222,18 @@ public class UserManager implements IUserManager {
 
             String link = UUID.randomUUID().toString().replace("-", "");
             user.setPasswordChangeLink(link);
-            userRepository.save(user);
 
-            logger.debug("Change password link generated for user {}", username);
-            notificationSender.sendMail(user.getEmail(),
+            boolean messageSent = notificationSender.sendMail(user.getEmail(),
                     "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
-            return buildSuccessResponse("Change password link generated. Notification sent");
+
+            if(messageSent) {
+                userRepository.save(user);
+                logger.debug("Change password link generated for user {}", username);
+                return buildSuccessResponse("Change password link generated. Notification sent");
+            } else {
+                logger.warn("Message was not sent");
+                return buildFailureResponse("Unable to send message");
+            }
         } else {
             responseText = "There is no user with username " + username;
             logger.warn(responseText);
