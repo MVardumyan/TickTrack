@@ -182,7 +182,7 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public Msg changePassword(UserOp.UserOpChangePassword request) {
+    public CommonResponse changePassword(UserOp.UserOpChangePassword request) {
         String responseText;
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
@@ -190,25 +190,19 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if (user.getPassword().equals(request.getOldPassword())) {
-                user.setPassword(request.getNewPassword());
-                user.setPasswordChangeLink(null);
-                userRepository.save(user);
+            user.setPassword(request.getNewPassword());
+            user.setPasswordChangeLink(null);
+            userRepository.save(user);
 
-                responseText = "User " + user.getUsername() + "'s password is updated!";
-                logger.debug(responseText);
-                return wrapIntoMsg(buildUserInfo(user));
-            } else {
-                responseText = "User " + request.getUsername() + "'s old password doesn't match!";
-                logger.warn(responseText);
-                response = buildFailureResponse(responseText);
-            }
+            responseText = "User " + user.getUsername() + "'s password is updated!";
+            logger.debug(responseText);
+            return buildSuccessResponse(responseText);
         } else {
             responseText = "There is no user with username " + request.getUsername();
             logger.warn(responseText);
             response = buildFailureResponse(responseText);
         }
-        return wrapCommonResponseIntoMsg(response);
+        return response;
     }
 
     @Transactional

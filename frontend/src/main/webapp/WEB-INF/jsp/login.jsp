@@ -308,7 +308,7 @@
                                 </form:form>
                                 <div id="popup-form">
                                     <form id="changePassword" class="popup-content" method="get"
-                                          action="/getChangePasswordLinkFromLogin">
+                                          action="/fromLogin/getChangePasswordLink">
                                         <span class="close">&times;</span>
                                         <div class="form-group">
                                             <input type="text" name="username" class="form-control"
