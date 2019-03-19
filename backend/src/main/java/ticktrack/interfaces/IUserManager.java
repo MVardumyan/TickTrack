@@ -5,17 +5,17 @@ import ticktrack.proto.Msg;
 import static ticktrack.proto.Msg.*;
 
 public interface IUserManager {
-   CommonResponse create(UserOp.UserOpCreateRequest request);
+    CommonResponse create(UserOp.UserOpCreateRequest request);
 
-   Msg update(UserOp.UserOpUpdateRequest request);
+    Msg update(UserOp.UserOpUpdateRequest request);
 
-   Msg changePassword(UserOp.UserOpChangePassword request);
+    CommonResponse changePassword(UserOp.UserOpChangePassword request);
 
-   CommonResponse generateChangePasswordLink(String username);
+    CommonResponse generateChangePasswordLink(String username);
 
-   CommonResponse validatePasswordLink(UserOp.UserOpValidatePasswordLink request);
+    CommonResponse validatePasswordLink(UserOp.UserOpValidatePasswordLink request);
 
-   CommonResponse deactivate(String username);
+    CommonResponse deactivate(String username);
 
     UserOp.UserOpGetResponse get(String username);
 

@@ -24,7 +24,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(sessionInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/getChangePasswordLinkFromLogin")
+                .excludePathPatterns("/fromLogin/**", "/changePassword/**")
                 .order(Ordered.HIGHEST_PRECEDENCE);
 
         registry.addInterceptor(adminRoleInterceptor)
