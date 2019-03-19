@@ -202,7 +202,6 @@ message Msg {
 
         message UserOpChangePassword {
             required string username = 1;
-            required string oldPassword = 2;
             required string newPassword = 3;
         }
 
