@@ -327,7 +327,7 @@
     </table>
 
 
-
+<c:if test="notRegular">
     <h4>My groups tickets</h4>
     <table id="my-groups-tickets" class="table table-striped table-bordered table-sm" width="100%">
         <thead>
@@ -390,6 +390,7 @@
         </tr>
         </tfoot>
     </table>
+</c:if>
 </div>
 
 </body>

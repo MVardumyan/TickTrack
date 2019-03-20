@@ -16,6 +16,7 @@ import ticktrack.proto.Msg.UserOp.UserOpValidatePasswordLink;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
@@ -53,6 +54,15 @@ public class PersonalInfoController {
     @RequestMapping(value = "/updateUserInfo/{username}", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user) {
         Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
+        Request groupsRequest = new Request.Builder()
+                .url(backendURL + "userGroups/getAll")
+                .build();
+        try (Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
+            TicketInfoController.groupListResultUtil(model, logger, groupResponse);
+        } catch (IOException e) {
+            logger.error("Internal error, unable to get categories list", e);
+            model.put("error","Internal error, unable to get categories list");
+        }
         try (Response response = httpClient.newCall(request).execute()) {
             Msg result = jsonToProtobuf(response.body().string());
             model.put("username", username);
@@ -84,6 +94,7 @@ public class PersonalInfoController {
                           @RequestParam String firstName,
                           @RequestParam String lastName,
                           @RequestParam String email,
+                          @RequestParam(required = false) String group,
                           @RequestParam(required = false) String role) {
 
         UserOpUpdateRequest.Builder requestMessage = UserOpUpdateRequest.newBuilder();
@@ -98,6 +109,9 @@ public class PersonalInfoController {
                 logger.error("There is no role input!");
                 model.put("error", "There is no role input!");
             }
+        }
+        if(group != null){
+            requestMessage.setGroup(group);
         }
 //        if (gender!=null){
 //            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));

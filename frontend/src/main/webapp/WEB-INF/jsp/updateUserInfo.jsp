@@ -167,7 +167,7 @@
             <input type="text" class="form-control" name="email"
                    value="${info.email}">
         </div>
-        <c:if test="${show}">
+        <c:if test="${admin}">
                 <div class="form-group">
                     <label>Role</label>
                     <select name="role" name="role[]" class="form-control" required>
@@ -176,6 +176,18 @@
                         <option value="BusinessUser">Business user</option>
                     </select>
                 </div>
+
+            <label>Group</label>
+            <div class="form-group">
+                <select id="group" name="group" multiple class="form-control"
+                        oninput="document.getElementById('assignee').disabled=false">
+                    <c:forEach var="group" items="${groupList}">
+                        <option value="${group}">
+                                ${group}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
            </c:if>
 
         <div class="form-group">
@@ -208,6 +220,16 @@
     $(document).ready(function () {
         $('#status').multiselect({
             nonSelectedText: 'Status',
+            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            includeSelectAllOption: true,
+            buttonWidth: '568px'
+        });
+    });
+
+    $(document).ready(function () {
+        $('#group').multiselect({
+            nonSelectedText: 'More',
             enableFiltering: true,
             enableCaseInsensitiveFiltering: true,
             includeSelectAllOption: true,

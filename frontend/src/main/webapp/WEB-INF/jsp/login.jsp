@@ -320,9 +320,7 @@
                                     </form>
                                 </div>
                                 <div align="center">
-                                    <button id="opener" class="btn btn-info" name="createCategory"
-                                            style="margin-bottom:30px;margin-top:20px;">Forgot password?
-                                    </button>
+                                    <a id="opener" name="createCategory" href="#">Forgot password?</a>
                                     <p style="color:blue">${forgotPasswordResponse}</p>
                                 </div>
                             </div>
