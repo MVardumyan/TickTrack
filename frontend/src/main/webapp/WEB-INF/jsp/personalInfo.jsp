@@ -210,7 +210,8 @@
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         <c:if test="${notRegular}">
-                            <div class="col-sm-5 col-xs-6 tital " >Member of following group:</div><div class="col-sm-7">${info.group}</div>
+                            <div class="col-sm-5 col-xs-6 tital " >Member of following group:</div>
+                            <div class="col-sm-7">${info.group}</div>
                             <div class="clearfix"></div>
                             <div class="bot-border"></div>
                         </c:if>

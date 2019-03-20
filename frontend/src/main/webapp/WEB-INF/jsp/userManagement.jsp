@@ -161,8 +161,16 @@
                 <td>${regularUser.gender}</td>
                 <td>
                     <button onclick="location.href='/updateUserInfo/${regularUser.username}'" type="button" class="btn btn-info">edit</button>
+                    <c:choose>
+                    <c:when test="${regularUser.isActive}">
+                <td>
                     <button onclick="location.href='/deactivate/${regularUser.username}'" type="button" class="btn btn-info">deactivate</button>
-
+                </td>
+                </c:when>
+                <c:otherwise>
+                <td>Deactivated</td>
+                </c:otherwise>
+                </c:choose>
                 </td>
             </tr>
         </c:forEach>
@@ -213,7 +221,18 @@
                 <td>${businessUser.gender}</td>
                 <td>
                     <button onclick="location.href='/updateUserInfo/${businessUser.username}'" type="button" class="btn btn-info">edit</button>
+                    <c:choose>
+                    <c:when test="${businessUser.isActive}">
+                <td>
                     <button onclick="location.href='/deactivate/${businessUser.username}'" type="button" class="btn btn-info">deactivate</button>
+                </td>
+
+                </c:when>
+                <c:otherwise>
+                    <td>Deactivated</td>
+                </c:otherwise>
+                </c:choose>
+
                 </td>
             </tr>
         </c:forEach>
