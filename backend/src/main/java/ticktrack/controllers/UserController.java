@@ -73,7 +73,9 @@ public class UserController {
             if (request == null) {
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
             } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangePassword()) {
-                Msg result = userManager.changePassword(request.getUserOperation().getUserOpChangePassword());
+                Msg result = wrapCommonResponseIntoMsg(
+                        userManager.changePassword(request.getUserOperation().getUserOpChangePassword())
+                );
                 return protobufToJson(result);
             }
 

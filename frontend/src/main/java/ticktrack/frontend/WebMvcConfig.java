@@ -22,7 +22,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(sessionInterceptor).addPathPatterns("/**").order(Ordered.HIGHEST_PRECEDENCE);
-        registry.addInterceptor(adminRoleInterceptor).addPathPatterns("/admin/**").order(Ordered.LOWEST_PRECEDENCE);
+        registry.addInterceptor(sessionInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/fromLogin/**", "/changePassword/**")
+                .order(Ordered.HIGHEST_PRECEDENCE);
+
+        registry.addInterceptor(adminRoleInterceptor)
+                .addPathPatterns("/admin/**")
+                .order(Ordered.LOWEST_PRECEDENCE);
     }
 }

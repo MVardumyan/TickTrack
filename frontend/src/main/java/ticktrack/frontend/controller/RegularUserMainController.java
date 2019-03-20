@@ -22,11 +22,11 @@ public class RegularUserMainController {
 
     @RequestMapping(value = "/regUserMain", method = RequestMethod.GET)
     public String displayHomePage(ModelMap model, @SessionAttribute("user") User user) {
-        if(!user.getRole().equals(UserRole.RegularUser)) {
+        if (!user.getRole().equals(UserRole.RegularUser)) {
             model.put("notRegular", true);
         }
-        if(user.getRole().equals(UserRole.Admin)){
-            model.put("admin",true);
+        if (user.getRole().equals(UserRole.Admin)) {
+            model.put("admin", true);
         }
         model.put("name", user.getUsername());
         return "regularUserMain";

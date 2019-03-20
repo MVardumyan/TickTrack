@@ -212,7 +212,6 @@
             <label>Deadline</label>
             <div class="input-daterange input-group" name="deadline">
                 <input type="text" class="input-sm form-control" name="deadline"/>
-                <span class="input-group-addon"></span>
             </div>
         </div>
         <div class="form-group">
@@ -265,11 +264,13 @@
             todayBtn: "linked",
             clearBtn: true,
             daysOfWeekHighlighted: "0",
-            todayHighlight: true
+            todayHighlight: true,
+            format: 'yyyy-mm-dd'
         });
         var cache = {};
         $('#assignee, #creator').autocomplete({
             minLength: 1,
+            delay: 500,
             source: function (request, response) {
                 var term = request.term;
                 if (term in cache) {

@@ -1,4 +1,5 @@
 package ticktrack.frontend.controller;
+
 import common.enums.UserRole;
 import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,9 @@ import ticktrack.frontend.attributes.User;
 public class ErrorController {
 
     @RequestMapping(value = "/error", method = RequestMethod.GET)
-    public String displayErrorPage(ModelMap model,@SessionAttribute User user) {
-        if(user.getRole().equals(UserRole.Admin)){
-            model.put("admin",true);
+    public String displayErrorPage(ModelMap model, @SessionAttribute User user) {
+        if (user.getRole().equals(UserRole.Admin)) {
+            model.put("admin", true);
         }
         return "error";
     }

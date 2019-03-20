@@ -36,7 +36,7 @@ public class SearchController {
 
     @RequestMapping(value = "search", method = RequestMethod.GET)
     String displaySearchPage(ModelMap model,@SessionAttribute User user) {
-        Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAllActive");
+        Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAll");
         Request groupsRequest = buildRequestWithoutBody(backendURL + "userGroups/getAll");
 
         if(user.getRole().equals(UserRole.Admin)){
@@ -50,7 +50,6 @@ public class SearchController {
                 if (result != null) {
                     model.put("categoryList", result.getCategoryOperation().getCategoryOpGetAllResponse().getCategoryInfoList()
                             .stream()
-                            .filter(categoryInfo -> !categoryInfo.getIsDeactivated())
                             .map(CategoryInfo::getCategoryName)
                             .collect(Collectors.toList()));
                 }

@@ -1,5 +1,7 @@
 package ticktrack.managers;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.Gender;
@@ -47,7 +49,7 @@ public class UserManager implements IUserManager {
         if (request != null) {
             Optional<User> searchResult = userRepository.findByUsername(request.getUsername());
 
-            if(searchResult.isPresent()) {
+            if (searchResult.isPresent()) {
                 response = buildFailureResponse("User with this username already exists");
             } else {
                 try {
@@ -69,7 +71,7 @@ public class UserManager implements IUserManager {
                     newUser.setActiveStatus(true);
                     newUser.setEmail(request.getEmail());
                     newUser.setGender(Gender.valueOf(request.getGender().toString()));
-                    newUser.setRegistrationTime(new Timestamp(System.currentTimeMillis()));
+                    newUser.setRegistrationTime(new Timestamp(getCurrentTimeInMillis()));
 
                     userRepository.save(newUser);
                     responseText = "User " + newUser.getUsername() + " created!";
@@ -180,7 +182,7 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public Msg changePassword(UserOp.UserOpChangePassword request) {
+    public CommonResponse changePassword(UserOp.UserOpChangePassword request) {
         String responseText;
         CommonResponse response;
         Optional<User> result = userRepository.findById(request.getUsername());
@@ -188,25 +190,19 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if (user.getPassword().equals(request.getOldPassword())) {
-                user.setPassword(request.getNewPassword());
-                user.setPasswordChangeLink(null);
-                userRepository.save(user);
+            user.setPassword(request.getNewPassword());
+            user.setPasswordChangeLink(null);
+            userRepository.save(user);
 
-                responseText = "User " + user.getUsername() + "'s password is updated!";
-                logger.debug(responseText);
-                return wrapIntoMsg(buildUserInfo(user));
-            } else {
-                responseText = "User " + request.getUsername() + "'s old password doesn't match!";
-                logger.warn(responseText);
-                response = buildFailureResponse(responseText);
-            }
+            responseText = "User " + user.getUsername() + "'s password is updated!";
+            logger.debug(responseText);
+            return buildSuccessResponse(responseText);
         } else {
             responseText = "There is no user with username " + request.getUsername();
             logger.warn(responseText);
             response = buildFailureResponse(responseText);
         }
-        return wrapCommonResponseIntoMsg(response);
+        return response;
     }
 
     @Transactional
@@ -218,20 +214,14 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if(user.getPasswordChangeLink() == null) {
-                String link = UUID.randomUUID().toString().replace("-", "");
-                user.setPasswordChangeLink(link);
-                userRepository.save(user);
+            String link = UUID.randomUUID().toString().replace("-", "");
+            user.setPasswordChangeLink(link);
+            userRepository.save(user);
 
-                logger.debug("Change password link generated for user {}", username);
-                notificationSender.sendMail(user.getEmail(),
-                        "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
-                return buildSuccessResponse("Change password link generated. Notification sent");
-            } else {
-                responseText = "Link for password change is already generated";
-                logger.debug(responseText);
-                return buildFailureResponse(responseText);
-            }
+            logger.debug("Change password link generated for user {}", username);
+            notificationSender.sendMail(user.getEmail(),
+                    "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
+            return buildSuccessResponse("Change password link generated. Notification sent");
         } else {
             responseText = "There is no user with username " + username;
             logger.warn(responseText);
@@ -248,7 +238,7 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if(request.getLink().equals(user.getPasswordChangeLink())) {
+            if (request.getLink().equals(user.getPasswordChangeLink())) {
                 return buildSuccessResponse("Password Change Link is valid");
             }
 
@@ -272,7 +262,7 @@ public class UserManager implements IUserManager {
             User user = result.get();
             if (user.isActive()) {
                 user.setActiveStatus(false);
-                user.setDeactivationTime(new Timestamp(System.currentTimeMillis()));
+                user.setDeactivationTime(new Timestamp(getCurrentTimeInMillis()));
                 userRepository.save(user);
                 responseText = "User " + user.getUsername() + " is deactivated.";
                 logger.warn(responseText);
@@ -341,7 +331,7 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
-            if(user.isActive()) {
+            if (user.isActive()) {
                 if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
                     return buildSuccessResponse("Password is valid");
                 }
@@ -353,6 +343,10 @@ public class UserManager implements IUserManager {
         logger.debug(responseText);
         return buildFailureResponse(responseText);
 
+    }
+
+    private long getCurrentTimeInMillis() {
+        return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).getMillis();
     }
 
     private UserOp.UserOpGetResponse.UserInfo buildUserInfo(User user) {
@@ -378,7 +372,7 @@ public class UserManager implements IUserManager {
     }
 
     private Msg wrapIntoMsg(UserOp.UserOpGetResponse.UserInfo userInfo) {
-        return  Msg.newBuilder()
+        return Msg.newBuilder()
                 .setUserOperation(Msg.UserOp.newBuilder()
                         .setUserOpGetResponse(Msg.UserOp.UserOpGetResponse.newBuilder()
                                 .addUserInfo(userInfo)))

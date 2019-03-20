@@ -87,6 +87,7 @@
                         Error</h2>
                     <div class="error-details">
                         Sorry, an error has occured!
+                        ${error}
                     </div>
                        <div>
                            <form action="/regUserMain">
