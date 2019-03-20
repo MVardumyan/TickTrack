@@ -2,6 +2,7 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import ticktrack.entities.PasswordLink;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.Gender;
@@ -9,6 +10,7 @@ import common.enums.UserRole;
 import ticktrack.interfaces.IUserManager;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.GroupRepository;
+import ticktrack.repositories.PasswordLinkRepository;
 import ticktrack.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +33,15 @@ public class UserManager implements IUserManager {
     private final UserRepository userRepository;
     private final GroupRepository groupRepository;
     private final NotificationSender notificationSender;
+    private final PasswordLinkRepository passwordLinkRepository;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
     @Autowired
-    public UserManager(UserRepository userRepository, GroupRepository groupRepository, NotificationSender notificationSender) {
+    public UserManager(UserRepository userRepository, GroupRepository groupRepository, NotificationSender notificationSender, PasswordLinkRepository passwordLinkRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.notificationSender = notificationSender;
+        this.passwordLinkRepository = passwordLinkRepository;
     }
 
     @Transactional
@@ -191,7 +195,8 @@ public class UserManager implements IUserManager {
             User user = result.get();
 
             user.setPassword(request.getNewPassword());
-            user.setPasswordChangeLink(null);
+            passwordLinkRepository.delete(user.getPasswordLink());
+            user.setPasswordLink(null);
             userRepository.save(user);
 
             responseText = "User " + user.getUsername() + "'s password is updated!";
@@ -215,19 +220,22 @@ public class UserManager implements IUserManager {
             User user = result.get();
 
             String link = UUID.randomUUID().toString().replace("-", "");
-            user.setPasswordChangeLink(link);
+            PasswordLink passwordLink = new PasswordLink();
+            passwordLink.setLink(link);
+            passwordLink.setValidDate(new Timestamp(getPasswordValidDate()));
+            passwordLink.setUser(user);
 
             boolean messageSent = notificationSender.sendMail(user.getEmail(),
                     "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
 
-            if(messageSent) {
-                userRepository.save(user);
+//            if(messageSent) {
+                passwordLinkRepository.save(passwordLink);
                 logger.debug("Change password link generated for user {}", username);
                 return buildSuccessResponse("Change password link generated. Notification sent");
-            } else {
-                logger.warn("Message was not sent");
-                return buildFailureResponse("Unable to send message");
-            }
+//            } else {
+//                logger.warn("Message was not sent");
+//                return buildFailureResponse("Unable to send message");
+//            }
         } else {
             responseText = "There is no user with username " + username;
             logger.warn(responseText);
@@ -244,7 +252,7 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            if (request.getLink().equals(user.getPasswordChangeLink())) {
+            if (request.getLink().equals(user.getPasswordLink().getLink())) {
                 return buildSuccessResponse("Password Change Link is valid");
             }
 
@@ -353,6 +361,10 @@ public class UserManager implements IUserManager {
 
     private long getCurrentTimeInMillis() {
         return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).getMillis();
+    }
+
+    private long getPasswordValidDate() {
+        return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).plusDays(1).getMillis();
     }
 
     private UserOp.UserOpGetResponse.UserInfo buildUserInfo(User user) {
