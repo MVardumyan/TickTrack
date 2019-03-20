@@ -52,13 +52,14 @@ public class TicketInfoController {
         return "ticketInfo";
     }
 
-    private void displayTicketConfig(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user, Response response) throws IOException {
+    private void displayTicketConfig(ModelMap model, long id, User user, Response response) throws IOException {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
                 if (user.getRole().equals(UserRole.BusinessUser)) {
                     model.put("resolve", true);
                 } else if (user.getRole().equals(UserRole.Admin)) {
+                    model.put("resolve", true);
                     model.put("admin", true);
                 }
                 model.put("info", msg.getTicketInfo());
