@@ -9,10 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 
@@ -36,8 +33,11 @@ public class MyTicketsController {
         this.httpClient = httpClient;
     }
 
-    @RequestMapping(value = "/myTickets", method = RequestMethod.GET)
-    String displayMyTickets(ModelMap model, @SessionAttribute("user") User user) {
+    @RequestMapping(value = "/myTickets/{page}/{size}", method = RequestMethod.GET)
+    String displayMyTickets(ModelMap model,
+                            @PathVariable("page") Integer page,
+                            @PathVariable("size") Integer size,
+                            @SessionAttribute("user") User user) {
 
         Msg.SearchOp.SearchOpRequest.Builder requestCreatedByMe = Msg.SearchOp.SearchOpRequest.newBuilder();
         Msg.SearchOp.SearchOpRequest.Builder requestAssignedToMe = Msg.SearchOp.SearchOpRequest.newBuilder();
@@ -50,13 +50,13 @@ public class MyTicketsController {
             requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
-        Request reqCreatedByMe = buildRequestWithBody(backendURL + "search",
+        Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestCreatedByMe)));
 
-        Request reqAssignedToMe = buildRequestWithBody(backendURL + "search",
+        Request reqAssignedToMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestAssignedToMe)));
 
-        Request reqAssignedToMyGroups = buildRequestWithBody(backendURL + "search",
+        Request reqAssignedToMyGroups = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestAssignedToMyGroups)));
 
         try (Response response = httpClient.newCall(reqCreatedByMe).execute()) {

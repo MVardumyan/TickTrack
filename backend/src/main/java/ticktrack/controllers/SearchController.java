@@ -3,6 +3,8 @@ package ticktrack.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.managers.SearchManager;
@@ -24,19 +26,21 @@ public class SearchController {
         this.searchManager = searchManager;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String searchTickets(@RequestBody String jsonRequest) {
+    String searchTickets(@PathVariable("page") Integer page,
+                         @PathVariable("size") Integer size,
+                         @RequestBody String jsonRequest) {
         try {
             Msg request = jsonToProtobuf(jsonRequest);
 
-            if(request == null) {
+            if (request == null) {
 
                 return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
 
             } else if (request.hasSearchOperation() && request.getSearchOperation().hasSearchOpRequest()) {
 
-                Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest());
+                Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest(),page,size);
                 return protobufToJson(wrapIntoMsg(result));
 
             }
