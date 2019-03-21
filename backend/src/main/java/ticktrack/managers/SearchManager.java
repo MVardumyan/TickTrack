@@ -56,15 +56,10 @@ public class SearchManager implements ISearchManager {
     @Override
     @Transactional
     public SearchOp.SearchOpResponse searchByCriteria(SearchOp.SearchOpRequest request,Integer page,Integer size) {
-//        Pageable pagination = PageRequest.of(page, size);
 
-//        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-//        countQuery.select(builder.count(countQuery.from(Ticket.class)));
-//        Long count = entityManager.createQuery(countQuery).getSingleResult();
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Ticket> criteriaQuery = builder.createQuery(Ticket.class);
         Root<Ticket> root = criteriaQuery.from(Ticket.class);
-        //Root<Ticket> from = criteriaQuery.from(Ticket.class);
         CriteriaQuery<Ticket> select = criteriaQuery.select(root);
 
         Predicate criteria = builder.conjunction();
@@ -185,11 +180,6 @@ public class SearchManager implements ISearchManager {
                     new Timestamp(end.getMillis()));
             criteria = builder.and(criteria, currentPredicate);
         }
-
-//        CriteriaQuery<Long> cq = builder.createQuery(Long.class);
-//        cq.select(builder.count(cq.from(Ticket.class)));
-//        entityManager.createQuery(cq);
-//        Long count = entityManager.createQuery(cq).getSingleResult();
 
         TypedQuery<Ticket> typedQuery = entityManager.createQuery(select);
             typedQuery.setFirstResult(page - 1);
