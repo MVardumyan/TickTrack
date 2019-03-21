@@ -32,8 +32,11 @@ public class User{
    private boolean activeStatus;
    @Column
    private Timestamp deactivationTime;
-   @Column
-   private String passwordChangeLink;
+//   @Column
+//   private String passwordChangeLink;
+
+   @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+   private PasswordLink passwordLink;
 
    @ManyToOne
    private UserGroup group;
@@ -96,8 +99,12 @@ public class User{
       this.deactivationTime = deactivationTime;
    }
 
-   public void setPasswordChangeLink(String passwordChangeLink) {
-      this.passwordChangeLink = passwordChangeLink;
+//   public void setPasswordChangeLink(String passwordChangeLink) {
+//      this.passwordChangeLink = passwordChangeLink;
+//   }
+
+   public void setPasswordLink(PasswordLink passwordLink) {
+      this.passwordLink = passwordLink;
    }
 
    public void setGroup(UserGroup group) {
@@ -148,8 +155,13 @@ public class User{
       return deactivationTime;
    }
 
-   public String getPasswordChangeLink() {
-      return passwordChangeLink;
+//   public String getPasswordChangeLink() {
+//      return passwordChangeLink;
+//   }
+
+
+   public PasswordLink getPasswordLink() {
+      return passwordLink;
    }
 
    public Set<Ticket> getCreatedTicketList() {

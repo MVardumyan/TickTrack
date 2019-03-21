@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ticktrack.interfaces.ITicketManager;
 import ticktrack.managers.TicketManager;
 import ticktrack.proto.Msg;
 
@@ -16,11 +17,11 @@ import static ticktrack.util.ResponseHandler.wrapCommonResponseIntoMsg;
 @Controller
 @RequestMapping(value = "backend/v1/Tickets")
 public class TicketController {
-    private final TicketManager ticketManager;
+    private final ITicketManager ticketManager;
     private final Logger logger = LoggerFactory.getLogger(TicketController.class);
 
     @Autowired
-    public TicketController(TicketManager ticketManager) { this.ticketManager = ticketManager; }
+    public TicketController(ITicketManager ticketManager) { this.ticketManager = ticketManager; }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody

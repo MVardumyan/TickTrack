@@ -72,8 +72,7 @@ public class SearchManager implements ISearchManager {
         //summary or description
         if (request.hasSummaryOrDescription()) {
             currentPredicate = builder.like(root.get("summary"), "%" + request.getSummaryOrDescription() + "%");
-            criteria = builder.and(criteria, currentPredicate);
-            currentPredicate = builder.like(root.get("description"), "%" + request.getSummaryOrDescription() + "%");
+            currentPredicate = builder.or(currentPredicate, (builder.like(root.get("description"), "%" + request.getSummaryOrDescription() + "%")));
             criteria = builder.and(criteria, currentPredicate);
         }
         //creator
