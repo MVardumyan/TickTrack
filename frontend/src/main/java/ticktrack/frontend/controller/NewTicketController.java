@@ -120,6 +120,7 @@ public class NewTicketController {
                     if (user.getRole().equals(UserRole.Admin)) {
                         model.put("admin", true);
                     }
+                    model.put("notClosed",true);
                     model.put("id",msg.getTicketInfo().getTicketID());
                 }
             } else {
