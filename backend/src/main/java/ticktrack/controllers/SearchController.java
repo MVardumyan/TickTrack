@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ticktrack.interfaces.ISearchManager;
 import ticktrack.managers.SearchManager;
 import ticktrack.proto.Msg;
 
@@ -16,11 +17,11 @@ import static ticktrack.util.ResponseHandler.*;
 @Controller
 @RequestMapping(value = "backend/v1")
 public class SearchController {
-    private final SearchManager searchManager;
+    private final ISearchManager searchManager;
     private final Logger logger = LoggerFactory.getLogger(SearchController.class);
 
     @Autowired
-    public SearchController(SearchManager searchManager) {
+    public SearchController(ISearchManager searchManager) {
         this.searchManager = searchManager;
     }
 

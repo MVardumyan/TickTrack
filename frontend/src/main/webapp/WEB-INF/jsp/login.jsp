@@ -320,7 +320,7 @@
                                     </form>
                                 </div>
                                 <div align="center">
-                                    <a id="opener" name="createCategory" href="#">Forgot password?</a>
+                                    <a id="opener" name="forgotPassword" href="#">Forgot password?</a>
                                     <p style="color:blue">${forgotPasswordResponse}</p>
                                 </div>
                             </div>
