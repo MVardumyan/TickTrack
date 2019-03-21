@@ -60,7 +60,6 @@ public class SearchManager implements ISearchManager {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Ticket> criteriaQuery = builder.createQuery(Ticket.class);
         Root<Ticket> root = criteriaQuery.from(Ticket.class);
-        CriteriaQuery<Ticket> select = criteriaQuery.select(root);
 
         Predicate criteria = builder.conjunction();
         Predicate currentPredicate;
@@ -181,12 +180,14 @@ public class SearchManager implements ISearchManager {
             criteria = builder.and(criteria, currentPredicate);
         }
 
-        TypedQuery<Ticket> typedQuery = entityManager.createQuery(select);
-            typedQuery.setFirstResult(page - 1);
-            typedQuery.setMaxResults(size);
-
         criteriaQuery.where(criteria);
-        List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
+
+        TypedQuery<Ticket> typedQuery = entityManager.createQuery(criteriaQuery);
+        typedQuery.setFirstResult((page - 1)*size);
+        typedQuery.setMaxResults(size);
+
+//        List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
+        List<Ticket> result = typedQuery.getResultList();
         return buildTicketResponseFromQueryResult(result);
     }
 

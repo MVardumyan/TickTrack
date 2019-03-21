@@ -258,7 +258,7 @@
         </div>
 
         <div class="sidnav-item-conteiner">
-            <a href="/myTickets/2/10" class="sidnav-item">MY TICKETS</a>
+            <a href="/myTickets/2/5" class="sidnav-item">MY TICKETS</a>
         </div>
 
         <div class="sidnav-item-conteiner">
