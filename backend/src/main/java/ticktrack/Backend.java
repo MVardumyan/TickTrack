@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import ticktrack.tasks.CheckDeadlineTask;
+import ticktrack.util.ActivePasswordLinksHandler;
 
 @SpringBootApplication
 public class Backend {
@@ -27,17 +28,17 @@ public class Backend {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Backend.class, args);
 
-        configureScheduledTasks(context);
+        configureDeadlineScheduledTasks(context);
+        configureChangePasswordLinkTasks(context);
     }
 
     /**
-     * method starts periodic tasks for:
-     * 1) deadline expiration notification (with start time - 24:00 and period - 1 day);
-     * 2) password change link expiration (in case of system restart)
+     * method starts periodic tasks for
+     * deadline expiration notification (with start time - 24:00 and period - 1 day)
      * @param context Spring application context needed to get scheduler and task beans
      */
-    private static void configureScheduledTasks(ConfigurableApplicationContext context) {
-        ThreadPoolTaskScheduler scheduler = context.getBean(ThreadPoolTaskScheduler.class);
+    private static void configureDeadlineScheduledTasks(ConfigurableApplicationContext context) {
+        ThreadPoolTaskScheduler deadlineScheduler = context.getBean(ThreadPoolTaskScheduler.class);
 
         long period = 1000*60*60*24L; //1 day in milliseconds
 
@@ -49,7 +50,17 @@ public class Backend {
                 .withSecondOfMinute(0)
                 .withZone(DateTimeZone.forID("Asia/Yerevan"));
 
-        scheduler.scheduleAtFixedRate(context.getBean(CheckDeadlineTask.class), startTime.toDate(), period);
+        deadlineScheduler.scheduleAtFixedRate(context.getBean(CheckDeadlineTask.class), startTime.toDate(), period);
+    }
+
+    /**
+     * method schedules tasks for password change link expiration (in case of system restart)
+     * @param context Spring application context needed to get ActivePasswordLinksHandler beans
+     */
+    private static void configureChangePasswordLinkTasks(ConfigurableApplicationContext context) {
+        ActivePasswordLinksHandler passwordLinksScheduler = context.getBean(ActivePasswordLinksHandler.class);
+
+        passwordLinksScheduler.checkAllPasswordLinks();
     }
 
 }

@@ -11,9 +11,11 @@ import ticktrack.entities.Ticket;
 import ticktrack.repositories.TicketRepository;
 import ticktrack.util.NotificationSender;
 
+import javax.transaction.Transactional;
+
 /**
  * Runnable class handles mail notification to ticket's assignee, if deadline will expire after 1 day.
- * run() methods queries all ticket's, which "deadline" field is not null, checks if assignee is not null;
+ * run() methods queries all ticket's, which "deadline" field is not null and assignee is not null;
  * checks that difference between current date and deadline equals 1 day and sends notification to assignee.
  */
 @Component
@@ -28,13 +30,13 @@ public class CheckDeadlineTask implements Runnable {
         this.notificationSender = notificationSender;
     }
 
+    @Transactional
     @Override
     public void run() {
         LocalDate currentDate = new LocalDate(DateTimeZone.forID("Asia/Yerevan"));
 
-        Iterable<Ticket> tickets = ticketRepository.findAllByDeadlineNotNull();
+        Iterable<Ticket> tickets = ticketRepository.findAllByDeadlineNotNullAndAssigneeNotNull();
         for (Ticket ticket : tickets) {
-            if(ticket.getAssignee()!=null) {
                 LocalDate deadline = new LocalDate(ticket.getDeadline());
                 if (Days.daysBetween(currentDate, deadline).getDays() == 1) {
 
@@ -55,9 +57,8 @@ public class CheckDeadlineTask implements Runnable {
                                 ticket.getID());
                     }
                 }
-            }
         }
 
-        logger.debug("Daily job for Deadline Check done.");
+        logger.debug("Daily job for Deadline check done.");
     }
 }

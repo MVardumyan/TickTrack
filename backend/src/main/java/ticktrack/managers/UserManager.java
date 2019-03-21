@@ -2,6 +2,7 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import ticktrack.entities.PasswordLink;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import common.helpers.PasswordHandler;
+import ticktrack.util.ActivePasswordLinksHandler;
 import ticktrack.util.NotificationSender;
 
 import static ticktrack.proto.Msg.*;
@@ -34,14 +36,20 @@ public class UserManager implements IUserManager {
     private final GroupRepository groupRepository;
     private final NotificationSender notificationSender;
     private final PasswordLinkRepository passwordLinkRepository;
+    private final ActivePasswordLinksHandler activePasswordLinksHandler;
     private Logger logger = LoggerFactory.getLogger(User.class);
 
     @Autowired
-    public UserManager(UserRepository userRepository, GroupRepository groupRepository, NotificationSender notificationSender, PasswordLinkRepository passwordLinkRepository) {
+    public UserManager(UserRepository userRepository,
+                       GroupRepository groupRepository,
+                       NotificationSender notificationSender,
+                       PasswordLinkRepository passwordLinkRepository,
+                       ActivePasswordLinksHandler activePasswordLinksHandler) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.notificationSender = notificationSender;
         this.passwordLinkRepository = passwordLinkRepository;
+        this.activePasswordLinksHandler = activePasswordLinksHandler;
     }
 
     @Transactional
@@ -169,7 +177,6 @@ public class UserManager implements IUserManager {
             if (updateSuccess) {
                 userRepository.save(user);
                 logger.debug(responseText.toString());
-                //response = buildSuccessResponse(responseText.toString());
                 return wrapIntoMsg(buildUserInfo(user));
             } else {
                 logger.warn(responseText.toString());
@@ -194,8 +201,9 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            user.setPassword(request.getNewPassword());
+            activePasswordLinksHandler.removeTask(user.getPasswordLink());
             passwordLinkRepository.delete(user.getPasswordLink());
+            user.setPassword(request.getNewPassword());
             user.setPasswordLink(null);
             userRepository.save(user);
 
@@ -218,24 +226,34 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
+            PasswordLink passwordLink;
 
             String link = UUID.randomUUID().toString().replace("-", "");
-            PasswordLink passwordLink = new PasswordLink();
+
+            if(user.getPasswordLink()==null) {
+                passwordLink = new PasswordLink();
+                passwordLink.setUser(user);
+            } else {
+                passwordLink = user.getPasswordLink();
+            }
             passwordLink.setLink(link);
             passwordLink.setValidDate(new Timestamp(getPasswordValidDate()));
-            passwordLink.setUser(user);
 
             boolean messageSent = notificationSender.sendMail(user.getEmail(),
-                    "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link);
+                    "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link
+                            + "\nlink is valid 24 hours");
 
-//            if(messageSent) {
+            if(messageSent) {
+                activePasswordLinksHandler.removeTask(passwordLink); //cancel previous task, if there already was a link
                 passwordLinkRepository.save(passwordLink);
+                activePasswordLinksHandler.addTask(passwordLink);
+
                 logger.debug("Change password link generated for user {}", username);
                 return buildSuccessResponse("Change password link generated. Notification sent");
-//            } else {
-//                logger.warn("Message was not sent");
-//                return buildFailureResponse("Unable to send message");
-//            }
+            } else {
+                logger.warn("Message was not sent");
+                return buildFailureResponse("Unable to send message");
+            }
         } else {
             responseText = "There is no user with username " + username;
             logger.warn(responseText);
