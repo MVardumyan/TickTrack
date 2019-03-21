@@ -130,7 +130,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
+        <a href="/newTicket/1/10" class="sidnav-item">NEW TICKET</a>
     </div>
     <c:if test="${admin}">
         <div class="sidnav-item-conteiner">

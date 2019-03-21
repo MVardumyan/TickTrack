@@ -50,6 +50,9 @@ public class MyTicketsController {
             requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
+        int pageNumber = 2;
+        model.put("p",pageNumber);
+
         Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestCreatedByMe)));
 
