@@ -71,7 +71,7 @@ class SearchManagerTest {
          .setSummaryOrDescription("test")
          .build();
 
-      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request,1,10);
       assertEquals("mik", response.getTicketInfo(0).getCreator());
    }
 
@@ -92,7 +92,7 @@ class SearchManagerTest {
          .addStatus(Msg.TicketStatus.Open)
          .build();
 
-      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request,1,10);
       assertEquals("mik", response.getTicketInfo(0).getCreator());
    }
 
@@ -102,7 +102,7 @@ class SearchManagerTest {
          .setCreator("this-user-doesn't-exist")
          .build();
 
-      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request);
+      Msg.SearchOp.SearchOpResponse response = searchManager.searchByCriteria(request,1,10);
       assertEquals(0, response.getTicketInfoCount());
    }
 

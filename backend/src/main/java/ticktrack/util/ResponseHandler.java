@@ -11,7 +11,17 @@ import java.util.stream.Collectors;
 import static common.helpers.CustomJsonParser.protobufToJson;
 import static ticktrack.proto.Msg.CommonResponse.ResponseType.Failure;
 
+/**
+ * Class contains util methods,
+ * used in controllers for wrapping and handling different types of protobuf messages
+ */
 public final class ResponseHandler {
+   /**
+    * Method wraps each ticket entity from query result to protobuf type TicketInfo
+    * and includes it in protobuf type SearchOpResponse
+    * @param result List of Ticket entities
+    * @return protobuf message SearchOpResponse, containing given tickets information
+    */
    public static Msg.SearchOp.SearchOpResponse buildTicketResponseFromQueryResult(List<Ticket> result) {
       Msg.SearchOp.SearchOpResponse.Builder responseBuilder = Msg.SearchOp.SearchOpResponse.newBuilder();
 
@@ -20,6 +30,11 @@ public final class ResponseHandler {
       return responseBuilder.build();
    }
 
+   /**
+    * Method builds parses given Ticket entity to protobuf type TicketInfo
+    * @param ticket entity that will be parsed to TicketInfo
+    * @return protobuf type TicketInfo
+    */
    public static Msg.TicketInfo buildTicketInfo(Ticket ticket) {
       Msg.TicketInfo.Builder ticketMessage = Msg.TicketInfo.newBuilder()
          .setTicketID(ticket.getID())
@@ -62,6 +77,11 @@ public final class ResponseHandler {
       return ticketMessage.build();
    }
 
+   /**
+    * Method builds protobuf message CommonResponse with responseType Success
+    * @param responseText is included in response
+    * @return protobuf type CommonResponse
+    */
    public static Msg.CommonResponse buildSuccessResponse(String responseText) {
       return Msg.CommonResponse.newBuilder()
               .setResponseText(responseText)
@@ -69,6 +89,11 @@ public final class ResponseHandler {
               .build();
    }
 
+   /**
+    * Method builds protobuf message CommonResponse with responseType Failure
+    * @param responseText is included in response
+    * @return protobuf type CommonResponse
+    */
    public static Msg.CommonResponse buildFailureResponse(String responseText) {
       return Msg.CommonResponse.newBuilder()
               .setResponseText(responseText)

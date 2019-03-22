@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.interfaces.ISearchManager;
@@ -25,8 +27,13 @@ public class SearchController {
         this.searchManager = searchManager;
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
+    String searchTickets(@PathVariable("page") Integer page,
+                         @PathVariable("size") Integer size,
+                         @RequestBody String jsonRequest) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
     ResponseEntity searchTickets(@RequestBody String jsonRequest) {
         Msg request = jsonToProtobuf(jsonRequest);
 
@@ -36,7 +43,7 @@ public class SearchController {
 
         } else if (request.hasSearchOperation() && request.getSearchOperation().hasSearchOpRequest()) {
 
-            Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest());
+            Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest(),page,size);
             return ResponseEntity
                     .ok(protobufToJson(wrapIntoMsg(result)));
         }

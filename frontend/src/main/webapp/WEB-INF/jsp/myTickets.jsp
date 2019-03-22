@@ -37,10 +37,8 @@
 
         .navigation {
             background-color: #f5821f;
-        <c:if test="${admin}">
-            background-color: brown;
-        </c:if>
-            position: fixed;
+        <c:if test="${admin}"> background-color: brown;
+        </c:if> position: fixed;
             left: 0;
             right: 0;
             top: 0px;
@@ -82,7 +80,7 @@
 
         .sidnav-item:active {
             text-decoration: none;
-            color:  #f5821f;
+            color: #f5821f;
         }
 
         .glyphicon-search,
@@ -134,9 +132,18 @@
 
             width: 100px;
             height: 100px;
-            border:2px solid #03b1ce ;}
-        .tital{ font-size:16px; font-weight:500;}
-        .bot-border{ border-bottom:1px #f8f8f8 solid;  margin:5px 0  5px 0}
+            border: 2px solid #03b1ce;
+        }
+
+        .tital {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .bot-border {
+            border-bottom: 1px #f8f8f8 solid;
+            margin: 5px 0 5px 0
+        }
 
         .button-group {
             display: flex;
@@ -176,7 +183,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
+        <a href="/myTickets/1/30" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -184,7 +191,7 @@
     </div>
     <c:if test="${admin}">
         <div class="sidnav-item-conteiner">
-            <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+            <a href="/admin/userManagement/1/30" class="sidnav-item">USER MANAGEMENT</a>
         </div>
 
         <div class="sidnav-item-conteiner">
@@ -224,7 +231,7 @@
         <tbody>
         <c:forEach items="${ticketsCreatedByMe}" var="ticket">
             <tr>
-                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
+                <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
                 <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
                 <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
@@ -259,8 +266,6 @@
         </tr>
         </tfoot>
     </table>
-
-
 
 
     <h4>Tickets assigned to me</h4>
@@ -290,7 +295,7 @@
         <tbody>
         <c:forEach items="${ticketsAssignedToMe}" var="ticket">
             <tr>
-                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
+                <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
                 <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
                 <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
@@ -327,70 +332,70 @@
     </table>
 
 
-<c:if test="notRegular">
-    <h4>My groups tickets</h4>
-    <table id="my-groups-tickets" class="table table-striped table-bordered table-sm" width="100%">
-        <thead>
-        <tr>
-            <th class="th-sm">ID
-            </th>
-            <th class="th-sm">Summary
-            </th>
-            <th class="th-sm">Assignee
-            </th>
-            <th class="th-sm">Creator
-            </th>
-            <th class="th-sm">Category
-            </th>
-            <th class="th-sm">Status
-            </th>
-            <th class="th-sm">Priority
-            </th>
-            <th class="th-sm">Open date
-            </th>
-            <th class="th-sm">Close date
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <c:forEach items="${ticketsAssignedToMyGroup}" var="ticket">
+    <c:if test="notRegular">
+        <h4>My groups tickets</h4>
+        <table id="my-groups-tickets" class="table table-striped table-bordered table-sm" width="100%">
+            <thead>
             <tr>
-                <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
-                <td>${ticket.summary}</td>
-                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
-                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
-                <td>${ticket.category}</td>
-                <td>${ticket.status}</td>
-                <td>${ticket.priority}</td>
-                <td>${ticket.openDate}</td>
-                <td>${ticket.closeDate}</td>
+                <th class="th-sm">ID
+                </th>
+                <th class="th-sm">Summary
+                </th>
+                <th class="th-sm">Assignee
+                </th>
+                <th class="th-sm">Creator
+                </th>
+                <th class="th-sm">Category
+                </th>
+                <th class="th-sm">Status
+                </th>
+                <th class="th-sm">Priority
+                </th>
+                <th class="th-sm">Open date
+                </th>
+                <th class="th-sm">Close date
+                </th>
             </tr>
-        </c:forEach>
-        </tbody>
-        <tfoot>
-        <tr>
-            <th>ID
-            </th>
-            <th>Summary
-            </th>
-            <th>Assignee
-            </th>
-            <th>Creator
-            </th>
-            <th>Category
-            </th>
-            <th>Status
-            </th>
-            <th>Priority
-            </th>
-            <th>Open date
-            </th>
-            <th>Close date
-            </th>
-        </tr>
-        </tfoot>
-    </table>
-</c:if>
+            </thead>
+            <tbody>
+            <c:forEach items="${ticketsAssignedToMyGroup}" var="ticket">
+                <tr>
+                    <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
+                    <td>${ticket.summary}</td>
+                    <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                    <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
+                    <td>${ticket.category}</td>
+                    <td>${ticket.status}</td>
+                    <td>${ticket.priority}</td>
+                    <td>${ticket.openDate}</td>
+                    <td>${ticket.closeDate}</td>
+                </tr>
+            </c:forEach>
+            </tbody>
+            <tfoot>
+            <tr>
+                <th>ID
+                </th>
+                <th>Summary
+                </th>
+                <th>Assignee
+                </th>
+                <th>Creator
+                </th>
+                <th>Category
+                </th>
+                <th>Status
+                </th>
+                <th>Priority
+                </th>
+                <th>Open date
+                </th>
+                <th>Close date
+                </th>
+            </tr>
+            </tfoot>
+        </table>
+    </c:if>
 </div>
 
 </body>
@@ -411,6 +416,7 @@
         $('#my-groups-tickets').DataTable();
         $('.dataTables_length').addClass('bs-select');
     });
+
     function goBack() {
         window.history.back();
     }

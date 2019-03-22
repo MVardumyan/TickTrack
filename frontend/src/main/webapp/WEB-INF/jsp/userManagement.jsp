@@ -112,7 +112,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
+        <a href="/myTickets/1/30" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -120,7 +120,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        <a href="/admin/userManagement/1/30" class="sidnav-item">USER MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -147,6 +147,8 @@
             </th>
             <th class="th-sm">Gender
             </th>
+            <th class="th-sm">Status
+            </th>
             <th class="th-sm">Edit user
             </th>
         </tr>
@@ -159,18 +161,22 @@
                 <td>${regularUser.lastname}</td>
                 <td>${regularUser.email}</td>
                 <td>${regularUser.gender}</td>
-                <td>
-                    <button onclick="location.href='/updateUserInfo/${regularUser.username}'" type="button" class="btn btn-info">edit</button>
-                    <c:choose>
+                <c:choose>
                     <c:when test="${regularUser.isActive}">
-                <td>
-                    <button onclick="location.href='/deactivate/${regularUser.username}'" type="button" class="btn btn-info">deactivate</button>
-                </td>
-                </c:when>
-                <c:otherwise>
-                <td>Deactivated</td>
-                </c:otherwise>
+                        <td>
+                            <button onclick="location.href='/deactivate/${regularUser.username}'" type="button"
+                                    class="btn btn-info">deactivate
+                            </button>
+                        </td>
+                    </c:when>
+                    <c:otherwise>
+                        <td>Deactivated</td>
+                    </c:otherwise>
                 </c:choose>
+                <td>
+                    <button onclick="location.href='/updateUserInfo/${regularUser.username}'" type="button"
+                            class="btn btn-info">edit
+                    </button>
                 </td>
             </tr>
         </c:forEach>
@@ -186,6 +192,8 @@
             <th>Email address
             </th>
             <th>Gender
+            </th>
+            <th>Status
             </th>
             <th>Edit user
             </th>
@@ -207,6 +215,8 @@
             </th>
             <th class="th-sm">Gender
             </th>
+            <th class="th-sm">Status
+            </th>
             <th class="th-sm">Edit user
             </th>
         </tr>
@@ -219,19 +229,23 @@
                 <td>${businessUser.lastname}</td>
                 <td>${businessUser.email}</td>
                 <td>${businessUser.gender}</td>
-                <td>
-                    <button onclick="location.href='/updateUserInfo/${businessUser.username}'" type="button" class="btn btn-info">edit</button>
-                    <c:choose>
+                <c:choose>
                     <c:when test="${businessUser.isActive}">
-                <td>
-                    <button onclick="location.href='/deactivate/${businessUser.username}'" type="button" class="btn btn-info">deactivate</button>
-                </td>
+                        <td>
+                            <button onclick="location.href='/deactivate/${businessUser.username}'" type="button"
+                                    class="btn btn-info">deactivate
+                            </button>
+                        </td>
 
-                </c:when>
-                <c:otherwise>
-                    <td>Deactivated</td>
-                </c:otherwise>
+                    </c:when>
+                    <c:otherwise>
+                        <td>Deactivated</td>
+                    </c:otherwise>
                 </c:choose>
+                <td>
+                    <button onclick="location.href='/updateUserInfo/${businessUser.username}'" type="button"
+                            class="btn btn-info">edit
+                    </button>
 
                 </td>
             </tr>
@@ -248,6 +262,8 @@
             <th>Email address
             </th>
             <th>Gender
+            </th>
+            <th>Status
             </th>
             <th>Edit user
             </th>
@@ -269,6 +285,8 @@
             </th>
             <th class="th-sm">Gender
             </th>
+            <th class="th-sm">Status
+            </th>
             <th class="th-sm">Edit user
             </th>
         </tr>
@@ -281,8 +299,23 @@
                 <td>${adminUser.lastname}</td>
                 <td>${adminUser.email}</td>
                 <td>${adminUser.gender}</td>
+                <c:choose>
+                    <c:when test="${adminUser.isActive}">
+                        <td>
+                            <button onclick="location.href='/deactivate/${adminUser.username}'" type="button"
+                                    class="btn btn-info">deactivate
+                            </button>
+                        </td>
+
+                    </c:when>
+                    <c:otherwise>
+                        <td>Deactivated</td>
+                    </c:otherwise>
+                </c:choose>
                 <td>
-                    <button onclick="location.href='/updateUserInfo/${adminUser.username}'" type="button" class="btn btn-info">edit</button>
+                    <button onclick="location.href='/updateUserInfo/${adminUser.username}'" type="button"
+                            class="btn btn-info">edit
+                    </button>
                 </td>
             </tr>
         </c:forEach>
@@ -299,14 +332,14 @@
             </th>
             <th>Gender
             </th>
+            <th>Status
+            </th>
             <th>Edit user
             </th>
         </tr>
         </tfoot>
     </table>
-
 </div>
-
 </body>
 </html>
 

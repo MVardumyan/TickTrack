@@ -19,7 +19,7 @@ public interface IUserManager {
 
     UserOp.UserOpGetResponse get(String username);
 
-    UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request);
+    UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request,Integer page,Integer size);
 
     CommonResponse validateLoginInformation(LoginRequest request);
 }

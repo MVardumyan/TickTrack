@@ -118,15 +118,20 @@ public class UserController {
         return protobufToJson(wrapIntoMsg(result));
     }
 
-    @RequestMapping(value = "/getUsersByRole", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/getUsersByRole/{page}/{size}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
+    String getUsersByRole(@RequestBody String jsonRequest,
+                          @PathVariable("page") Integer page,
+                          @PathVariable("size") Integer size) {
+        try {
+            Msg request = jsonToProtobuf(jsonRequest);
     ResponseEntity getUsersByRole(@RequestBody String jsonRequest) {
         Msg request = jsonToProtobuf(jsonRequest);
 
         if (request == null) {
             return buildFailedToParseResponse();
         } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByRoleRequest()) {
-            Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByRoleRequest());
+            Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByRoleRequest(),page,size);
             return ResponseEntity
                     .ok(protobufToJson(wrapIntoMsg(result)));
         }
