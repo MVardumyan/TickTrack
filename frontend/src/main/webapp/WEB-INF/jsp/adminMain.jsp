@@ -262,7 +262,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        <a href="/admin/userManagement1/10" class="sidnav-item">USER MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">

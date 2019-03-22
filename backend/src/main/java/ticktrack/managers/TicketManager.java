@@ -84,7 +84,7 @@ public class TicketManager implements ITicketManager {
                 }
 
                 if (request.hasAssignee()) {
-                    userRepository.findById(request.getAssignee())
+                    userRepository.findByUsername(request.getAssignee())
                             .ifPresent(newTicket::setAssignee);
                 } else if (request.hasGroup()) {
                     groupRepository.findByName(request.getGroup())

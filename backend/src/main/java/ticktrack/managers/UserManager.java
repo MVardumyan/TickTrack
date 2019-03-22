@@ -2,6 +2,8 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import ticktrack.entities.PasswordLink;
 import ticktrack.entities.User;
@@ -332,16 +334,18 @@ public class UserManager implements IUserManager {
 
     @Transactional
     @Override
-    public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request) {
+    public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request,Integer page,Integer size) {
         Iterable<User> result;
         UserOp.UserOpGetResponse.Builder responseBuilder = UserOp.UserOpGetResponse.newBuilder();
+        Pageable pageable = PageRequest.of(page - 1, size);
+
 
         if (request.getCriteria().equals(UserOp.UserOpGetByRoleRequest.Criteria.All)) {
-            result = userRepository.findAll();
+            result = userRepository.findAll(pageable.first());
         } else {
             try {
                 UserRole role = UserRole.valueOf(request.getCriteria().toString());
-                result = userRepository.findAllByRole(role);
+                result = userRepository.findAllByRole(role,pageable);
             } catch (IllegalArgumentException e) {
                 logger.warn("Role {} does not exist", request.getCriteria());
                 return null;

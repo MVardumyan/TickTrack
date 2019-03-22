@@ -44,13 +44,15 @@ public class AdminController {
         return "adminMain";
     }
 
-    @RequestMapping(value = "/userManagement", method = RequestMethod.GET)
-    String displayUserManagementPage(ModelMap model) {
+    @RequestMapping(value = "/userManagement/{page}/{size}", method = RequestMethod.GET)
+    String displayUserManagementPage(ModelMap model,
+                                     @PathVariable("page") Integer page,
+                                     @PathVariable("size") Integer size) {
         UserOpGetByRoleRequest message = UserOpGetByRoleRequest.newBuilder()
                 .setCriteria(UserOpGetByRoleRequest.Criteria.All)
                 .build();
 
-        Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/getUsersByRole",
+        Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/getUsersByRole/{page}/{size}",
                 protobufToJson(wrapIntoMsg(message)));
 
         try (Response response = httpClient.newCall(request).execute()) {
