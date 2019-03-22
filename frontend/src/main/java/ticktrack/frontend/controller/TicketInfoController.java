@@ -221,6 +221,8 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
+                model.put("notClosed",true);
+                model.put("cancel",true);
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
                 model.put("commentList", msg.getTicketInfo().getCommentList());
@@ -348,6 +350,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("resolve", true);
+                    model.put("notClosed",true);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
                 }
             } else {
