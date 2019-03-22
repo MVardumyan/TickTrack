@@ -198,7 +198,11 @@ public class SearchManager implements ISearchManager {
         Root<User> root = criteriaQuery.from(User.class);
 
         criteriaQuery.where(builder.like(root.get("username"), "%" + term + "%"));
-        return entityManager.createQuery(criteriaQuery).getResultList().stream().map(User::getUsername).collect(Collectors.toList());
+        return entityManager.createQuery(criteriaQuery).getResultList()
+                .stream()
+                .filter(User::isActive)
+                .map(User::getUsername)
+                .collect(Collectors.toList());
     }
 
     private TicketStatus mapTicketStatus(Msg.TicketStatus status) {

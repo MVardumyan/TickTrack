@@ -179,8 +179,9 @@
 
             <label>Group</label>
             <div class="form-group">
-                <select id="group" name="group" multiple class="form-control"
+                <select id="group" name="group" class="form-control"
                         oninput="document.getElementById('assignee').disabled=false">
+                    <option>none</option>
                     <c:forEach var="group" items="${groupList}">
                         <option value="${group}">
                                 ${group}

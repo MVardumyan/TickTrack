@@ -2,9 +2,9 @@ package ticktrack.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.interfaces.ICategoryManager;
-import ticktrack.managers.CategoryManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ticktrack.proto.Msg;
@@ -25,16 +25,16 @@ public class CategoryController {
 
     @RequestMapping(path = "/add", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String addCategory(@RequestParam("name") String categoryName) {
+    ResponseEntity addCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.createCategory(categoryName);
-        return protobufToJson(wrapCommonResponseIntoMsg(result));
+        return processManagerResponse(result);
     }
 
     @RequestMapping(path = "/deactivate", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String deactivateCategory(@RequestParam("name") String categoryName) {
+    ResponseEntity deactivateCategory(@RequestParam("name") String categoryName) {
         Msg.CommonResponse result = categoryManager.deactivateCategory(categoryName);
-        return protobufToJson(wrapCommonResponseIntoMsg(result));
+        return processManagerResponse(result);
     }
 
     @RequestMapping(path = "/getAll", method = RequestMethod.GET, produces = "application/json")
@@ -46,28 +46,21 @@ public class CategoryController {
 
     @RequestMapping(path = "/changeName", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String changeCategoryName(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity changeCategoryName(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            Msg.CommonResponse result;
-
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasCategoryOperation()
-                    && request.getCategoryOperation().hasCategoryOpUpdateRequest()) {
-                result = categoryManager.changeName(
-                        request.getCategoryOperation().getCategoryOpUpdateRequest()
-                );
-            } else {
-                result = buildFailureResponse("Request message should contain CategoryOp.CategoryOpUpdateRequest type");
-            }
-
-            return protobufToJson(wrapCommonResponseIntoMsg(result));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling search request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasCategoryOperation()
+                && request.getCategoryOperation().hasCategoryOpUpdateRequest()) {
+            Msg.CommonResponse result = categoryManager.changeName(
+                    request.getCategoryOperation().getCategoryOpUpdateRequest()
+            );
+            return processManagerResponse(result);
         }
+
+        logger.warn("Request message should contain CategoryOp.CategoryOpUpdateRequest type");
+        return buildInvalidProtobufContentResponse("Request message should contain CategoryOp.CategoryOpUpdateRequest type");
     }
 
     private Msg wrapIntoMsg(Msg.CategoryOp.CategoryOpGetAllResponse message) {

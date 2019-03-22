@@ -12,19 +12,9 @@ import org.springframework.context.annotation.Scope;
 @SpringBootApplication
 public class Frontend {
 
-   @Autowired
-   Logger logger;
-
-   @Bean
-   @Scope("singleton")
-   public Logger logger() {
-      return LoggerFactory.getLogger("");
-   }
-
    @Bean
    @Scope("singleton")
    public OkHttpClient httpClient() {
-      logger.info("initializing http client");
       return new OkHttpClient();
    }
 
