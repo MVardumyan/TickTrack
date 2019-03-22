@@ -254,7 +254,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
+        <a href="/myTickets/1/30" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -262,7 +262,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/admin/userManagement" class="sidnav-item">USER MANAGEMENT</a>
+        <a href="/admin/userManagement/1/30" class="sidnav-item">USER MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
