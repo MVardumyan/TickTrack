@@ -11,7 +11,5 @@ public interface IUserGroupManager {
 
    CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request);
 
-   UserGroup get(String name);
-
    UserGroupOp.UserGroupOpGetAllResponse getAll();
 }
