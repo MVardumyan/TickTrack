@@ -57,20 +57,24 @@ public class SearchController {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
             }
 
-            if (groupResponse.code() == 200) {
-                Msg result = jsonToProtobuf(groupResponse.body().string());
-
-                if (result != null) {
-                    model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
-                }
-            } else {
-                logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
-            }
+            getGroup(model, groupResponse, logger);
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
         }
 
         return "searchTicket";
+    }
+
+    static void getGroup(ModelMap model, Response groupResponse, Logger logger) throws IOException {
+        if (groupResponse.code() == 200) {
+            Msg result = jsonToProtobuf(groupResponse.body().string());
+
+            if (result != null) {
+                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+            }
+        } else {
+            logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
+        }
     }
 
     @RequestMapping(value = "searchTickets/{page}/{size}", method = RequestMethod.POST)
