@@ -73,7 +73,7 @@ public class SearchController {
         return "searchTicket";
     }
 
-    @RequestMapping(value = "searchTickets", method = RequestMethod.POST)
+    @RequestMapping(value = "searchTickets/{page}/{size}", method = RequestMethod.POST)
     String searchTickets(ModelMap model,@SessionAttribute User user,
                          @RequestParam(required = false) String summaryOrDescription,
                          @RequestParam(required = false) String ticket_id,
@@ -89,7 +89,9 @@ public class SearchController {
                          @RequestParam(required = false) String closeDateStart,
                          @RequestParam(required = false) String closeDateEnd,
                          @RequestParam(required = false) String deadlineStart,
-                         @RequestParam(required = false) String deadlineEnd
+                         @RequestParam(required = false) String deadlineEnd,
+                         @PathVariable("page") Integer page,
+                         @PathVariable("size") Integer size
 
     ) {
 
@@ -175,7 +177,7 @@ public class SearchController {
             requestMessage.setDeadlineEnd(deadlineEnd);
         }
 
-        Request request = buildRequestWithBody(backendURL + "search",
+        Request request = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestMessage)));
 
         try (Response response = httpClient.newCall(request).execute()) {
