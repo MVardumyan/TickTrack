@@ -56,12 +56,22 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                if (user.getRole().equals(UserRole.BusinessUser)) {
-                    model.put("resolve", true);
-                } else if (user.getRole().equals(UserRole.Admin)) {
-                    model.put("resolve", true);
-                    model.put("admin", true);
+                if (!user.getRole().equals(UserRole.RegularUser)) {
+                    if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)) {
+                        model.put("resolve", true);
+                    }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Resolved)){
+                        model.put("close",true);
+                    }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)){
+                        model.put("inProgress",true);
+                    }else{
+                        model.put("resolve",false);
+                        model.put("close",false);
+                        model.put("inProgress",false);
+                    }
                 }
+                if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
+                    }
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
 
