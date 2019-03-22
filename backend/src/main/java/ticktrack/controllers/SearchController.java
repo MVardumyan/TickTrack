@@ -29,12 +29,9 @@ public class SearchController {
 
     @RequestMapping(value = "/search/{page}/{size}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String searchTickets(@PathVariable("page") Integer page,
+    ResponseEntity searchTickets(@PathVariable("page") Integer page,
                          @PathVariable("size") Integer size,
                          @RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
-    ResponseEntity searchTickets(@RequestBody String jsonRequest) {
         Msg request = jsonToProtobuf(jsonRequest);
 
         if (request == null) {

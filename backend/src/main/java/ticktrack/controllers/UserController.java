@@ -120,12 +120,9 @@ public class UserController {
 
     @RequestMapping(value = "/getUsersByRole/{page}/{size}", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String getUsersByRole(@RequestBody String jsonRequest,
+    ResponseEntity getUsersByRole(@RequestBody String jsonRequest,
                           @PathVariable("page") Integer page,
                           @PathVariable("size") Integer size) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
-    ResponseEntity getUsersByRole(@RequestBody String jsonRequest) {
         Msg request = jsonToProtobuf(jsonRequest);
 
         if (request == null) {
