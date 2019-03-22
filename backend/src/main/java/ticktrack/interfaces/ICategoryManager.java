@@ -11,7 +11,5 @@ public interface ICategoryManager {
 
    CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request);
 
-   Category get(String name);
-
    CategoryOp.CategoryOpGetAllResponse getAll();
 }

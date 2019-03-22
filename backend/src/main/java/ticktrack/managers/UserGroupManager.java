@@ -18,6 +18,11 @@ import static ticktrack.util.ResponseHandler.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Class provides methods for managing Category entity.
+ * CategoryManager is Spring component. For db interaction it uses autowired crudRepository interfaces.
+ * Contains business logic for new Category creation, changing name and deactivation.
+ */
 @Service("GroupMng")
 public class UserGroupManager implements IUserGroupManager {
     private final GroupRepository groupRepository;
@@ -28,6 +33,11 @@ public class UserGroupManager implements IUserGroupManager {
         this.groupRepository = groupRepository;
     }
 
+    /**
+     * Method for new group creation.
+     * @param groupName new group name
+     * @return protobuf type CommonResponse with responseType: 1) success if group created; 2) failure if group exists or given name is null
+     */
     @Transactional
     @Override
     public CommonResponse createUserGroup(String groupName) {
@@ -52,6 +62,11 @@ public class UserGroupManager implements IUserGroupManager {
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method for deleting UserGroup from db.
+     * @param groupName corresponding group name
+     * @return protobuf type CommonResponse with responseType: 1) success if group deleted; 2) failure if group not found/contains users/given name is null
+     */
     @Transactional
     @Override
     public CommonResponse deleteUserGroup(String groupName) {
@@ -82,6 +97,11 @@ public class UserGroupManager implements IUserGroupManager {
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method for changing user group name
+     * @param request protobuf type UserGroupOpUpdateRequest contains old and new names
+     * @return CommonResponse with responseType: 1) success if name updated; 2) failure if old name does not match
+     */
     @Transactional
     @Override
     public CommonResponse changeName(UserGroupOp.UserGroupOpUpdateRequest request) {
@@ -108,8 +128,12 @@ public class UserGroupManager implements IUserGroupManager {
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method used inside UserGroupManager for searching group by name
+     * @param name group name
+     * @return 1) UserGroup entity; 2) null if not found
+     */
     @Transactional
-    @Override
     public UserGroup get(String name) {
         Optional<UserGroup> result = groupRepository.findByName(name);
         if (result.isPresent()) {
@@ -121,6 +145,10 @@ public class UserGroupManager implements IUserGroupManager {
         }
     }
 
+    /**
+     * Method for getting all groups from db.
+     * @return protobuf type UserGroupOpGetAllResponse containing list of UserGroup String names.
+     */
     @Transactional
     @Override
     public UserGroupOp.UserGroupOpGetAllResponse getAll() {
