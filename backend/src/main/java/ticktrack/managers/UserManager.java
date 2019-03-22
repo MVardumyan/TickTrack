@@ -147,19 +147,25 @@ public class UserManager implements IUserManager {
                 }
             }
             if (request.hasGroup()) {
-                Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
-                if (groupResult.isPresent()) {
-                    UserGroup group = groupResult.get();
-
-                    if (group.equals(user.getGroup())) {
-                        responseText.append("Nothing changed. The user ").append(user.getUsername()).append(" is in group ").append(user.getGroup());
-                    } else {
-                        user.setGroup(group);
-                        responseText.append("User ").append(request.getUsername()).append("'s group updated!\n");
-                        updateSuccess = true;
-                    }
+                if(request.getGroup().equals("none")) {
+                    user.setGroup(null);
+                    responseText.append("User ").append(request.getUsername()).append("'s group updated!\n");
+                    updateSuccess = true;
                 } else {
-                    responseText.append("Group ").append(request.getGroup()).append(" not found");
+                    Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
+                    if (groupResult.isPresent()) {
+                        UserGroup group = groupResult.get();
+
+                        if (group.equals(user.getGroup())) {
+                            responseText.append("Nothing changed. The user ").append(user.getUsername()).append(" is in group ").append(user.getGroup());
+                        } else {
+                            user.setGroup(group);
+                            responseText.append("User ").append(request.getUsername()).append("'s group updated!\n");
+                            updateSuccess = true;
+                        }
+                    } else {
+                        responseText.append("Group ").append(request.getGroup()).append(" not found");
+                    }
                 }
             }
             if (request.hasRole()) {
