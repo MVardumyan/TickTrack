@@ -97,7 +97,7 @@ class UserManagerTest {
                 .setCriteria(Msg.UserOp.UserOpGetByRoleRequest.Criteria.RegularUser)
                 .build();
 
-        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request);
+        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request,1,10);
 
         assertEquals(2, result.getUserInfoCount());
         assertEquals("user1", result.getUserInfo(0).getUsername());
