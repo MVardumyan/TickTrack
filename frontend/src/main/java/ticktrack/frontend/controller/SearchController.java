@@ -57,15 +57,7 @@ public class SearchController {
                 logger.warn("Error received from backend, unable to get categories list: {}", categoryResponse.message());
             }
 
-            if (groupResponse.code() == 200) {
-                Msg result = jsonToProtobuf(groupResponse.body().string());
-
-                if (result != null) {
-                    model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
-                }
-            } else {
-                logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
-            }
+            getGroup(model, groupResponse, logger);
         } catch (IOException e) {
             logger.error("Internal error, unable to get categories list", e);
         }
@@ -73,7 +65,19 @@ public class SearchController {
         return "searchTicket";
     }
 
-    @RequestMapping(value = "searchTickets", method = RequestMethod.POST)
+    static void getGroup(ModelMap model, Response groupResponse, Logger logger) throws IOException {
+        if (groupResponse.code() == 200) {
+            Msg result = jsonToProtobuf(groupResponse.body().string());
+
+            if (result != null) {
+                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+            }
+        } else {
+            logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
+        }
+    }
+
+    @RequestMapping(value = "searchTickets/{page}/{size}", method = RequestMethod.POST)
     String searchTickets(ModelMap model,@SessionAttribute User user,
                          @RequestParam(required = false) String summaryOrDescription,
                          @RequestParam(required = false) String ticket_id,
@@ -89,7 +93,9 @@ public class SearchController {
                          @RequestParam(required = false) String closeDateStart,
                          @RequestParam(required = false) String closeDateEnd,
                          @RequestParam(required = false) String deadlineStart,
-                         @RequestParam(required = false) String deadlineEnd
+                         @RequestParam(required = false) String deadlineEnd,
+                         @PathVariable("page") Integer page,
+                         @PathVariable("size") Integer size
 
     ) {
 
@@ -175,7 +181,7 @@ public class SearchController {
             requestMessage.setDeadlineEnd(deadlineEnd);
         }
 
-        Request request = buildRequestWithBody(backendURL + "search",
+        Request request = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestMessage)));
 
         try (Response response = httpClient.newCall(request).execute()) {
