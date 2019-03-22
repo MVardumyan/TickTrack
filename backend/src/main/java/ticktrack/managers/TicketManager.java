@@ -50,6 +50,7 @@ public class TicketManager implements ITicketManager {
     /**
      * Method for new ticket creation.
      * Sets ticket ID, creation date and status automatically
+     *
      * @param request protobuf type TicketOpCreateRequest contains new Ticket fields information
      * @return TicketInfo - new ticket's information for success; CommonResponse - if Creator/Priority/Category not found
      */
@@ -68,10 +69,15 @@ public class TicketManager implements ITicketManager {
             TicketPriority priority;
             Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
             Optional<User> creatorResult = userRepository.findById(request.getCreator());
-            if (categoryResult.isPresent() && creatorResult.isPresent() && request.hasCreator()) {
+
+            if (categoryResult.isPresent()
+                    && creatorResult.isPresent()
+                    && !categoryResult.get().isDeactivated()
+                    && creatorResult.get().isActive()) {
+
                 Category category = categoryResult.get();
+                creator = creatorResult.get();
                 try {
-                    creator = creatorResult.get();
                     priority = TicketPriority.valueOf(request.getPriority());
                 } catch (IllegalArgumentException e) {
                     responseText = "Priority doesn't match with existing types OR there is no such a user to assign to this ticket!";
@@ -93,12 +99,35 @@ public class TicketManager implements ITicketManager {
                 }
 
                 if (request.hasAssignee()) {
-                    userRepository.findByUsername(request.getAssignee())
-                            .ifPresent(newTicket::setAssignee);
-                    newTicket.setStatus(Assigned);
+                    Optional<User> assigneeResult = userRepository.findByUsername(request.getAssignee());
+
+                    if (assigneeResult.isPresent()) {
+                        User assignee = assigneeResult.get();
+
+                        if (assignee.isActive()) {
+                            newTicket.setAssignee(assignee);
+                            newTicket.setStatus(Assigned);
+                        } else {
+                            responseText = "Unable to create Ticket: User " + assignee.getUsername() + " deactivated and cannot be assignee";
+                            logger.warn(responseText);
+                            return wrapCommonResponseIntoMsg(buildFailureResponse(responseText));
+                        }
+                    } else {
+                        responseText = "Unable to create Ticket: Assignee does not exist";
+                        logger.warn(responseText);
+                        return wrapCommonResponseIntoMsg(buildFailureResponse(responseText));
+                    }
                 } else if (request.hasGroup()) {
-                    groupRepository.findByName(request.getGroup())
-                            .ifPresent(newTicket::setGroup);
+                    Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
+
+                    if (groupResult.isPresent()) {
+                        UserGroup group = groupResult.get();
+                        newTicket.setGroup(group);
+                    } else {
+                        responseText = "Unable to create Ticket: Group does not exist";
+                        logger.warn(responseText);
+                        return wrapCommonResponseIntoMsg(buildFailureResponse(responseText));
+                    }
                 }
 
                 ticketRepository.save(newTicket);
@@ -109,13 +138,15 @@ public class TicketManager implements ITicketManager {
 
             } else if (!categoryResult.isPresent()) {
                 responseText = "Unable to create Ticket: Invalid Category type";
-                logger.warn(responseText);
-                response = buildFailureResponse(responseText);
-            } else {
+            } else if (!creatorResult.isPresent()) {
                 responseText = "Unable to create Ticket: Creator does not exist";
-                logger.warn(responseText);
-                response = buildFailureResponse(responseText);
+            } else if(!creatorResult.get().isActive()) {
+                responseText = "Unable to create Ticket: Creator deactivated";
+            } else {
+                responseText = "Unable to create Ticket: Category deactivated";
             }
+            logger.warn(responseText);
+            response = buildFailureResponse(responseText);
         }
         return wrapCommonResponseIntoMsg(response);
     }
@@ -123,6 +154,7 @@ public class TicketManager implements ITicketManager {
     /**
      * Method for ticket fields update.
      * Checks which fields should be updated and updates them with new values.
+     *
      * @param request TicketOpUpdateRequest contains set of optional fields to update
      * @return TicketInfo - new ticket's information for success; CommonResponse/ - if ticket_id/Status/Creator/Priority/Category not found
      */
@@ -136,6 +168,9 @@ public class TicketManager implements ITicketManager {
         Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
         if (result.isPresent()) {
             Ticket ticket = result.get();
+            if (ticket.getStatus().equals(Closed)) {
+                return wrapCommonResponseIntoMsg(buildFailureResponse("Ticket " + ticket.getID() + " is closed and cannot be updated"));
+            }
 
             if (request.hasGroup()) {
                 Optional<UserGroup> groupResult = groupRepository.findByName(request.getGroup());
@@ -160,18 +195,22 @@ public class TicketManager implements ITicketManager {
                 Optional<User> userResult = userRepository.findByUsername(request.getAssignee());
                 if (userResult.isPresent()) {
                     User assignee = userResult.get();
-                    ticket.setAssignee(assignee);
-                    if (Open.equals(ticket.getStatus())) {
-                        ticket.setStatus(Assigned);
-                    }
-                    if(ticket.getGroup() != null) {
-                        ticket.setGroup(null);
-                    }
+                    if (assignee.isActive()) {
+                        ticket.setAssignee(assignee);
+                        if (Open.equals(ticket.getStatus())) {
+                            ticket.setStatus(Assigned);
+                        }
+                        if (ticket.getGroup() != null) {
+                            ticket.setGroup(null);
+                        }
 
-                    responseText.append("Ticket ").append(request.getTicketID()).append("'s Assignee updated! ");
-                    updateSuccess = true;
+                        responseText.append("Ticket ").append(request.getTicketID()).append("'s Assignee updated! ");
+                        updateSuccess = true;
+                    } else {
+                        responseText.append("User ").append(request.getTicketID()).append(" deactivated and cannot be assignee! ");
+                    }
                 } else {
-                    responseText.append("There is no such a user to update assignee of ticket ").append(ticket.getID()).append(" ");
+                    responseText.append("There is no such a user to update assignee of ticket! ").append(ticket.getID()).append(" ");
                 }
             }
             if (request.hasDescription()) {
@@ -183,9 +222,13 @@ public class TicketManager implements ITicketManager {
                 Optional<Category> categoryResult = categoryRepository.findByName(request.getCategory());
                 if (categoryResult.isPresent()) {
                     Category category = categoryResult.get();
-                    ticket.setCategory(category);
-                    responseText.append("Ticket ").append(request.getTicketID()).append("'s Category updated! ");
-                    updateSuccess = true;
+                    if (category.isDeactivated()) {
+                        responseText.append("Category ").append(request.getTicketID()).append(" deactivated! ");
+                    } else {
+                        ticket.setCategory(category);
+                        responseText.append("Ticket ").append(request.getTicketID()).append("'s Category updated! ");
+                        updateSuccess = true;
+                    }
                 } else {
                     responseText.append("There is no such category to update ticket ").append(ticket.getID()).append(" ");
                 }
@@ -197,13 +240,13 @@ public class TicketManager implements ITicketManager {
                     ticket.setStatus(status);
                     if (status.equals(Closed) || status.equals(Canceled)) {
                         ticket.setCloseDate(new Timestamp(getCurrentTimeInMillis()));
-                    } else if(status.equals(Resolved)) {
+                    } else if (status.equals(Resolved)) {
                         ticket.setAssignee(ticket.getCreator());
                     }
                     responseText.append("Ticket ").append(request.getTicketID()).append("' Status updated! ");
                     updateSuccess = true;
                 } catch (IllegalArgumentException e) {
-                    responseText.append("Status doesn't match with existing types!\n");
+                    responseText.append("Status doesn't match with existing types! ");
                 }
             }
             if (request.hasSummary()) {
@@ -256,6 +299,7 @@ public class TicketManager implements ITicketManager {
 
     /**
      * Method creates new Comment entity and adds it to corresponding ticket
+     *
      * @param request protobuf type TicketOpAddComment contains new Comment information
      * @return protobuf type Comment with new Comment information in case of success. CommonResponse with failure message in case of failure
      */
@@ -292,6 +336,7 @@ public class TicketManager implements ITicketManager {
 
     /**
      * Method searches ticket in db by given id and returns its information
+     *
      * @param ticket_id param for search by id
      * @return protobuf type TicketInfo with ticket fields information. Empty if ticket not found
      */
