@@ -25,13 +25,13 @@ class CategoryManagerTest {
    void createAndDeactivateCategory() {
       categoryManager.createCategory("testCategory1");
 
-      Category category = categoryManager.get("testCategory1");
+      Category category = categoryRepository.findByName("testCategory1").get();
       assertNotNull(category);
       assertEquals("testCategory1", category.getName());
 
       categoryManager.deactivateCategory("testCategory1");
 
-      category = categoryManager.get("testCategory1");
+      category = categoryRepository.findByName("testCategory1").get();
       assertTrue(category.isDeactivated());
    }
 
@@ -39,7 +39,7 @@ class CategoryManagerTest {
    void createAndUpdateCategory() {
       categoryManager.createCategory("testCategory2");
 
-      Category category = categoryManager.get("testCategory2");
+      Category category = categoryRepository.findByName("testCategory2").get();
       assertNotNull(category);
       assertEquals("testCategory2", category.getName());
 
@@ -48,7 +48,7 @@ class CategoryManagerTest {
          .setNewName("testCategory3")
          .build());
 
-      category = categoryManager.get("testCategory3");
+      category = categoryRepository.findByName("testCategory3").get();
       assertNotNull(category);
       assertEquals("testCategory3", category.getName());
    }

@@ -17,6 +17,11 @@ import static ticktrack.util.ResponseHandler.*;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Class provides methods for managing Category entity.
+ * CategoryManager is Spring component. For db interaction it uses autowired crudRepository interfaces.
+ * Contains business logic for new Category creation, changing name and deactivation.
+ */
 @Service("CategoryMng")
 public class CategoryManager implements ICategoryManager {
     private final CategoryRepository categoryRepository;
@@ -27,6 +32,11 @@ public class CategoryManager implements ICategoryManager {
         this.categoryRepository = categoryRepository;
     }
 
+    /**
+     * Method for new category creation.
+     * @param categoryName new category name
+     * @return protobuf type CommonResponse with responseType: 1) success if category created; 2) failure if category exists or given name is null
+     */
     @Transactional
     @Override
     public CommonResponse createCategory(String categoryName) {
@@ -52,18 +62,25 @@ public class CategoryManager implements ICategoryManager {
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method for category deactivation. Sets Category entities field isDeactivated to true
+     * @param categoryName corresponding category name
+     * @return protobuf type CommonResponse with responseType: 1) success if category deactivated; 2) failure if category not found / given name is null
+     */
     @Transactional
     @Override
     public CommonResponse deactivateCategory(String categoryName) {
         String responseText;
-        Optional<Category> result = categoryRepository.findByName(categoryName);
 
         if (categoryName == null) {
             responseText = "Category name is null";
             logger.warn(responseText);
         } else {
-            if (result.isPresent()) {
-                Category category = result.get();
+            Category category = get(categoryName);
+            if (category == null) {
+                responseText = "Category" + categoryName + " not found";
+                logger.warn("Category {} not found", responseText);
+            } else {
                 category.setDeactivated(true);
                 categoryRepository.save(category);
 
@@ -71,15 +88,17 @@ public class CategoryManager implements ICategoryManager {
                 logger.debug("Category {} deactivated", responseText);
 
                 return buildSuccessResponse(responseText);
-            } else {
-                responseText = "Category" + categoryName + " not found";
-                logger.warn("Category {} not found", responseText);
             }
         }
 
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method for category name update.
+     * @param request protobuf type CategoryOpUpdateRequest contains old and new names
+     * @return protobuf type CommonResponse with responseType: 1) success if name updated; 2) failure if old name does not match/category deactivated
+     */
     @Transactional
     @Override
     public CommonResponse changeName(CategoryOp.CategoryOpUpdateRequest request) {
@@ -94,6 +113,12 @@ public class CategoryManager implements ICategoryManager {
             if (category == null) {
                 responseText = "Category " + request.getOldName() + " not found";
             } else {
+                if(category.isDeactivated()) {
+                    responseText = "Unable to update deactivated category" + category.getName();
+                    logger.warn(responseText);
+
+                    return buildFailureResponse(responseText);
+                }
                 category.setName(request.getNewName());
                 categoryRepository.save(category);
 
@@ -107,8 +132,12 @@ public class CategoryManager implements ICategoryManager {
         return buildFailureResponse(responseText);
     }
 
+    /**
+     * Method used inside CategoryManager for searching category by name
+     * @param name category name
+     * @return 1) Category entity; 2) null if not found
+     */
     @Transactional
-    @Override
     public Category get(String name) {
         Optional<Category> result = categoryRepository.findByName(name);
 
@@ -121,6 +150,10 @@ public class CategoryManager implements ICategoryManager {
         }
     }
 
+    /**
+     * Method for getting all categories from db.
+     * @return protobuf type CategoryOpGetAllResponse containing list of CategoryInfo objects. Each object contains category name and status
+     */
     @Transactional
     @Override
     public CategoryOp.CategoryOpGetAllResponse getAll() {
