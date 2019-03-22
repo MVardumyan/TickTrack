@@ -3,10 +3,10 @@ package ticktrack.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.interfaces.IUserManager;
-import ticktrack.managers.UserManager;
 import ticktrack.proto.Msg;
 
 import static common.helpers.CustomJsonParser.*;
@@ -25,104 +25,89 @@ public class UserController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String addUser(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity addUser(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpCreateRequest()) {
-                Msg.CommonResponse result = userManager.create(request.getUserOperation().getUserOpCreateRequest());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
-            }
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpCreateRequest()) {
 
-            logger.warn("No create user request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No create user request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling create user request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+            Msg.CommonResponse result = userManager.create(request.getUserOperation().getUserOpCreateRequest());
+            return processManagerResponse(result);
         }
+
+        logger.warn("No create user request found");
+        return buildInvalidProtobufContentResponse("No create user request found");
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String updateUser(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity updateUser(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpUpdateRequest()) {
-                Msg result = userManager.update(request.getUserOperation().getUserOpUpdateRequest());
-                return protobufToJson(result);
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpUpdateRequest()) {
+            Msg result = userManager.update(request.getUserOperation().getUserOpUpdateRequest());
+            if (result.hasCommonResponse()) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(protobufToJson(result));
             }
-
-            logger.warn("No update user request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No update user request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling update user request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+            return ResponseEntity
+                    .ok(protobufToJson(result));
         }
+
+        logger.warn("No update user request found");
+        return buildInvalidProtobufContentResponse("No update user request found");
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String changePassword(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity changePassword(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangePassword()) {
-                Msg result = wrapCommonResponseIntoMsg(
-                        userManager.changePassword(request.getUserOperation().getUserOpChangePassword())
-                );
-                return protobufToJson(result);
-            }
-
-            logger.warn("No change password request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No change password request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling change password request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpChangePassword()) {
+            Msg.CommonResponse result = userManager.changePassword(request.getUserOperation().getUserOpChangePassword());
+            return processManagerResponse(result);
         }
+
+        logger.warn("No change password request found");
+        return buildInvalidProtobufContentResponse("No change password request found");
     }
 
     @RequestMapping(value = "/generateChangePasswordLink/{username}", method = RequestMethod.GET)
     @ResponseBody
-    String generateChangePasswordLink(@PathVariable("username") String username) {
+    ResponseEntity generateChangePasswordLink(@PathVariable("username") String username) {
         Msg.CommonResponse result = userManager.generateChangePasswordLink(username);
 
-        return protobufToJson(wrapCommonResponseIntoMsg(result));
+        return processManagerResponse(result);
     }
 
     @RequestMapping(value = "/validatePasswordLink", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String validatePasswordLink(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity validatePasswordLink(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpValidatePasswordLink()) {
-                Msg.CommonResponse response = userManager.validatePasswordLink(request.getUserOperation().getUserOpValidatePasswordLink());
-                return protobufToJson(wrapCommonResponseIntoMsg(response));
-            }
-
-            logger.warn("No validate password link request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No validate password link request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling change password request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpValidatePasswordLink()) {
+            Msg.CommonResponse result = userManager.validatePasswordLink(request.getUserOperation().getUserOpValidatePasswordLink());
+            return processManagerResponse(result);
         }
+
+        logger.warn("No validate password link request found");
+        return buildInvalidProtobufContentResponse("No validate password link request found");
     }
 
     @RequestMapping(value = "/deactivate/{username}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
-    String deactivate(@PathVariable("username") String username) {
+    ResponseEntity deactivate(@PathVariable("username") String username) {
         Msg.CommonResponse result = userManager.deactivate(username);
 
-        return protobufToJson(wrapCommonResponseIntoMsg(result));
+        return processManagerResponse(result);
     }
 
     @RequestMapping(value = "/getUser/{username}", method = RequestMethod.GET, produces = "application/json")
@@ -135,44 +120,35 @@ public class UserController {
 
     @RequestMapping(value = "/getUsersByRole", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String getUsersByRole(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity getUsersByRole(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByRoleRequest()) {
-                Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByRoleRequest());
-                return protobufToJson(wrapIntoMsg(result));
-            }
-
-            logger.warn("No get user by role request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No get user by role request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling get user by role request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasUserOperation() && request.getUserOperation().hasUserOpGetByRoleRequest()) {
+            Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request.getUserOperation().getUserOpGetByRoleRequest());
+            return ResponseEntity
+                    .ok(protobufToJson(wrapIntoMsg(result)));
         }
+
+        logger.warn("No get user by role request found");
+        return buildInvalidProtobufContentResponse("No get user by role request found");
     }
 
     @RequestMapping(value = "/validateLogin", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String validateLogin(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity validateLogin(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if (request == null) {
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
-            } else if (request.hasLoginRequest()) {
-                Msg.CommonResponse result = userManager.validateLoginInformation(request.getLoginRequest());
-                return protobufToJson(wrapCommonResponseIntoMsg(result));
-            }
-
-            logger.warn("No login request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No login request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling get user by role request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+        if (request == null) {
+            return buildFailedToParseResponse();
+        } else if (request.hasLoginRequest()) {
+            Msg.CommonResponse result = userManager.validateLoginInformation(request.getLoginRequest());
+            return processManagerResponse(result);
         }
+
+        logger.warn("No login request found");
+        return buildInvalidProtobufContentResponse("No login request found");
     }
 
     private Msg wrapIntoMsg(Msg.UserOp.UserOpGetResponse message) {

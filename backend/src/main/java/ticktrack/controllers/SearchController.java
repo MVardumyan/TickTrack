@@ -3,10 +3,10 @@ package ticktrack.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import ticktrack.interfaces.ISearchManager;
-import ticktrack.managers.SearchManager;
 import ticktrack.proto.Msg;
 
 import java.util.List;
@@ -27,27 +27,23 @@ public class SearchController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = "application/json")
     @ResponseBody
-    String searchTickets(@RequestBody String jsonRequest) {
-        try {
-            Msg request = jsonToProtobuf(jsonRequest);
+    ResponseEntity searchTickets(@RequestBody String jsonRequest) {
+        Msg request = jsonToProtobuf(jsonRequest);
 
-            if(request == null) {
+        if (request == null) {
 
-                return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error: unable to parse request to protobuf")));
+            return buildFailedToParseResponse();
 
-            } else if (request.hasSearchOperation() && request.getSearchOperation().hasSearchOpRequest()) {
+        } else if (request.hasSearchOperation() && request.getSearchOperation().hasSearchOpRequest()) {
 
-                Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest());
-                return protobufToJson(wrapIntoMsg(result));
-
-            }
-
-            logger.warn("No search request found");
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("No search request found")));
-        } catch (Throwable t) {
-            logger.error("Exception appear while handling search request", t);
-            return protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Internal Error\n" + t.getMessage())));
+            Msg.SearchOp.SearchOpResponse result = searchManager.searchByCriteria(request.getSearchOperation().getSearchOpRequest());
+            return ResponseEntity
+                    .ok(protobufToJson(wrapIntoMsg(result)));
         }
+
+        logger.warn("No search request found");
+        return buildInvalidProtobufContentResponse("No search request found");
+
     }
 
     @RequestMapping(value = "/searchUsers/{term}", method = RequestMethod.GET, produces = "application/json")

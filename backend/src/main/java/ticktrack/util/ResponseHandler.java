@@ -1,10 +1,15 @@
 package ticktrack.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.springframework.http.ResponseEntity;
 import ticktrack.entities.Ticket;
 import ticktrack.proto.Msg;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static common.helpers.CustomJsonParser.protobufToJson;
+import static ticktrack.proto.Msg.CommonResponse.ResponseType.Failure;
 
 public final class ResponseHandler {
    public static Msg.SearchOp.SearchOpResponse buildTicketResponseFromQueryResult(List<Ticket> result) {
@@ -75,5 +80,30 @@ public final class ResponseHandler {
       return Msg.newBuilder()
               .setCommonResponse(message)
               .build();
+   }
+
+   @NotNull
+   public static ResponseEntity<String> buildFailedToParseResponse() {
+      return ResponseEntity
+              .badRequest()
+              .body(protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Unable to parse request to protobuf"))));
+   }
+
+   @NotNull
+   public static ResponseEntity<String> buildInvalidProtobufContentResponse(String s) {
+      return ResponseEntity
+              .badRequest()
+              .body(protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse(s))));
+   }
+
+   @NotNull
+   public static ResponseEntity processManagerResponse(Msg.CommonResponse result) {
+      if (result.getResponseType().equals(Failure)) {
+         return ResponseEntity
+                 .badRequest()
+                 .body(protobufToJson(wrapCommonResponseIntoMsg(result)));
+      }
+      return ResponseEntity
+              .ok(protobufToJson(wrapCommonResponseIntoMsg(result)));
    }
 }
