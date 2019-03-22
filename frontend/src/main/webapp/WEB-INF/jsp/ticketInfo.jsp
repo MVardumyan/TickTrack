@@ -75,6 +75,7 @@
         margin-left: 100px;
         margin-top: 50px;
         padding-left: 190px;
+        width: 1900px;
     }
 
     .container__header {
@@ -289,13 +290,16 @@
                 <form action="/updateTicket/${id}">
                     <button class="action-button">Edit</button>
                 </form>
-                </c:if>
+                    <c:if test="inProgress">
                 <form action="/progressTicket/${id}">
                     <button class="action-button">In Progress</button>
                 </form>
+                    </c:if>
+                    <c:if test="${close}">
                 <form action="/closeTicket/${id}">
                     <button class="action-button">Close</button>
                 </form>
+                </c:if>
                 <form action="/cancelTicket/${id}">
                     <button class="action-button">Cancel</button>
                 </form>
@@ -303,6 +307,7 @@
                     <form action="/resolveTicket/${id}">
                         <button class="action-button">Resolve</button>
                     </form>
+                </c:if>
                 </c:if>
             </div>
         </div>
