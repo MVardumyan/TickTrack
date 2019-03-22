@@ -116,11 +116,8 @@ public class NewTicketController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
-                    //msg.getTicketInfo().getTicketID();
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
                     model.put("notClosed",true);
+                    model.put("cancel",true);
                     model.put("id",msg.getTicketInfo().getTicketID());
                 }
             } else {
