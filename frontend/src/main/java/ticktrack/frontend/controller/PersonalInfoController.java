@@ -71,16 +71,6 @@ public class PersonalInfoController {
             } else {
                 logger.error("User not found");
             }
-            if (user.getRole().equals(UserRole.Admin)) {
-                model.put("admin", true);
-            } else {
-                model.put("admin", false);
-            }
-            if (user.getRole().equals(UserRole.Admin)) {
-                model.put("admin", true);
-            } else {
-                model.put("admin", false);
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,6 +84,7 @@ public class PersonalInfoController {
                           @RequestParam String firstName,
                           @RequestParam String lastName,
                           @RequestParam String email,
+                          @RequestParam String gender,
                           @RequestParam(required = false) String group,
                           @RequestParam(required = false) String role) {
 
@@ -113,10 +104,9 @@ public class PersonalInfoController {
         if(group != null){
             requestMessage.setGroup(group);
         }
-//        if (gender!=null){
-//            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
-//        }
-
+        if (gender!=null){
+            requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
+        }
         try (Response response = httpClient.newCall(buildRequestWithBody(backendURL + "users/update", protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
             configurePersonalInfo(model, username, user, response);
@@ -152,11 +142,6 @@ public class PersonalInfoController {
             Msg result = jsonToProtobuf(response.body().string());
             if (result != null && result.hasCommonResponse()) {
                 if (result.getCommonResponse().getResponseType().equals(Success)) {
-                    if(user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    } else {
-                        model.put("admin", false);
-                    }
                     return "passwordSuccess";
                 }
             }
@@ -216,10 +201,6 @@ public class PersonalInfoController {
 
             if (result != null && result.hasCommonResponse()
                     && result.getCommonResponse().getResponseType().equals(Success)) {
-
-                if (user.getRole().equals(UserRole.Admin)) {
-                    model.put("admin", true);
-                }
                 model.put("error", result.getCommonResponse().getResponseText());
                 return "changePassword";
             }
@@ -327,12 +308,6 @@ public class PersonalInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                if (!user.getRole().equals(UserRole.RegularUser)) {
-                    model.put("notRegular", true);
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
-                }
                 Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
                 showPersonalInfo(request, model, user);
             }
@@ -359,11 +334,6 @@ public class PersonalInfoController {
                     .getUserInfo(0)
                     .getUsername())) {
                 model.put("showPass", false);
-            }
-            if (user.getRole().equals(UserRole.Admin)) {
-                model.put("admin", true);
-            } else {
-                model.put("admin", false);
             }
             if (result.getUserOperation().getUserOpGetResponse().getUserInfo(0).getIsActive()) {
                 model.put("active", true);

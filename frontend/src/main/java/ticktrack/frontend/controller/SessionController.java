@@ -1,5 +1,6 @@
 package ticktrack.frontend.controller;
 
+import common.enums.UserRole;
 import common.helpers.PasswordHandler;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -79,8 +80,10 @@ class SessionController {
 
                             model.put("name", username);
                             if (Admin.equals(user.getRole())) {
+                                model.put("admin", true);
                                 return "adminMain";
                             } else {
+                                model.put("notRegular",true);
                                 return "regularUserMain";
                             }
                         } else {

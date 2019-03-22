@@ -155,7 +155,7 @@
 <div class="body" align="left">
     <h4 align="left">Select filters to search tickets</h4>
     <br/><br/>
-    <form method="post" id="search_form" action="searchTickets">
+    <form method="post" id="search_form" action="searchTickets/1/100">
         <div class="form-group">
             <input type="text" class="form-control" id="summaryOrDescription" name="summaryOrDescription"
                    placeholder="Keyword to search in Summary or Description">

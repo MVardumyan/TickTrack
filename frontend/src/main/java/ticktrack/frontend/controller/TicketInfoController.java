@@ -47,8 +47,8 @@ public class TicketInfoController {
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
+            return "error";
         }
-
         return "ticketInfo";
     }
 
@@ -56,36 +56,36 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                if (!user.getRole().equals(UserRole.RegularUser)) {
-                    if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)) {
-                        model.put("resolve", true);
-                    }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Resolved)){
-                        model.put("close",true);
-                    }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)){
-                        model.put("inProgress",true);
-                    }else{
-                        model.put("resolve",false);
-                        model.put("close",false);
-                        model.put("inProgress",false);
-                    }
+                if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                    model.put("notClosed", true);
                 }
-                if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
+                if (msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)
+                        && user.getUsername().equals(msg.getTicketInfo().getAssignee())) {
+                    model.put("inProgress", true);
+                }else if (!user.getRole().equals(UserRole.RegularUser) &&
+                        msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)) {
+                    model.put("resolve", true);
+                }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Resolved)
+                        && user.getUsername().equals(msg.getTicketInfo().getCreator()))
+                {
+                    model.put("close",true);
+                }
+                if (user.getUsername().equals(msg.getTicketInfo().getCreator())) {
+                    model.put("cancel", true);
+                }
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
-
                 List<Msg.Comment> commentList = new ArrayList<Msg.Comment>(msg.getTicketInfo().getCommentList());
                 commentList.sort((Comparator<Msg.Comment>) (o1, o2) -> {
                     if (o1.getTime() == null || o2.getTime() == null)
                         return 0;
                     return o1.getTime().compareTo(o2.getTime());
                 });
-
                 model.put("commentList", commentList);
-                if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
-                    model.put("notClosed", true);
-                }
+
+            }else{
+                logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                model.put("error", "Error received from backend, unable to get search result");
             }
         } else {
             logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -133,23 +133,11 @@ public class TicketInfoController {
         Request groupsRequest = new Request.Builder()
                 .url(backendURL + "userGroups/getAll")
                 .build();
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
-        }
+
         categoryResponseUtil(model, requestCategory, groupsRequest, httpClient, logger);
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "Tickets/getTicket/" + id)).execute()) {
-            if (response.code() == 200) {
-                Msg msg = jsonToProtobuf(response.body().string());
-                if (msg != null) {
-                    model.put("info", msg.getTicketInfo());
-                    model.put("id", id);
-                    model.put("commentList", msg.getTicketInfo().getCommentList());
-                }
-            } else {
-                logger.warn("Error received from backend, unable to get search result: {}", response.message());
-                model.put("error", "Error received from backend, unable to get search result");
-            }
+            modelPutTicketInfo(model, id, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
@@ -158,7 +146,7 @@ public class TicketInfoController {
         return "updateTicketInfo";
     }
 
-    static void categoryResponseUtil(ModelMap model, Request requestCategory, Request groupsRequest, OkHttpClient httpClient, Logger logger) {
+    private static void categoryResponseUtil(ModelMap model, Request requestCategory, Request groupsRequest, OkHttpClient httpClient, Logger logger) {
         try (Response categoryResponse = httpClient.newCall(requestCategory).execute();
              Response groupResponse = httpClient.newCall(groupsRequest).execute()) {
             if (categoryResponse.code() == 200) {
@@ -184,15 +172,7 @@ public class TicketInfoController {
     }
 
     static void groupListResultUtil(ModelMap model, Logger logger, Response groupResponse) throws IOException {
-        if (groupResponse.code() == 200) {
-            Msg result = jsonToProtobuf(groupResponse.body().string());
-
-            if (result != null) {
-                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
-            }
-        } else {
-            logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());
-        }
+        SearchController.getGroup(model, groupResponse, logger);
     }
 
     @RequestMapping(value = "updateTicket/updateTheTicket/{id}", method = RequestMethod.POST)
@@ -228,28 +208,27 @@ public class TicketInfoController {
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
-            if (response.code() == 200) {
-                Msg msg = jsonToProtobuf(response.body().string());
-                if (msg != null) {
-                    if (user.getRole().equals(UserRole.BusinessUser)) {
-                        model.put("resolve", true);
-                    } else if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
-                    model.put("info", msg.getTicketInfo());
-                    model.put("id", id);
-                    model.put("commentList", msg.getTicketInfo().getCommentList());
-                }
-            } else {
-                logger.warn("Error received from backend, unable to get search result: {}", response.message());
-                model.put("error", "Error received from backend, unable to get search result");
-            }
+            modelPutTicketInfo(model, id, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
         }
 
         return "ticketInfo";
+    }
+
+    private void modelPutTicketInfo(ModelMap model, @PathVariable("id") long id, Response response) throws IOException {
+        if (response.code() == 200) {
+            Msg msg = jsonToProtobuf(response.body().string());
+            if (msg != null) {
+                model.put("info", msg.getTicketInfo());
+                model.put("id", id);
+                model.put("commentList", msg.getTicketInfo().getCommentList());
+            }
+        } else {
+            logger.warn("Error received from backend, unable to get search result: {}", response.message());
+            model.put("error", "Error received from backend, unable to get search result");
+        }
     }
 
     private Msg wrapIntoMsg(Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage) {
@@ -265,9 +244,6 @@ public class TicketInfoController {
         model.put("close", true);
         model.put("cancel", false);
         model.put("progress", false);
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
-        }
         return "message";
     }
 
@@ -282,11 +258,6 @@ public class TicketInfoController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    if (user.getRole().equals(UserRole.BusinessUser)) {
-                        model.put("resolve", true);
-                    } else if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
@@ -310,9 +281,6 @@ public class TicketInfoController {
         model.put("close", false);
         model.put("cancel", false);
         model.put("progress", true);
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
-        }
         return "message";
     }
 
@@ -339,9 +307,6 @@ public class TicketInfoController {
         model.put("close", false);
         model.put("cancel", true);
         model.put("progress", false);
-        if (user.getRole().equals(UserRole.Admin)) {
-            model.put("admin", true);
-        }
         return "message";
     }
 
@@ -384,12 +349,6 @@ public class TicketInfoController {
                     model.put("id", id);
                     model.put("resolve", true);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
-                    if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
-                        model.put("notClosed", true);
-                    }
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());

@@ -50,9 +50,6 @@ public class MyTicketsController {
             requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
-        int pageNumber = 2;
-        model.put("p",pageNumber);
-
         Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(requestCreatedByMe)));
 
@@ -70,14 +67,16 @@ public class MyTicketsController {
                     if (user.getRole().equals(UserRole.Admin)) {
                         model.put("admin", true);
                     }
+                    int pageNumber = 2;
+                    model.put("p",pageNumber);
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
                 model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to get tickets list", e);
+            model.put("error", "Internal error, unable to get tickets list");
         }
 
         try (Response response = httpClient.newCall(reqAssignedToMe).execute()) {
@@ -91,8 +90,8 @@ public class MyTicketsController {
                 model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to get tickets list", e);
+            model.put("error", "Internal error, unable to get tickets list");
         }
         try (Response response = httpClient.newCall(reqAssignedToMyGroups).execute()) {
             if (response.code() == 200) {
@@ -105,8 +104,8 @@ public class MyTicketsController {
                 model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to get tickets list", e);
+            model.put("error", "Internal error, unable to get tickets list");
         }
         return "myTickets";
     }

@@ -159,8 +159,8 @@
         </div>
         <label>Gender</label>
         <div class="form-group">
-            <input type="radio" name="gender" value="male"> Male
-            <input type="radio" name="gender" value="female"> Female
+            <input type="radio" name="gender" value="Male"> Male
+            <input type="radio" name="gender" value="Female"> Female
         </div>
         <label>Email</label>
         <div class="form-group">
