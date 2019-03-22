@@ -2,6 +2,7 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -335,13 +336,13 @@ public class UserManager implements IUserManager {
     @Transactional
     @Override
     public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request,Integer page,Integer size) {
-        Iterable<User> result;
+        Page<User> result;
         UserOp.UserOpGetResponse.Builder responseBuilder = UserOp.UserOpGetResponse.newBuilder();
         Pageable pageable = PageRequest.of(page - 1, size);
 
 
         if (request.getCriteria().equals(UserOp.UserOpGetByRoleRequest.Criteria.All)) {
-            result = userRepository.findAll(pageable.first());
+            result = userRepository.findAll(pageable);
         } else {
             try {
                 UserRole role = UserRole.valueOf(request.getCriteria().toString());

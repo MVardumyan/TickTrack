@@ -8,8 +8,8 @@ import common.enums.UserRole;
 
 import java.util.Optional;
 
-public interface UserRepository extends PagingAndSortingRepository {
-   Optional<User> findByUsername(String name);
-   Page findAll(Pageable pageable);
-   Iterable<User> findAllByRole(UserRole role, Pageable pageable);
+public interface UserRepository extends PagingAndSortingRepository<User,String> {
+    Optional<User> findByUsername(String name);
+
+    Page<User> findAllByRole(UserRole role,Pageable pageable);
 }

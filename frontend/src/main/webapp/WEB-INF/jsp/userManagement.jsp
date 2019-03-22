@@ -112,7 +112,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/myTickets/1/10" class="sidnav-item">MY TICKETS</a>
+        <a href="/myTickets/1/30" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -120,7 +120,7 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/admin/userManagement/1/10" class="sidnav-item">USER MANAGEMENT</a>
+        <a href="/admin/userManagement/1/30" class="sidnav-item">USER MANAGEMENT</a>
     </div>
 
     <div class="sidnav-item-conteiner">
@@ -304,18 +304,7 @@
         </tr>
         </tfoot>
     </table>
-    <div class="pagination">
-        <a href="#">&laquo;</a>
-        <a href="/admin/userManagement/1/10">1</a>
-        <a href="/admin/userManagement/2/10">2</a>
-        <a href="/admin/userManagement/3/10">3</a>
-        <a href="/admin/userManagement/4/10">4</a>
-        <a href="/admin/userManagement/5/10">5</a>
-        <a href="/admin/userManagement/6/10">6</a>
-        <a href="#">&raquo;</a>
-    </div>
 </div>
-
 </body>
 </html>
 

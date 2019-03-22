@@ -52,7 +52,7 @@ public class AdminController {
                 .setCriteria(UserOpGetByRoleRequest.Criteria.All)
                 .build();
 
-        Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/getUsersByRole/{page}/{size}",
+        Request request = OkHttpRequestHandler.buildRequestWithBody(backendURL + "users/getUsersByRole/"+page+"/"+size,
                 protobufToJson(wrapIntoMsg(message)));
 
         try (Response response = httpClient.newCall(request).execute()) {
