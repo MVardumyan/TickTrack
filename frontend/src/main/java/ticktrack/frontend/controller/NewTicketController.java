@@ -79,7 +79,7 @@ public class NewTicketController {
     @RequestMapping(value = "createTicket", method = RequestMethod.POST)
     String createTicket(ModelMap model,
                         @SessionAttribute("user") User user,
-                        @RequestParam() String summary,
+                        @RequestParam String summary,
                         @RequestParam() String description,
                         @RequestParam(required = false) String assignee,
                         @RequestParam(required = false) String group,
@@ -97,7 +97,7 @@ public class NewTicketController {
                 .setDescription(description)
                 .setPriority(priority)
                 .setCategory(category);
-        if (assignee != null) {
+        if (!assignee.isEmpty()) {
             requestMessage.setAssignee(assignee);
         }
         if (group != null) {

@@ -246,7 +246,7 @@ public class TicketInfoController {
                 .build();
     }
 
-    @RequestMapping(value = "/closeTicket/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/confirmCloseTicket/{id}", method = RequestMethod.GET)
     String displayCloseTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
         model.put("close", true);
@@ -255,7 +255,7 @@ public class TicketInfoController {
         return "message";
     }
 
-    @RequestMapping(value = "closeTicket/closeTheTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "closeTicket/{id}", method = RequestMethod.POST)
     String closeTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();

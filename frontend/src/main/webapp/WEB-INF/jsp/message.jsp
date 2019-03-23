@@ -87,7 +87,7 @@
                         <h1>
                             Are you sure you want to close Ticket ${id}?</h1>
                         <div>
-                            <form method="post" action="closeTheTicket/${id}">
+                            <form method="post" action="/closeTicket/${id}">
                                 <button class="button button1">Close</button>
                             </form>
                         </div>

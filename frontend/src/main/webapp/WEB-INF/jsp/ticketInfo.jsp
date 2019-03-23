@@ -296,7 +296,7 @@
                 </form>
                     </c:if>
                     <c:if test="${close}">
-                <form action="/closeTicket/${id}">
+                <form action="/confirmCloseTicket/${id}">
                     <button class="action-button">Close</button>
                 </form>
                 </c:if>
