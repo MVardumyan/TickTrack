@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 
+/**
+ * This controller is responsible for displaying SearchPage, in that page it can get one or more criteries and search
+ * tickets by that criteries. Supported also search for users. For this page is supported pagination.
+ * */
+
 @Controller
 public class SearchController {
     private final OkHttpClient httpClient;

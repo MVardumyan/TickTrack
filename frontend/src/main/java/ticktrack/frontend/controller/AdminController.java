@@ -26,6 +26,13 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 import static ticktrack.proto.Msg.UserGroupOp.*;
 import static ticktrack.proto.Msg.UserRole.*;
 
+/**
+ * This controller is responsible for admins pages, they are Admins home page, UserManagement,CategoryManagement,
+ * and GroupManagement. It is getting requests from browser, sending requests
+ * to backend controllers and getting data from backend. Controller contains methods to display pages and
+ * methods for functionality(create/update/delete groups and categories).
+ * */
+
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
@@ -39,7 +46,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/main", method = RequestMethod.GET)
-    String displaySearchPage(ModelMap model, @SessionAttribute("user") User user) {
+    String displayMainPage(ModelMap model, @SessionAttribute("user") User user) {
         model.put("name", user.getUsername());
         return "adminMain";
     }
