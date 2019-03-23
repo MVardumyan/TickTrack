@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserGroupManagerTest {
 
     @Autowired
-    private IUserGroupManager groupManager;
+    private UserGroupManager groupManager;
 
     @Test
     void createAndDeleteUserGroup() {
