@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
+/**
+ * This controller is responsible for displaying newTicket page, then send data from browser to backend and
+ * create new ticket in db.
+ * */
+
 @Controller
 public class NewTicketController {
     private final OkHttpClient httpClient;
@@ -116,11 +121,8 @@ public class NewTicketController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
-                    //msg.getTicketInfo().getTicketID();
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                    }
                     model.put("notClosed",true);
+                    model.put("cancel",true);
                     model.put("id",msg.getTicketInfo().getTicketID());
                 }
             } else {

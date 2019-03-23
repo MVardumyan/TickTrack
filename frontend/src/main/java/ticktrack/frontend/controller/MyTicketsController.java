@@ -22,6 +22,11 @@ import static common.helpers.CustomJsonParser.jsonToProtobuf;
 import static common.helpers.CustomJsonParser.protobufToJson;
 import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithBody;
 
+/**
+ * This controller is responsible for sending requests to backend, get data(session users tickets(created by it,
+ * assigned to it and its group) and show in MyTickets page. For this page is supported pagination.
+ * */
+
 @Controller
 public class MyTicketsController {
     private final OkHttpClient httpClient;

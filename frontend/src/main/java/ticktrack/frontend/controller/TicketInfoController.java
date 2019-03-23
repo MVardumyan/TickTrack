@@ -27,6 +27,12 @@ import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
+/**
+ * This controller is responsible for Ticket Info. It is displaying Ticket Info page, some pages for changing ticket
+ * status. There are methods to update ticket, add comment, change status. Also in this page is supported buttons logic,
+ * for different type of users Ticket Info page will look different way.
+ * */
+
 @Controller
 public class TicketInfoController {
     private final OkHttpClient httpClient;
@@ -221,6 +227,8 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
+                model.put("notClosed",true);
+                model.put("cancel",true);
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
                 model.put("commentList", msg.getTicketInfo().getCommentList());
@@ -348,6 +356,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("resolve", true);
+                    model.put("notClosed",true);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
                 }
             } else {
