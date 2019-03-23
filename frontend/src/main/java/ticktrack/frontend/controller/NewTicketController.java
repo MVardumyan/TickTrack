@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
+/**
+ * This controller is responsible for displaying newTicket page, then send data from browser to backend and
+ * create new ticket in db.
+ * */
+
 @Controller
 public class NewTicketController {
     private final OkHttpClient httpClient;

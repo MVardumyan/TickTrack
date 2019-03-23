@@ -29,6 +29,11 @@ import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
 
 import ticktrack.frontend.util.CaptchaValidation;
 
+/**
+ * This controller is responsible for logout, login and register pages displaying and functionality.
+ * In this page is supported reCaptcha.
+ * */
+
 @Controller
 class SessionController {
     private final OkHttpClient httpClient;

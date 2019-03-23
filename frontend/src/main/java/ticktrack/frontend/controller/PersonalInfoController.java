@@ -23,6 +23,12 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
 import static ticktrack.proto.Msg.UserOp.*;
 
+/**
+ * This controller is responsible for PersonalInfo page. It is getting requests from browser, sending requests
+ * to backend controllers and getting data from backend. Controller contains methods to display page and
+ * methods for functionality(edit/deactivate user, change password).
+ * */
+
 @Controller
 public class PersonalInfoController {
     private final OkHttpClient httpClient;

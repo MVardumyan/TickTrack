@@ -10,6 +10,10 @@ import ticktrack.frontend.attributes.User;
 
 import javax.servlet.http.HttpSession;
 
+/**
+ * This controller is responsible for displaying regular and business users home page.
+ * */
+
 @Controller
 //@SessionAttributes("name")
 public class RegularUserMainController {
