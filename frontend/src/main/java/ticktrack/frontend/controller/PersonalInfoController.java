@@ -90,7 +90,7 @@ public class PersonalInfoController {
                           @RequestParam String firstName,
                           @RequestParam String lastName,
                           @RequestParam String email,
-                          @RequestParam String gender,
+                          @RequestParam(required = false) String gender,
                           @RequestParam(required = false) String group,
                           @RequestParam(required = false) String role) {
 
@@ -110,6 +110,7 @@ public class PersonalInfoController {
         if(group != null){
             requestMessage.setGroup(group);
         }
+
         if (gender!=null){
             requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
         }
