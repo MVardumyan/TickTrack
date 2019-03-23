@@ -37,6 +37,10 @@ import java.util.stream.Collectors;
 import static ticktrack.util.ResponseHandler.buildTicketResponseFromQueryResult;
 import static ticktrack.proto.Msg.*;
 
+/**
+ * Class provides methods for searching Tickets by fields and users by characters.
+ * SearchManager is Spring component. For db interaction it uses autowired crudRepository interfaces.
+ */
 @Service("SearchMng")
 public class SearchManager implements ISearchManager {
     private final EntityManager entityManager;
@@ -53,6 +57,14 @@ public class SearchManager implements ISearchManager {
         this.categoryRepository = categoryRepository;
     }
 
+    /**
+     * Method for searching Tickets by given criterias. Uses EntityManager for querying db; CriteriaBuilder and Predicates for building query.
+     * Checks which criterias where selected, maps Category, Priority, User, Status, Dates to valid formats.
+     * @param request protobuf type SearchOpRequest contains list of optional criterias for search
+     * @param page number of page for pagination
+     * @param size number of results for pagination
+     * @return protobuf type SearchOpResponse, containing list of TicketInfo objects
+     */
     @Override
     @Transactional
     public SearchOp.SearchOpResponse searchByCriteria(SearchOp.SearchOpRequest request,Integer page,Integer size) {
@@ -89,24 +101,33 @@ public class SearchManager implements ISearchManager {
         }
         //priority
         if (request.getPriorityCount() > 0) {
-            currentPredicate = root.get("priority").in(
-                    request.getPriorityList()
-                            .stream()
-                            .map(this::mapTicketPriority)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
+            List<TicketPriority> priorityList;
+            try {
+                priorityList = request.getPriorityList()
+                        .stream()
+                        .map(this::mapTicketPriority)
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                return getEmptyResult();
+            }
+
+            currentPredicate = root.get("priority").in(priorityList);
             criteria = builder.and(criteria, currentPredicate);
         }
         //category
         if (request.getCategoryCount() > 0) {
-            currentPredicate = root.get("category").in(
-                    request.getCategoryList()
-                            .stream()
-                            .map(this::mapCategory)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
+            List<Category> categoryList;
+
+            try {
+                categoryList = request.getCategoryList()
+                        .stream()
+                        .map(this::mapCategory)
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                return getEmptyResult();
+            }
+
+            currentPredicate = root.get("category").in(categoryList);
             criteria = builder.and(criteria, currentPredicate);
         }
         //assignee
@@ -123,13 +144,17 @@ public class SearchManager implements ISearchManager {
         }
         //status
         if (request.getStatusCount() > 0) {
-            currentPredicate = root.get("status").in(
-                    request.getStatusList()
-                            .stream()
-                            .map(this::mapTicketStatus)
-                            .filter(Objects::nonNull)
-                            .collect(Collectors.toList())
-            );
+            List<TicketStatus> statusList;
+            try {
+                statusList = request.getStatusList()
+                        .stream()
+                        .map(this::mapTicketStatus)
+                        .collect(Collectors.toList());
+            } catch (IllegalArgumentException e) {
+                return getEmptyResult();
+            }
+
+            currentPredicate = root.get("status").in(statusList);
             criteria = builder.and(criteria, currentPredicate);
         }
         //resolution
@@ -185,11 +210,16 @@ public class SearchManager implements ISearchManager {
         typedQuery.setFirstResult((page - 1)*size);
         typedQuery.setMaxResults(size);
 
-//        List<Ticket> result = entityManager.createQuery(criteriaQuery).getResultList();
         List<Ticket> result = typedQuery.getResultList();
         return buildTicketResponseFromQueryResult(result);
     }
 
+    /**
+     * Method searches users names by given term (characters). Should be used for autocomplete in frontend.
+     * Method filters search results to return only active users
+     * @param term characters for username search
+     * @return List of found user names
+     */
     @Override
     public List<String> searchUsersByTerm(String term) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
@@ -205,31 +235,49 @@ public class SearchManager implements ISearchManager {
                 .collect(Collectors.toList());
     }
 
-    private TicketStatus mapTicketStatus(Msg.TicketStatus status) {
+    /**
+     * Method maps protobuf enum TicketStatus to backend enum TicketStatus.
+     * @param status protobuf type TicketStatus
+     * @return corresponding TicketStatus enum value
+     * @throws IllegalArgumentException if given status does not match
+     */
+    private TicketStatus mapTicketStatus(Msg.TicketStatus status) throws IllegalArgumentException {
         try {
             return TicketStatus.valueOf(status.toString());
         } catch (IllegalArgumentException e) {
-            logger.warn("Status {} does not exist", status);
-            return null;
+            logger.error("Status {} does not exist", status);
+            throw e;
         }
     }
 
-    private TicketPriority mapTicketPriority(Msg.TicketPriority priority) {
+    /**
+     * Method maps protobuf enum TicketPriority to backend enum TicketPriority.
+     * @param priority protobuf type TicketPriority
+     * @return corresponding TicketPriority enum value
+     * @throws IllegalArgumentException if given priority does not match
+     */
+    private TicketPriority mapTicketPriority(Msg.TicketPriority priority) throws IllegalArgumentException {
         try {
             return TicketPriority.valueOf(priority.toString());
         } catch (IllegalArgumentException e) {
-            logger.warn("Priority {} does not exist", priority);
-            return null;
+            logger.error("Priority {} does not exist", priority);
+            throw e;
         }
     }
 
-    private Category mapCategory(String category) {
+    /**
+     * Method maps String category name to Category entity
+     * @param category String category name
+     * @return corresponding Category entity
+     * @throws IllegalArgumentException if given category not found
+     */
+    private Category mapCategory(String category) throws IllegalArgumentException {
         Optional<Category> result = categoryRepository.findByName(category);
         if (result.isPresent()) {
             return result.get();
         } else {
             logger.warn("Category " + category + " does not exist");
-            return null;
+            throw new IllegalArgumentException("Invalid Category type " + category + " does not exist");
         }
     }
 
@@ -238,11 +286,22 @@ public class SearchManager implements ISearchManager {
                 .build();
     }
 
+    /**
+     * Method for converting string start date to joda time DateTime
+     * @param date string date in format yyyy-MM-dd
+     * @return DateTime with time zone of Yerevan
+     */
     private DateTime setStartDateTime(String date) {
         return new DateTime(date)
                 .withZone(DateTimeZone.forID("Asia/Yerevan"));
     }
 
+    /**
+     * Method for converting string end date to joda time DateTime.
+     * Adds time 23:59:59 to date.
+     * @param date string date in format yyyy-MM-dd
+     * @return DateTime with time zone of Yerevan
+     */
     private DateTime setEndDateTime(String date) {
         return new DateTime(date)
                 .withHourOfDay(23)
