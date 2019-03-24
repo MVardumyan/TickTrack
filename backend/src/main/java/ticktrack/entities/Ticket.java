@@ -40,7 +40,7 @@ public class Ticket{
    @ManyToOne
    private Category category;
 
-   @OneToMany(mappedBy = "ticket")
+   @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
    private Set<Comment> commentList;
 
    public Ticket(String summary,String description,TicketPriority priority,User creator,Category category){
