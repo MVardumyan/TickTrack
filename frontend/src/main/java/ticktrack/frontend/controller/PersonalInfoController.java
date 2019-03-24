@@ -18,6 +18,8 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import static common.enums.UserRole.Admin;
+import static common.enums.UserRole.RegularUser;
 import static common.helpers.CustomJsonParser.*;
 import static ticktrack.frontend.util.OkHttpRequestHandler.*;
 import static ticktrack.proto.Msg.CommonResponse.ResponseType.Success;
@@ -47,6 +49,12 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/personalInfo/{username}", method = RequestMethod.GET)
     public String displayPersonalInfoPage(ModelMap model, @PathVariable("username") String username, @SessionAttribute User user) {
+        if (user.getRole().equals(UserRole.Admin)) {
+            model.put("admin", true);
+            if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                model.put("notRegular",true);
+            }
+        }
         Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         showPersonalInfo(request, model, user);
         return "personalInfo";
@@ -59,6 +67,9 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/updateUserInfo/{username}", method = RequestMethod.GET)
     String displayUpdateUserInfo(ModelMap model, @PathVariable("username") String username, @SessionAttribute("user") User user) {
+        if (Admin.equals(user.getRole())) {
+            model.put("admin", true);
+        }
         Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         Request groupsRequest = new Request.Builder()
                 .url(backendURL + "userGroups/getAll")
@@ -90,7 +101,7 @@ public class PersonalInfoController {
                           @RequestParam String firstName,
                           @RequestParam String lastName,
                           @RequestParam String email,
-                          @RequestParam String gender,
+                          @RequestParam(required = false) String gender,
                           @RequestParam(required = false) String group,
                           @RequestParam(required = false) String role) {
 
@@ -110,17 +121,24 @@ public class PersonalInfoController {
         if(group != null){
             requestMessage.setGroup(group);
         }
+
         if (gender!=null){
             requestMessage.setGender(Msg.UserOp.Gender.valueOf(gender));
         }
         try (Response response = httpClient.newCall(buildRequestWithBody(backendURL + "users/update", protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
+            if (user.getRole().equals(UserRole.Admin)) {
+                model.put("admin", true);
+                if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                    model.put("notRegular",true);
+                }
+            }
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
         }
-        return "personalInfo";
+        return "redirect:/personalInfo/" + username;
     }
 
     /////////////////////////////////////DEACTIVATE
