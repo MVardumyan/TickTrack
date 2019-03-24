@@ -87,7 +87,7 @@ class SessionController {
                             if (Admin.equals(user.getRole())) {
                                 model.put("admin", true);
                                 return "adminMain";
-                            } else if (!RegularUser.equals(user.getRole())) {
+                            } else {
                                 model.put("notRegular", true);
                                 return "regularUserMain";
                             }
@@ -104,14 +104,12 @@ class SessionController {
                     }
                 } else {
                     model.put("error", "User not found");
-                    return "error";
                 }
             } catch (IOException e) {
                 logger.error("Internal error, unable to get login validation", e);
-                return "error";
+                model.put("error", "reCAPTCHA is not valid");
             }
         }
-        model.put("error", "reCAPTCHA is not valid");
         return "error";
     }
 

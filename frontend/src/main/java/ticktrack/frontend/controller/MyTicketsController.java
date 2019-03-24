@@ -27,7 +27,7 @@ import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithBody;
 /**
  * This controller is responsible for sending requests to backend, get data(session users tickets(created by it,
  * assigned to it and its group) and show in MyTickets page. For this page is supported pagination.
- * */
+ */
 
 @Controller
 public class MyTicketsController {
@@ -57,25 +57,19 @@ public class MyTicketsController {
             requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
-        Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
+        Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/" + page + "/" + size,
                 protobufToJson(wrapIntoMsg(requestCreatedByMe)));
 
-        Request reqAssignedToMe = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
+        Request reqAssignedToMe = buildRequestWithBody(backendURL + "search/" + page + "/" + size,
                 protobufToJson(wrapIntoMsg(requestAssignedToMe)));
 
-        Request reqAssignedToMyGroups = buildRequestWithBody(backendURL + "search/"+page+"/"+size,
+        Request reqAssignedToMyGroups = buildRequestWithBody(backendURL + "search/" + page + "/" + size,
                 protobufToJson(wrapIntoMsg(requestAssignedToMyGroups)));
 
         try (Response response = httpClient.newCall(reqCreatedByMe).execute()) {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
-                            model.put("notRegular",true);
-                        }
-                    }
                     model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
@@ -91,12 +85,6 @@ public class MyTicketsController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
-                            model.put("notRegular",true);
-                        }
-                    }
                     model.put("ticketsAssignedToMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
@@ -107,26 +95,27 @@ public class MyTicketsController {
             logger.error("Internal error, unable to get tickets list", e);
             model.put("error", "Internal error, unable to get tickets list");
         }
-        try (Response response = httpClient.newCall(reqAssignedToMyGroups).execute()) {
-            if (response.code() == 200) {
-                Msg msg = jsonToProtobuf(response.body().string());
-                if (msg != null) {
-                    if (user.getRole().equals(UserRole.Admin)) {
-                        model.put("admin", true);
-                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
-                            model.put("notRegular",true);
+        if (user.getRole().equals(UserRole.Admin)) {
+            model.put("admin", true);
+            if (user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)) {
+                model.put("notRegular", true);
+                try (Response response = httpClient.newCall(reqAssignedToMyGroups).execute()) {
+                    if (response.code() == 200) {
+                        Msg msg = jsonToProtobuf(response.body().string());
+                        if (msg != null) {
+                            model.put("ticketsAssignedToMyGroup", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                         }
+                    } else {
+                        logger.warn("Error received from backend, unable to get search result: {}", response.message());
+                        model.put("error", "Error received from backend, unable to get search result");
                     }
-                    model.put("ticketsAssignedToMyGroup", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
+                } catch (IOException e) {
+                    logger.error("Internal error, unable to get tickets list", e);
+                    model.put("error", "Internal error, unable to get tickets list");
                 }
-            } else {
-                logger.warn("Error received from backend, unable to get search result: {}", response.message());
-                model.put("error", "Error received from backend, unable to get search result");
             }
-        } catch (IOException e) {
-            logger.error("Internal error, unable to get tickets list", e);
-            model.put("error", "Internal error, unable to get tickets list");
         }
+
         return "myTickets";
     }
 
