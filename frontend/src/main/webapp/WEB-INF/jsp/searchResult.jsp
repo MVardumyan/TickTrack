@@ -43,7 +43,7 @@
             position: fixed;
             left: 0;
             right: 0;
-            top: 0px;
+            top: 0;
             z-index: 9999;
             height: 34px;
             display: flex;

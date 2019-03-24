@@ -33,6 +33,12 @@ import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Class provides methods for managing User entity.
+ * UserManager is Spring component. For db interaction it uses autowired crudRepository interfaces.
+ * Contains business logic for new User creation, update, deactivation.
+ * Handles password change link generation, validation and password update.
+ */
 @Service("userMng")
 public class UserManager implements IUserManager {
     private final UserRepository userRepository;
@@ -55,6 +61,13 @@ public class UserManager implements IUserManager {
         this.activePasswordLinksHandler = activePasswordLinksHandler;
     }
 
+    /**
+     * Method for new user creation.
+     * Sets registration time automatically.
+     *
+     * @param request protobuf message UserOpCreateRequest contains new user information
+     * @return CommonResponse with type success if user created; with type failure if username already exists/ Group or UserRole not found
+     */
     @Transactional
     @Override
     public CommonResponse create(UserOp.UserOpCreateRequest request) {
@@ -62,9 +75,7 @@ public class UserManager implements IUserManager {
         CommonResponse response;
         UserRole userRole;
         if (request != null) {
-            Optional<User> searchResult = userRepository.findByUsername(request.getUsername());
-
-            if (searchResult.isPresent()) {
+            if (userRepository.existsById(request.getUsername())) {
                 response = buildFailureResponse("User with this username already exists");
             } else {
                 try {
@@ -107,6 +118,13 @@ public class UserManager implements IUserManager {
         return response;
     }
 
+    /**
+     * Method for user attributes update.
+     * Checks which fields should be updated and updates them with new values.
+     *
+     * @param request UserOpUpdateRequest contains set of optional fields to update
+     * @return UserInfo - users updated information for success; CommonResponse with type failure - if nothing was updated
+     */
     @Transactional
     @Override
     public Msg update(UserOp.UserOpUpdateRequest request) {
@@ -147,7 +165,7 @@ public class UserManager implements IUserManager {
                 }
             }
             if (request.hasGroup()) {
-                if(request.getGroup().equals("none")) {
+                if (request.getGroup().equals("none")) {
                     user.setGroup(null);
                     responseText.append("User ").append(request.getUsername()).append("'s group updated!\n");
                     updateSuccess = true;
@@ -200,6 +218,12 @@ public class UserManager implements IUserManager {
         return wrapCommonResponseIntoMsg(response);
     }
 
+    /**
+     * Method for password change.
+     *
+     * @param request protobuf message UserOpChangePassword with username and new password
+     * @return CommonResponse with type success if password changed; failure if user not found/link doesn't exist
+     */
     @Transactional
     @Override
     public CommonResponse changePassword(UserOp.UserOpChangePassword request) {
@@ -210,15 +234,21 @@ public class UserManager implements IUserManager {
         if (result.isPresent()) {
             User user = result.get();
 
-            activePasswordLinksHandler.removeTask(user.getPasswordLink());
-            passwordLinkRepository.delete(user.getPasswordLink());
-            user.setPassword(request.getNewPassword());
-            user.setPasswordLink(null);
-            userRepository.save(user);
+            if (passwordLinkRepository.existsByUser(user)) {
+                activePasswordLinksHandler.removeTask(user.getPasswordLink());
+                passwordLinkRepository.delete(user.getPasswordLink());
+                user.setPassword(request.getNewPassword());
+                user.setPasswordLink(null);
+                userRepository.save(user);
 
-            responseText = "User " + user.getUsername() + "'s password is updated!";
-            logger.debug(responseText);
-            return buildSuccessResponse(responseText);
+                responseText = "User " + user.getUsername() + "'s password is updated!";
+                logger.debug(responseText);
+                return buildSuccessResponse(responseText);
+            } else {
+                responseText = user.getUsername() + " user's Password Change link is invalid";
+                logger.warn(responseText);
+                response = buildFailureResponse(responseText);
+            }
         } else {
             responseText = "There is no user with username " + request.getUsername();
             logger.warn(responseText);
@@ -227,6 +257,14 @@ public class UserManager implements IUserManager {
         return response;
     }
 
+    /**
+     * Generate link for password change and send it to user by mail.
+     * Link is random UUID String. If link already exists, methods replaces it.
+     * Schedules password link invalidate task after 24 hours.
+     *
+     * @param username corresponding user name
+     * @return CommonResponse with type success if link generated and mail sent; failure if user not found/message not sent
+     */
     @Transactional
     @Override
     public CommonResponse generateChangePasswordLink(String username) {
@@ -239,7 +277,7 @@ public class UserManager implements IUserManager {
 
             String link = UUID.randomUUID().toString().replace("-", "");
 
-            if(user.getPasswordLink()==null) {
+            if (user.getPasswordLink() == null) {
                 passwordLink = new PasswordLink();
                 passwordLink.setUser(user);
             } else {
@@ -252,7 +290,7 @@ public class UserManager implements IUserManager {
                     "Use this link to change your password:\nhttp://localhost:9203/changePassword/" + link
                             + "\nlink is valid 24 hours");
 
-            if(messageSent) {
+            if (messageSent) {
                 activePasswordLinksHandler.removeTask(passwordLink); //cancel previous task, if there already was a link
                 passwordLinkRepository.save(passwordLink);
                 activePasswordLinksHandler.addTask(passwordLink);
@@ -270,6 +308,13 @@ public class UserManager implements IUserManager {
         }
     }
 
+    /**
+     * Verify that corresponding link belongs to corresponding user.
+     * Should be used by frontend before change password request.
+     *
+     * @param request protobuf message UserOpValidatePasswordLink contains username and link
+     * @return CommonResponse with type success if link belongs to user; failure if not
+     */
     @Transactional
     @Override
     public CommonResponse validatePasswordLink(UserOp.UserOpValidatePasswordLink request) {
@@ -293,6 +338,13 @@ public class UserManager implements IUserManager {
         }
     }
 
+    /**
+     * Method for user deactivation. Sets isActive attribute to false.
+     * Sets deactivation time automatically
+     *
+     * @param username corresponding user name
+     * @return CommonResponse with type success if user created; with type failure if user already inactive/not found
+     */
     @Transactional
     @Override
     public CommonResponse deactivate(String username) {
@@ -309,7 +361,7 @@ public class UserManager implements IUserManager {
                 logger.warn(responseText);
                 response = buildSuccessResponse(responseText);
             } else {
-                responseText = "User is already not active.";
+                responseText = "User is already inactive.";
                 logger.warn(responseText);
                 response = buildFailureResponse(responseText);
             }
@@ -321,6 +373,12 @@ public class UserManager implements IUserManager {
         return response;
     }
 
+    /**
+     * Get user information by username.
+     *
+     * @param username corresponding user name
+     * @return protobuf message UserOpGetResponse with user's information in UserInfo object. If user not found, UserInfo will be empty
+     */
     @Transactional
     @Override
     public UserOp.UserOpGetResponse get(String username) {
@@ -339,9 +397,17 @@ public class UserManager implements IUserManager {
         }
     }
 
+    /**
+     * Get all users of specified role.
+     *
+     * @param request protobuf message UserOpGetByRoleRequest
+     * @param page    number of page for pagination
+     * @param size    number of results for pagination
+     * @return protobuf type UserOpGetResponse, containing list of UserInfo objects
+     */
     @Transactional
     @Override
-    public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request,Integer page,Integer size) {
+    public UserOp.UserOpGetResponse getByRole(UserOp.UserOpGetByRoleRequest request, Integer page, Integer size) {
         Page<User> result;
         UserOp.UserOpGetResponse.Builder responseBuilder = UserOp.UserOpGetResponse.newBuilder();
         Pageable pageable = PageRequest.of(page - 1, size);
@@ -352,7 +418,7 @@ public class UserManager implements IUserManager {
         } else {
             try {
                 UserRole role = UserRole.valueOf(request.getCriteria().toString());
-                result = userRepository.findAllByRole(role,pageable);
+                result = userRepository.findAllByRole(role, pageable);
             } catch (IllegalArgumentException e) {
                 logger.warn("Role {} does not exist", request.getCriteria());
                 return null;
@@ -366,6 +432,14 @@ public class UserManager implements IUserManager {
         return responseBuilder.build();
     }
 
+    /**
+     * Validate username and password for login attempt.
+     * Uses jargon for varifiying encrypted password.
+     * Checks if user is deactivated.
+     *
+     * @param request protobuf message LoginRequest contains username and encrypted password
+     * @return CommonResponse with type success if username/password valid; failure if username/password invalid or user is deactivated
+     */
     @Transactional
     @Override
     public CommonResponse validateLoginInformation(LoginRequest request) {
@@ -396,6 +470,12 @@ public class UserManager implements IUserManager {
         return DateTime.now().withZone(DateTimeZone.forID("Asia/Yerevan")).plusDays(1).getMillis();
     }
 
+    /**
+     * Build protobuf message UserInfo, using information of given User jpa entity.
+     *
+     * @param user corresponding User entity
+     * @return protobuf message UserInfo with user's information
+     */
     private UserOp.UserOpGetResponse.UserInfo buildUserInfo(User user) {
         UserOp.UserOpGetResponse.UserInfo.Builder userInfo = UserOp.UserOpGetResponse.UserInfo.newBuilder()
                 .setUsername(user.getUsername())

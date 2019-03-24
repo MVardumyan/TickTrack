@@ -80,9 +80,9 @@
         <span class="navigation-brand">T!ckTrack</span>
 
         <div class="navigation-action-button">
-            <span class="glyphicon glyphicon-search"></span>
-            <span class="glyphicon glyphicon-user"></span>
-            <span class="glyphicon glyphicon-log-out"></span>
+            <a href="/search"> <span class="glyphicon glyphicon-search"></span></a>
+            <a href="/personalInfo"><span class="glyphicon glyphicon-user"></span></a>
+            <a href="/logout"><span class="glyphicon glyphicon-log-out"></span></a>
         </div>
     </div>
     <div class="body">
