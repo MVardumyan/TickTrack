@@ -260,6 +260,7 @@
         $('#assignee').autocomplete({
             minLength: 1,
             delay: 500,
+            async: true,
             source: function (request, response) {
                 var term = request.term;
                 if (term in cache) {

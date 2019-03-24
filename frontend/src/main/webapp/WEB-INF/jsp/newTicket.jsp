@@ -126,11 +126,11 @@
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/myTickets" class="sidnav-item">MY TICKETS</a>
+        <a href="/myTickets/1/30" class="sidnav-item">MY TICKETS</a>
     </div>
 
     <div class="sidnav-item-conteiner">
-        <a href="/newTicket/1/30" class="sidnav-item">NEW TICKET</a>
+        <a href="/newTicket" class="sidnav-item">NEW TICKET</a>
     </div>
     <c:if test="${admin}">
         <div class="sidnav-item-conteiner">
@@ -271,6 +271,7 @@
         $('#assignee, #creator').autocomplete({
             minLength: 1,
             delay: 500,
+            async: true,
             source: function (request, response) {
                 var term = request.term;
                 if (term in cache) {
