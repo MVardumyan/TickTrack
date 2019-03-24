@@ -121,10 +121,16 @@ public class NewTicketController {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
-                    model.put("notClosed",true);
                     model.put("cancel",true);
                     model.put("id",msg.getTicketInfo().getTicketID());
+                    model.put("notClosedAndCanceled",true);
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
+                    }else if(!user.getRole().equals(UserRole.RegularUser)){
+                        model.put("notRegularUser",true);
+                    }
                 }
+                return "redirect:/ticketInfo/" + msg.getTicketInfo().getTicketID();
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
                 model.put("error","Error received from backend, unable to get search result");
@@ -134,7 +140,7 @@ public class NewTicketController {
             model.put("error","Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "error" ;
     }
 
     private Msg wrapIntoMsg(Msg.TicketOp.TicketOpCreateRequest.Builder requestMessage) {

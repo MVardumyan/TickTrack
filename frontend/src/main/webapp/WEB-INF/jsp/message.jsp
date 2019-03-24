@@ -97,7 +97,7 @@
                         <h1>
                             Are you sure you want to cancel Ticket ${id}?</h1>
                         <div>
-                            <form method="post" action="cancelTheTicket/${id}">
+                            <form method="post" action="/cancelTicket/${id}">
                                 <button class="button button1">Cancel</button>
                             </form>
                         </div>
@@ -107,7 +107,7 @@
                             <h1>
                                 Are you sure you want to change Ticket ${id}'s status to in progress?</h1>
                             <div>
-                                <form method="post" action="progressTheTicket/${id}">
+                                <form method="post" action="/progressTicket/${id}">
                                     <button class="button button1">Yes</button>
                                 </form>
                             </div>

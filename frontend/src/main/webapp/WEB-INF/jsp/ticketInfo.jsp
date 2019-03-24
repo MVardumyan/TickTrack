@@ -286,12 +286,12 @@
                 </div>
             </div>
             <div class="button-group">
-                <c:if test="${notClosed}">
-                <form action="/updateTicket/${id}">
+                <c:if test="${notClosedAndCanceled}">
+                <form action="/displayUpdateTicket/${id}">
                     <button class="action-button">Edit</button>
                 </form>
                     <c:if test="${inProgress}">
-                <form action="/progressTicket/${id}">
+                <form action="/confirmProgressTicket/${id}">
                     <button class="action-button">In Progress</button>
                 </form>
                     </c:if>
@@ -301,12 +301,12 @@
                 </form>
                 </c:if>
                     <c:if test="${cancel}">
-                <form action="/cancelTicket/${id}">
+                <form action="/confirmCancelTicket/${id}">
                     <button class="action-button">Cancel</button>
                 </form>
                     </c:if>
                 <c:if test="${resolve}">
-                    <form action="/resolveTicket/${id}">
+                    <form action="/confirmResolveTicket/${id}">
                         <button class="action-button">Resolve</button>
                     </form>
                 </c:if>

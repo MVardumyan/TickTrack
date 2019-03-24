@@ -1,9 +1,7 @@
 package ticktrack.frontend.controller;
 
-import com.google.protobuf.util.JsonFormat;
 import common.enums.UserRole;
 import common.helpers.CustomJsonParser;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -20,11 +18,12 @@ import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static common.enums.UserRole.Admin;
+import static common.enums.UserRole.RegularUser;
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 
 /**
@@ -47,7 +46,9 @@ public class TicketInfoController {
 
     @RequestMapping(value = "/ticketInfo/{id}", method = RequestMethod.GET)
     public String displayTicketInfoPage(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
-
+        if (Admin.equals(user.getRole())) {
+            model.put("admin", true);
+        }
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "Tickets/getTicket/" + id)).execute()) {
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
@@ -63,10 +64,10 @@ public class TicketInfoController {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
                 if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
-                    model.put("notClosed", true);
+                    model.put("notClosedAndCanceled", true);
                 }
                 if (msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)
-                        && user.getUsername().equals(msg.getTicketInfo().getAssignee())) {
+                        && !user.getRole().equals(RegularUser)) {
                     model.put("inProgress", true);
                 }else if (!user.getRole().equals(UserRole.RegularUser) &&
                         msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)) {
@@ -131,7 +132,7 @@ public class TicketInfoController {
     }
 
 
-    @RequestMapping(value = "/updateTicket/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/displayUpdateTicket/{id}", method = RequestMethod.GET)
     public String displayUpdateTicketPage(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         Request requestCategory = new Request.Builder()
                 .url(backendURL + "categories/getAll")
@@ -181,7 +182,7 @@ public class TicketInfoController {
         SearchController.getGroup(model, groupResponse, logger);
     }
 
-    @RequestMapping(value = "updateTicket/updateTheTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "updateTicket/{id}", method = RequestMethod.POST)
     String updateTicket(ModelMap model, @PathVariable("id") long id,
                         @SessionAttribute("user") User user,
                         @RequestParam() String summary,
@@ -220,14 +221,14 @@ public class TicketInfoController {
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "redirect:ticketInfo/" + id;
     }
 
     private void modelPutTicketInfo(ModelMap model, @PathVariable("id") long id, Response response) throws IOException {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                model.put("notClosed",true);
+                model.put("notClosedAndCanceled",true);
                 model.put("cancel",true);
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
@@ -255,7 +256,7 @@ public class TicketInfoController {
         return "message";
     }
 
-    @RequestMapping(value = "closeTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/closeTicket/{id}", method = RequestMethod.POST)
     String closeTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -269,7 +270,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
-                    model.put("notClosed", false);
+                    model.put("notClosedAndCanceled", false);
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -280,19 +281,16 @@ public class TicketInfoController {
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "redirect:/ticketInfo/" + id;
     }
 
-    @RequestMapping(value = "/progressTicket/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/confirmProgressTicket/{id}", method = RequestMethod.GET)
     String displayInProgressTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
-        model.put("close", false);
-        model.put("cancel", false);
-        model.put("progress", true);
         return "message";
     }
 
-    @RequestMapping(value = "progressTicket/progressTheTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/progressTicket/{id}", method = RequestMethod.POST)
     String inProgressTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -300,25 +298,25 @@ public class TicketInfoController {
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
+            model.put("close", false);
+            model.put("cancel", false);
+            model.put("progress", true);
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "redirect:/ticketInfo/" + id;
     }
 
-    @RequestMapping(value = "/cancelTicket/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/confirmCancelTicket/{id}", method = RequestMethod.GET)
     String displayCancelTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
-        model.put("close", false);
-        model.put("cancel", true);
-        model.put("progress", false);
         return "message";
     }
 
-    @RequestMapping(value = "cancelTicket/cancelTheTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelTicket/{id}", method = RequestMethod.POST)
     String cancelTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -326,23 +324,27 @@ public class TicketInfoController {
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
+            model.put("close", false);
+            model.put("cancel", true);
+            model.put("progress", false);
+            model.put("notClosedAndCanceled",false);
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "redirect:/ticketInfo/" + id;
     }
 
 
-    @RequestMapping(value = "/resolveTicket/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/confirmResolveTicket/{id}", method = RequestMethod.GET)
     String displayResolveTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
         return "resolveTicket";
     }
 
-    @RequestMapping(value = "resolveTicket/resolveTheTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/resolveTicket/{id}", method = RequestMethod.POST)
     String resolveTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user, @RequestParam(required = false) String resolution) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -356,7 +358,7 @@ public class TicketInfoController {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
                     model.put("resolve", true);
-                    model.put("notClosed",true);
+                    model.put("notClosedAndCanceled",true);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
                 }
             } else {
@@ -368,7 +370,7 @@ public class TicketInfoController {
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "ticketInfo";
+        return "redirect:/ticketInfo/" + id;
     }
 
 }

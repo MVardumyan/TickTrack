@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static common.enums.UserRole.RegularUser;
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 import static common.helpers.CustomJsonParser.protobufToJson;
 import static ticktrack.frontend.util.OkHttpRequestHandler.buildRequestWithBody;
@@ -71,6 +72,8 @@ public class MyTicketsController {
                     model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                     if (user.getRole().equals(UserRole.Admin)) {
                         model.put("admin", true);
+                    }else if(!user.getRole().equals(UserRole.RegularUser)){
+                        model.put("notRegularUser",true);
                     }
                     int pageNumber = 2;
                     model.put("p",pageNumber);
