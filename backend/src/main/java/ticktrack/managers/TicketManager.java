@@ -9,7 +9,6 @@ import ticktrack.enums.TicketStatus;
 import ticktrack.interfaces.ITicketManager;
 import ticktrack.proto.Msg;
 import ticktrack.repositories.*;
-import com.google.common.collect.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import static ticktrack.util.ResponseHandler.*;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Class provides methods for managing Ticket entity.
@@ -51,7 +49,7 @@ public class TicketManager implements ITicketManager {
      * Method for new ticket creation.
      * Sets ticket ID, creation date and status automatically
      *
-     * @param request protobuf type TicketOpCreateRequest contains new Ticket fields information
+     * @param request protobuf message TicketOpCreateRequest contains new Ticket fields information
      * @return TicketInfo - new ticket's information for success; CommonResponse - if Creator/Priority/Category not found
      */
     @Transactional
@@ -140,7 +138,7 @@ public class TicketManager implements ITicketManager {
                 responseText = "Unable to create Ticket: Invalid Category type";
             } else if (!creatorResult.isPresent()) {
                 responseText = "Unable to create Ticket: Creator does not exist";
-            } else if(!creatorResult.get().isActive()) {
+            } else if (!creatorResult.get().isActive()) {
                 responseText = "Unable to create Ticket: Creator deactivated";
             } else {
                 responseText = "Unable to create Ticket: Category deactivated";
@@ -156,7 +154,7 @@ public class TicketManager implements ITicketManager {
      * Checks which fields should be updated and updates them with new values.
      *
      * @param request TicketOpUpdateRequest contains set of optional fields to update
-     * @return TicketInfo - new ticket's information for success; CommonResponse/ - if ticket_id/Status/Creator/Priority/Category not found
+     * @return TicketInfo - tickets updated information for success; CommonResponse - if ticket_id/Status/Creator/Priority/Category not found
      */
     @Transactional
     @Override
@@ -168,7 +166,7 @@ public class TicketManager implements ITicketManager {
         Optional<Ticket> result = ticketRepository.findById(request.getTicketID());
         if (result.isPresent()) {
             Ticket ticket = result.get();
-            if (ticket.getStatus().equals(Closed)) {
+            if (ticket.getStatus().equals(Closed) || ticket.getStatus().equals(Canceled)) {
                 return wrapCommonResponseIntoMsg(buildFailureResponse("Ticket " + ticket.getID() + " is closed and cannot be updated"));
             }
 
@@ -300,8 +298,8 @@ public class TicketManager implements ITicketManager {
     /**
      * Method creates new Comment entity and adds it to corresponding ticket
      *
-     * @param request protobuf type TicketOpAddComment contains new Comment information
-     * @return protobuf type Comment with new Comment information in case of success. CommonResponse with failure message in case of failure
+     * @param request protobuf message TicketOpAddComment contains new Comment information
+     * @return protobuf message Comment with new Comment information in case of success. CommonResponse with failure message in case of failure
      */
     @Transactional
     @Override
@@ -311,6 +309,10 @@ public class TicketManager implements ITicketManager {
         Optional<Ticket> result = ticketRepository.findById(request.getTicketId());
         if (result.isPresent()) {
             Ticket ticket = result.get();
+            if (ticket.getStatus().equals(Closed) || ticket.getStatus().equals(Canceled)) {
+                return wrapCommonResponseIntoMsg(buildFailureResponse("Ticket " + ticket.getID() + " is closed and cannot be updated"));
+            }
+
             Comment comment = new Comment(request.getNewComment().getUsername(),
                     new Timestamp(getCurrentTimeInMillis()),
                     request.getNewComment().getText());
@@ -338,7 +340,7 @@ public class TicketManager implements ITicketManager {
      * Method searches ticket in db by given id and returns its information
      *
      * @param ticket_id param for search by id
-     * @return protobuf type TicketInfo with ticket fields information. Empty if ticket not found
+     * @return protobuf message TicketInfo with ticket fields information. Empty if ticket not found
      */
     @Transactional
     @Override
@@ -351,12 +353,6 @@ public class TicketManager implements ITicketManager {
             logger.debug("Ticket {} not found", ticket_id);
             return TicketInfo.newBuilder().build();
         }
-    }
-
-    @Transactional
-    @Override
-    public SearchOp.SearchOpResponse getAll() {
-        return buildTicketResponseFromQueryResult(Streams.stream(ticketRepository.findAll()).collect(Collectors.toList()));
     }
 
     private long getCurrentTimeInMillis() {
