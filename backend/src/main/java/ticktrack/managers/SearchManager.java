@@ -2,8 +2,6 @@ package ticktrack.managers;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import ticktrack.entities.Category;
 import ticktrack.entities.Ticket;
 import ticktrack.entities.User;
@@ -30,7 +28,6 @@ import javax.persistence.criteria.Root;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

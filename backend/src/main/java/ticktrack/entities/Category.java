@@ -14,7 +14,7 @@ public class Category{
    @Column
    private boolean deactivated;
 
-   @OneToMany(mappedBy = "category")
+   @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
    private Set<Ticket> ticketList;
 
    public Category() {}

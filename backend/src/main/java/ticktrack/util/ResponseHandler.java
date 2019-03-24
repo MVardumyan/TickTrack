@@ -25,26 +25,18 @@ public final class ResponseHandler {
    public static Msg.SearchOp.SearchOpResponse buildTicketResponseFromQueryResult(List<Ticket> result) {
       Msg.SearchOp.SearchOpResponse.Builder responseBuilder = Msg.SearchOp.SearchOpResponse.newBuilder();
 
-      result.stream().map(ResponseHandler::buildTicketInfo).forEach(responseBuilder::addTicketInfo);
+      result.stream().map(ticket -> buildTicketWithoutComments(ticket).build()).forEach(responseBuilder::addTicketInfo);
 
       return responseBuilder.build();
    }
 
    /**
-    * Method builds parses given Ticket entity to protobuf message TicketInfo
+    * Method parses given Ticket entity to protobuf message TicketInfo
     * @param ticket entity that will be parsed to TicketInfo
     * @return protobuf message TicketInfo
     */
    public static Msg.TicketInfo buildTicketInfo(Ticket ticket) {
-      Msg.TicketInfo.Builder ticketMessage = Msg.TicketInfo.newBuilder()
-         .setTicketID(ticket.getID())
-         .setSummary(ticket.getSummary())
-         .setDescription(ticket.getDescription())
-         .setCategory(ticket.getCategory().getName())
-         .setCreator(ticket.getCreator().getUsername())
-         .setOpenDate(ticket.getOpenDate().toString())
-         .setPriority(Msg.TicketPriority.valueOf(ticket.getPriority().toString()))
-         .setStatus(Msg.TicketStatus.valueOf(ticket.getStatus().toString()));
+      Msg.TicketInfo.Builder ticketMessage = buildTicketWithoutComments(ticket);
 
       if(ticket.getCommentList() != null){
          ticketMessage.addAllComment(
@@ -57,6 +49,26 @@ public final class ResponseHandler {
                  ).collect(Collectors.toList())
          );
       }
+
+      return ticketMessage.build();
+   }
+
+   /**
+    * Method builds ticket info without comments.
+    * This is needed for search operations response for performance purposes.
+    * @param ticket entity that will be parsed to TicketInfo
+    * @return protobuf message TicketInfo's builder
+    */
+   private static Msg.TicketInfo.Builder buildTicketWithoutComments(Ticket ticket) {
+      Msg.TicketInfo.Builder ticketMessage = Msg.TicketInfo.newBuilder()
+         .setTicketID(ticket.getID())
+         .setSummary(ticket.getSummary())
+         .setDescription(ticket.getDescription())
+         .setCategory(ticket.getCategory().getName())
+         .setCreator(ticket.getCreator().getUsername())
+         .setOpenDate(ticket.getOpenDate().toString())
+         .setPriority(Msg.TicketPriority.valueOf(ticket.getPriority().toString()))
+         .setStatus(Msg.TicketStatus.valueOf(ticket.getStatus().toString()));
 
       if (ticket.getAssignee() != null) {
          ticketMessage.setAssignee(ticket.getAssignee().getUsername());
@@ -74,7 +86,7 @@ public final class ResponseHandler {
          ticketMessage.setResolution(ticket.getResolution());
       }
 
-      return ticketMessage.build();
+      return ticketMessage;
    }
 
    /**
