@@ -8,7 +8,10 @@ import java.sql.Timestamp;
 import java.util.Set;
 
 @Entity
-@Table
+@Table(indexes = {
+        @Index(name = "ticketSearch",
+        columnList = "summary,description,status,resolution,priority,deadline,closeDate,openDate")
+})
 public class Ticket{
    @Id
    @GeneratedValue(strategy = GenerationType.TABLE)
