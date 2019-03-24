@@ -227,8 +227,8 @@
         <tr>
             <td><a  href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
             <td>${ticket.summary}</td>
-            <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
-            <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
+            <td><a href="/personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+            <td><a href="/personalInfo/${ticket.creator}">${ticket.creator}</a></td>
             <td>${ticket.category}</td>
             <td>${ticket.status}</td>
             <td>${ticket.priority}</td>
