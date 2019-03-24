@@ -147,7 +147,7 @@
     <h4 align="left" class="container__header">Update ticket ${info.ticketID}</h4>
 
 
-    <form method="post" action="updateTheTicket/${id}" id="create_form">
+    <form method="post" action="/updateTicket/${id}" id="create_form">
         <label>Summary</label>
         <div class="form-group">
             <input type="text" class="form-control" name="summary"

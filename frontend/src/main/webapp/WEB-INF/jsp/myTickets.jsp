@@ -233,8 +233,8 @@
             <tr>
                 <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
-                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
-                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
+                <td><a href="/personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                <td><a href="/personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                 <td>${ticket.category}</td>
                 <td>${ticket.status}</td>
                 <td>${ticket.priority}</td>
@@ -297,8 +297,8 @@
             <tr>
                 <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                 <td>${ticket.summary}</td>
-                <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
-                <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
+                <td><a href="/personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                <td><a href="/personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                 <td>${ticket.category}</td>
                 <td>${ticket.status}</td>
                 <td>${ticket.priority}</td>
@@ -332,7 +332,7 @@
     </table>
 
 
-    <c:if test="notRegular">
+    <c:if test="${notRegular}">
         <h4>My groups tickets</h4>
         <table id="my-groups-tickets" class="table table-striped table-bordered table-sm" width="100%">
             <thead>
@@ -362,8 +362,8 @@
                 <tr>
                     <td><a href="/ticketInfo/${ticket.ticketID}">${ticket.ticketID}</a></td>
                     <td>${ticket.summary}</td>
-                    <td><a href="personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
-                    <td><a href="personalInfo/${ticket.creator}">${ticket.creator}</a></td>
+                    <td><a href="/personalInfo/${ticket.assignee}">${ticket.assignee}</a></td>
+                    <td><a href="/personalInfo/${ticket.creator}">${ticket.creator}</a></td>
                     <td>${ticket.category}</td>
                     <td>${ticket.status}</td>
                     <td>${ticket.priority}</td>

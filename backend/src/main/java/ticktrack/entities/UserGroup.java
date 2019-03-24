@@ -14,10 +14,10 @@ public class UserGroup {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private Set<User> members;
 
-    @OneToMany(mappedBy = "group")
+    @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private Set<Ticket> tickets;
 
     public UserGroup(String name, Set<User> members) {

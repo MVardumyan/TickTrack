@@ -32,7 +32,7 @@ import ticktrack.frontend.util.CaptchaValidation;
 /**
  * This controller is responsible for logout, login and register pages displaying and functionality.
  * In this page is supported reCaptcha.
- * */
+ */
 
 @Controller
 class SessionController {
@@ -88,7 +88,7 @@ class SessionController {
                                 model.put("admin", true);
                                 return "adminMain";
                             } else {
-                                model.put("notRegular",true);
+                                model.put("notRegular", true);
                                 return "regularUserMain";
                             }
                         } else {
@@ -104,16 +104,13 @@ class SessionController {
                     }
                 } else {
                     model.put("error", "User not found");
-                    return "error";
                 }
             } catch (IOException e) {
                 logger.error("Internal error, unable to get login validation", e);
-                return "error";
+                model.put("error", "reCAPTCHA is not valid");
             }
-        } else {
-            model.put("error", "reCAPTCHA is not valid");
-            return "error";
         }
+        return "error";
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
