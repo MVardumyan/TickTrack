@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static common.enums.UserRole.Admin;
 import static common.enums.UserRole.RegularUser;
 import static common.helpers.CustomJsonParser.jsonToProtobuf;
 import static common.helpers.CustomJsonParser.protobufToJson;
@@ -69,14 +70,13 @@ public class MyTicketsController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
-                    model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                     if (user.getRole().equals(UserRole.Admin)) {
                         model.put("admin", true);
-                    }else if(!user.getRole().equals(UserRole.RegularUser)){
-                        model.put("notRegularUser",true);
+                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                            model.put("notRegular",true);
+                        }
                     }
-                    int pageNumber = 2;
-                    model.put("p",pageNumber);
+                    model.put("ticketsCreatedByMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
@@ -91,6 +91,12 @@ public class MyTicketsController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
+                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                            model.put("notRegular",true);
+                        }
+                    }
                     model.put("ticketsAssignedToMe", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {
@@ -105,6 +111,12 @@ public class MyTicketsController {
             if (response.code() == 200) {
                 Msg msg = jsonToProtobuf(response.body().string());
                 if (msg != null) {
+                    if (user.getRole().equals(UserRole.Admin)) {
+                        model.put("admin", true);
+                        if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                            model.put("notRegular",true);
+                        }
+                    }
                     model.put("ticketsAssignedToMyGroup", msg.getSearchOperation().getSearchOpResponse().getTicketInfoList());
                 }
             } else {

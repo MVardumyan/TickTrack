@@ -89,7 +89,7 @@
         <div class="row">
             <div class="col-md-12">
 
-                <form method="post" action="resolveTheTicket/${id}">
+                <form method="post" action="/resolveTicket/${id}">
                 <div class="error-template">
                     <h1>
                         Are you sure you want to resolve Ticket ${id}?</h1>

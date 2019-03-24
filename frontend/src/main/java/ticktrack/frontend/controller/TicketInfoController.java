@@ -63,7 +63,8 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
-                if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed)) {
+                if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed )
+                        && !msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Canceled )) {
                     model.put("notClosedAndCanceled", true);
                 }
                 if (msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)
@@ -144,6 +145,9 @@ public class TicketInfoController {
         categoryResponseUtil(model, requestCategory, groupsRequest, httpClient, logger);
 
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithoutBody(backendURL + "Tickets/getTicket/" + id)).execute()) {
+            if (Admin.equals(user.getRole())) {
+                model.put("admin", true);
+            }
             modelPutTicketInfo(model, id, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
@@ -221,7 +225,7 @@ public class TicketInfoController {
             model.put("error", "Internal error, unable to get users list");
         }
 
-        return "redirect:ticketInfo/" + id;
+        return "redirect:/ticketInfo/" + id;
     }
 
     private void modelPutTicketInfo(ModelMap model, @PathVariable("id") long id, Response response) throws IOException {
@@ -287,6 +291,7 @@ public class TicketInfoController {
     @RequestMapping(value = "/confirmProgressTicket/{id}", method = RequestMethod.GET)
     String displayInProgressTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
+        model.put("progress", true);
         return "message";
     }
 
@@ -300,7 +305,6 @@ public class TicketInfoController {
         ).execute()) {
             model.put("close", false);
             model.put("cancel", false);
-            model.put("progress", true);
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
             logger.error("Internal error, unable to get users list", e);
@@ -313,10 +317,11 @@ public class TicketInfoController {
     @RequestMapping(value = "/confirmCancelTicket/{id}", method = RequestMethod.GET)
     String displayCancelTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
+        model.put("cancel", true);
         return "message";
     }
 
-    @RequestMapping(value = "/cancelTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "fcancelTicket/{id}", method = RequestMethod.POST)
     String cancelTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -325,7 +330,6 @@ public class TicketInfoController {
         try (Response response = httpClient.newCall(OkHttpRequestHandler.buildRequestWithBody(backendURL + "Tickets/update", CustomJsonParser.protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
             model.put("close", false);
-            model.put("cancel", true);
             model.put("progress", false);
             model.put("notClosedAndCanceled",false);
             displayTicketConfig(model, id, user, response);
@@ -341,10 +345,11 @@ public class TicketInfoController {
     @RequestMapping(value = "/confirmResolveTicket/{id}", method = RequestMethod.GET)
     String displayResolveTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
         model.put("id", id);
+        model.put("resolve", true);
         return "resolveTicket";
     }
 
-    @RequestMapping(value = "/resolveTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "resolveTicket/{id}", method = RequestMethod.POST)
     String resolveTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user, @RequestParam(required = false) String resolution) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
@@ -357,7 +362,6 @@ public class TicketInfoController {
                 if (msg != null) {
                     model.put("info", msg.getTicketInfo());
                     model.put("id", id);
-                    model.put("resolve", true);
                     model.put("notClosedAndCanceled",true);
                     model.put("commentList", msg.getTicketInfo().getCommentList());
                 }

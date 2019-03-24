@@ -49,10 +49,11 @@ public class PersonalInfoController {
 
     @RequestMapping(value = "/personalInfo/{username}", method = RequestMethod.GET)
     public String displayPersonalInfoPage(ModelMap model, @PathVariable("username") String username, @SessionAttribute User user) {
-        if (Admin.equals(user.getRole())) {
+        if (user.getRole().equals(UserRole.Admin)) {
             model.put("admin", true);
-        }else if(!RegularUser.equals(user.getRole())){
-            model.put("notRegular",true);
+            if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                model.put("notRegular",true);
+            }
         }
         Request request = buildRequestWithoutBody(backendURL + "users/getUser/" + username);
         showPersonalInfo(request, model, user);
@@ -126,10 +127,11 @@ public class PersonalInfoController {
         }
         try (Response response = httpClient.newCall(buildRequestWithBody(backendURL + "users/update", protobufToJson(wrapIntoMsg(requestMessage)))
         ).execute()) {
-            if (Admin.equals(user.getRole())) {
+            if (user.getRole().equals(UserRole.Admin)) {
                 model.put("admin", true);
-            }else if(!RegularUser.equals(user.getRole())){
-                model.put("notRegular",true);
+                if(user.getRole().equals(UserRole.Admin) || user.getRole().equals(UserRole.BusinessUser)){
+                    model.put("notRegular",true);
+                }
             }
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
