@@ -68,10 +68,12 @@ public class TicketInfoController {
                     model.put("notClosedAndCanceled", true);
                 }
                 if (msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Assigned)
-                        && !user.getRole().equals(RegularUser)) {
+                        && !user.getRole().equals(RegularUser)
+                        && msg.getTicketInfo().getAssignee().equals(user.getUsername())) {
                     model.put("inProgress", true);
                 }else if (!user.getRole().equals(UserRole.RegularUser) &&
-                        msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)) {
+                        msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.InProgress)
+                        && msg.getTicketInfo().getAssignee().equals(user.getUsername())) {
                     model.put("resolve", true);
                 }else if(msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Resolved)
                         && user.getUsername().equals(msg.getTicketInfo().getCreator()))
@@ -321,7 +323,7 @@ public class TicketInfoController {
         return "message";
     }
 
-    @RequestMapping(value = "fcancelTicket/{id}", method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelTicket/{id}", method = RequestMethod.POST)
     String cancelTicket(ModelMap model, @PathVariable("id") long id, @SessionAttribute User user) {
 
         Msg.TicketOp.TicketOpUpdateRequest.Builder requestMessage = Msg.TicketOp.TicketOpUpdateRequest.newBuilder();
