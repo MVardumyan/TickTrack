@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 public class NotificationSender {
 
     private final Configuration configuration = new Configuration()
-            .domain("sandboxe7e97291348e44e99b85e737b9a9b0f7.mailgun.org")
+            .domain("sandbox00ce7ea3ee2f4e39b0c86aeeadfccdc2.mailgun.org")
             .apiKey("")
             .from("TickTrack", "Info@TickTrack.am");
 

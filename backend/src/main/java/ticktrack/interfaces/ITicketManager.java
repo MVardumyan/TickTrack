@@ -12,6 +12,4 @@ public interface ITicketManager {
     Msg addComment(TicketOp.TicketOpAddComment request);
 
     TicketInfo get(long ticket_id);
-
-    SearchOp.SearchOpResponse getAll();
 }

@@ -31,9 +31,9 @@ public final class ResponseHandler {
    }
 
    /**
-    * Method builds parses given Ticket entity to protobuf type TicketInfo
+    * Method builds parses given Ticket entity to protobuf message TicketInfo
     * @param ticket entity that will be parsed to TicketInfo
-    * @return protobuf type TicketInfo
+    * @return protobuf message TicketInfo
     */
    public static Msg.TicketInfo buildTicketInfo(Ticket ticket) {
       Msg.TicketInfo.Builder ticketMessage = Msg.TicketInfo.newBuilder()
@@ -80,7 +80,7 @@ public final class ResponseHandler {
    /**
     * Method builds protobuf message CommonResponse with responseType Success
     * @param responseText is included in response
-    * @return protobuf type CommonResponse
+    * @return protobuf message CommonResponse
     */
    public static Msg.CommonResponse buildSuccessResponse(String responseText) {
       return Msg.CommonResponse.newBuilder()
@@ -92,7 +92,7 @@ public final class ResponseHandler {
    /**
     * Method builds protobuf message CommonResponse with responseType Failure
     * @param responseText is included in response
-    * @return protobuf type CommonResponse
+    * @return protobuf message CommonResponse
     */
    public static Msg.CommonResponse buildFailureResponse(String responseText) {
       return Msg.CommonResponse.newBuilder()
@@ -101,26 +101,49 @@ public final class ResponseHandler {
               .build();
    }
 
+   /**
+    * Method for wrapping protobuf message CommonResponse into general type Msg.
+    * @param message protobuf message CommonResponse
+    * @return protobuf message Msg
+    */
    public static Msg wrapCommonResponseIntoMsg(Msg.CommonResponse message) {
       return Msg.newBuilder()
               .setCommonResponse(message)
               .build();
    }
 
+   /**
+    * Method user by controllers for building http response entity in case of json to protobuf parse failure
+    * @return http response entity; code - 400 Bad Request; body - CommonResponse with type failure
+    */
    @NotNull
    public static ResponseEntity<String> buildFailedToParseResponse() {
       return ResponseEntity
               .badRequest()
-              .body(protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse("Unable to parse request to protobuf"))));
+              .body(
+                      protobufToJson(
+                              wrapCommonResponseIntoMsg(
+                                      buildFailureResponse("Unable to parse request to protobuf")))
+              );
    }
 
+   /**
+    * Method user by controllers for building http response entity in case of incorrect protobuf message type
+    * @param message failure response message
+    * @return http response entity; code - 400 Bad Request; body - CommonResponse with type failure
+    */
    @NotNull
-   public static ResponseEntity<String> buildInvalidProtobufContentResponse(String s) {
+   public static ResponseEntity<String> buildInvalidProtobufContentResponse(String message) {
       return ResponseEntity
               .badRequest()
-              .body(protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse(s))));
+              .body(protobufToJson(wrapCommonResponseIntoMsg(buildFailureResponse(message))));
    }
 
+   /**
+    * Method user by controllers to handle CommonResponse, received from managers.
+    * @param result protobuf message CommonResponse
+    * @return http response entity. In case of Failure - 400 Bad Request; success - 200 Ok
+    */
    @NotNull
    public static ResponseEntity processManagerResponse(Msg.CommonResponse result) {
       if (result.getResponseType().equals(Failure)) {
