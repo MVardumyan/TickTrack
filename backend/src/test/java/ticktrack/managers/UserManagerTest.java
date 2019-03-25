@@ -1,5 +1,6 @@
 package ticktrack.managers;
 
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import ticktrack.entities.PasswordLink;
 import ticktrack.entities.User;
 import ticktrack.entities.UserGroup;
 import ticktrack.enums.Gender;
@@ -159,6 +161,57 @@ class UserManagerTest {
     }
 
     @Test
+    void updateUser() {
+        Msg.UserOp.UserOpUpdateRequest request = Msg.UserOp.UserOpUpdateRequest.newBuilder()
+                .setUsername("user1")
+                .setFirstName("Elizabeth")
+                .setLastName("Taylor")
+                .setGender(Msg.UserOp.Gender.Female)
+                .setEmail("lisa@gmail.com")
+                .setRole(Msg.UserRole.BusinessUser)
+                .setGroup("testGroup")
+                .build();
+
+        Msg response = userManager.update(request);
+
+        assertTrue(response.hasUserOperation());
+        assertTrue(response.getUserOperation().hasUserOpGetResponse());
+
+        Optional<User> result = userRepository.findByUsername("user1");
+        assertTrue(result.isPresent());
+        User user = result.get();
+
+        assertEquals("Elizabeth", user.getFirstName());
+        assertEquals("Taylor", user.getLastName());
+    }
+
+    @Test
+    void updateInvalidUser() {
+        Msg.UserOp.UserOpUpdateRequest request = Msg.UserOp.UserOpUpdateRequest.newBuilder()
+                .setUsername("user000")
+                .setFirstName("George")
+                .build();
+
+        Msg response = userManager.update(request);
+
+        assertTrue(response.hasCommonResponse());
+        assertEquals(Failure, response.getCommonResponse().getResponseType());
+    }
+
+    @Test
+    void updateUserWithInvalidGroup() {
+        Msg.UserOp.UserOpUpdateRequest request = Msg.UserOp.UserOpUpdateRequest.newBuilder()
+                .setUsername("user1")
+                .setGroup("non-existing")
+                .build();
+
+        Msg response = userManager.update(request);
+
+        assertTrue(response.hasCommonResponse());
+        assertEquals(Failure, response.getCommonResponse().getResponseType());
+    }
+
+    @Test
     void deactivateUser() {
         Msg.CommonResponse commonResponse = userManager.deactivate("user1");
 
@@ -204,12 +257,25 @@ class UserManagerTest {
     }
 
     @Test
-    void GetByRole() {
+    void GetAll() {
+        Msg.UserOp.UserOpGetByRoleRequest request = Msg.UserOp.UserOpGetByRoleRequest.newBuilder()
+                .setCriteria(Msg.UserOp.UserOpGetByRoleRequest.Criteria.All)
+                .build();
+
+        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request, 1, 10);
+
+        assertEquals(2, result.getUserInfoCount());
+        assertEquals("user1", result.getUserInfo(0).getUsername());
+        assertEquals("user2", result.getUserInfo(1).getUsername());
+    }
+
+    @Test
+    void GetBusinessUsers() {
         Msg.UserOp.UserOpGetByRoleRequest request = Msg.UserOp.UserOpGetByRoleRequest.newBuilder()
                 .setCriteria(Msg.UserOp.UserOpGetByRoleRequest.Criteria.RegularUser)
                 .build();
 
-        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request,1,10);
+        Msg.UserOp.UserOpGetResponse result = userManager.getByRole(request, 1, 10);
 
         assertEquals(2, result.getUserInfoCount());
         assertEquals("user1", result.getUserInfo(0).getUsername());
@@ -227,8 +293,58 @@ class UserManagerTest {
         assertEquals(Success, result.getResponseType());
     }
 
+    @Test
+    void changePassword() {
+        PasswordLink link = new PasswordLink();
+        link.setUser(
+                userRepository.findByUsername("user1").get()
+        );
+        link.setLink("aaa");
+        link.setValidDate(new Timestamp(DateTime.now().plusDays(1).getMillis()));
+
+        passwordLinkRepository.save(link);
+
+        Msg.UserOp.UserOpChangePassword request = Msg.UserOp.UserOpChangePassword.newBuilder()
+                .setUsername("user1")
+                .setNewPassword("wordpass")
+                .build();
+
+        Msg.CommonResponse commonResponse = userManager.changePassword(request);
+
+        assertEquals(Success, commonResponse.getResponseType());
+
+        Optional<User> result = userRepository.findByUsername("user1");
+        assertTrue(result.isPresent());
+        assertEquals("wordpass", result.get().getPassword());
+    }
+
+    @Test
+    void changePasswordForInvalidUser() {
+        Msg.UserOp.UserOpChangePassword request = Msg.UserOp.UserOpChangePassword.newBuilder()
+                .setUsername("user000")
+                .setNewPassword("wordpass")
+                .build();
+
+        Msg.CommonResponse commonResponse = userManager.changePassword(request);
+
+        assertEquals(Failure, commonResponse.getResponseType());
+    }
+
+    @Test
+    void changePasswordWithoutLink() {
+        Msg.UserOp.UserOpChangePassword request = Msg.UserOp.UserOpChangePassword.newBuilder()
+                .setUsername("user1")
+                .setNewPassword("wordpass")
+                .build();
+
+        Msg.CommonResponse commonResponse = userManager.changePassword(request);
+
+        assertEquals(Failure, commonResponse.getResponseType());
+    }
+
     @AfterEach
     void deleteTestData() {
+        passwordLinkRepository.deleteAll();
         userRepository.deleteAll();
         groupRepository.deleteAll();
     }
