@@ -62,6 +62,13 @@ class UserGroupManagerTest {
     }
 
     @Test
+    void createUserGroupWithNullRequest() {
+        CommonResponse commonResponse = groupManager.createUserGroup(null);
+
+        assertEquals(Failure, commonResponse.getResponseType());
+    }
+
+    @Test
     void deleteUserGroup() {
         CommonResponse commonResponse = groupManager.deleteUserGroup("group1");
 
@@ -96,6 +103,13 @@ class UserGroupManagerTest {
     }
 
     @Test
+    void deleteGroupWithNullRequest() {
+        CommonResponse commonResponse = groupManager.deleteUserGroup(null);
+
+        assertEquals(Failure, commonResponse.getResponseType());
+    }
+
+    @Test
     void updateUserGroup() {
 
         CommonResponse commonResponse = groupManager.changeName(UserGroupOp.UserGroupOpUpdateRequest.newBuilder()
@@ -119,6 +133,35 @@ class UserGroupManagerTest {
                 .build());
 
         assertEquals(Failure, commonResponse.getResponseType());
+}
+
+    @Test
+    void updateGroupWithNullRequest() {
+        CommonResponse commonResponse = groupManager.changeName(null);
+
+        assertEquals(Failure, commonResponse.getResponseType());
+    }
+
+    @Test
+    void getGroup() {
+        UserGroup group = groupManager.get("group1");
+
+        assertNotNull(group);
+        assertEquals("group1", group.getName());
+    }
+
+    @Test
+    void getNonExistingGroup() {
+        UserGroup group = groupManager.get("group00");
+
+        assertNull(group);
+    }
+
+    @Test
+    void getAllGroups() {
+        UserGroupOp.UserGroupOpGetAllResponse result = groupManager.getAll();
+
+        assertEquals(1, result.getGroupNameCount());
     }
 
     @AfterEach

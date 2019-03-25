@@ -59,6 +59,13 @@ class CategoryManagerTest {
    }
 
    @Test
+   void createCategoryWithNullRequest() {
+      Msg.CommonResponse commonResponse = categoryManager.createCategory(null);
+
+      assertEquals(Failure, commonResponse.getResponseType());
+   }
+
+   @Test
    void updateCategory() {
       Msg.CommonResponse commonResponse = categoryManager.changeName(CategoryOp.CategoryOpUpdateRequest.newBuilder()
               .setOldName("testCategory2")
@@ -83,6 +90,13 @@ class CategoryManagerTest {
    }
 
    @Test
+   void updateCategoryWithNullRequest() {
+      Msg.CommonResponse commonResponse = categoryManager.changeName(null);
+
+      assertEquals(Failure, commonResponse.getResponseType());
+   }
+
+   @Test
    void deactivateCategory() {
       Msg.CommonResponse commonResponse = categoryManager.deactivateCategory("testCategory1");
 
@@ -91,6 +105,13 @@ class CategoryManagerTest {
       Optional<Category> testCategory = categoryRepository.findByName("testCategory1");
       assertTrue(testCategory.isPresent());
       assertTrue(testCategory.get().isDeactivated());
+   }
+
+   @Test
+   void deactivateCategoryWithNullRequest() {
+      Msg.CommonResponse commonResponse = categoryManager.deactivateCategory(null);
+
+      assertEquals(Failure, commonResponse.getResponseType());
    }
 
    @Test
