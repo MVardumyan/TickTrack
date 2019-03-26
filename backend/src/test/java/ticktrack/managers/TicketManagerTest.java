@@ -16,8 +16,12 @@ import ticktrack.proto.Msg;
 import ticktrack.repositories.*;
 
 import java.sql.Timestamp;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static ticktrack.enums.TicketPriority.High;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -88,7 +92,6 @@ class TicketManagerTest {
         assertEquals("Summary",request.getSummary());
         assertEquals("Desc",request.getDescription());
         assertEquals(testCategory.getName(),request.getCategory());
-
     }
 
     @Test
@@ -97,10 +100,22 @@ class TicketManagerTest {
                 .setTicketID(0)
                 .setStatus(Msg.TicketStatus.InProgress)
                 .setAssignee(testUser.getUsername())
+                .setResolution("resolution")
+                .setPriority(Msg.TicketPriority.High)
+                .setCategory(testCategory.getName())
+                .setDescription("desc")
+                .setSummary("summary")
                 .build();
 
         assertEquals(testUser.getUsername(),request.getAssignee());
         assertEquals(Msg.TicketStatus.InProgress,request.getStatus());
+        assertEquals(0,request.getTicketID());
+        assertEquals(testUser.getUsername(),request.getAssignee());
+        assertEquals("resolution",request.getResolution());
+        assertEquals(Msg.TicketPriority.High,request.getPriority());
+        assertEquals("desc",request.getDescription());
+        assertEquals(testCategory.getName(),request.getCategory());
+        assertEquals("summary",request.getSummary());
     }
 
     @Test
@@ -111,6 +126,27 @@ class TicketManagerTest {
                 .build();
 
         assertEquals(testComment,request.getNewComment());
+
+        Msg.TicketOp.TicketOpAddComment falseRequest = Msg.TicketOp.TicketOpAddComment.newBuilder()
+                .setNewComment(testComment)
+                .setTicketId(1)
+                .build();
+        Optional<Ticket> result = ticketRepository.findById(falseRequest.getTicketId());
+        if(!result.isPresent()) {
+            assertTrue(true);
+        }
+    }
+
+    @Test
+    void get(){
+        Optional<Ticket> result = ticketRepository.findById((long)0);
+        if(result.isPresent()){
+            assertTrue(true);
+        }
+        Optional<Ticket> falseResult = ticketRepository.findById((long)1);
+        if(result.isPresent()){
+            assertTrue(false);
+        }
     }
 
     @AfterEach

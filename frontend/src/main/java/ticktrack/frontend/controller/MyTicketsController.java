@@ -57,6 +57,7 @@ public class MyTicketsController {
             requestAssignedToMyGroups.setGroup(user.getUserGroup());
         }
 
+        //REQUESTS TO BACKEND FOR TICKETS CREATED BY ME, ASSIGNED TO ME, ASSIGNED TO MY GROUP
         Request reqCreatedByMe = buildRequestWithBody(backendURL + "search/" + page + "/" + size,
                 protobufToJson(wrapIntoMsg(requestCreatedByMe)));
 

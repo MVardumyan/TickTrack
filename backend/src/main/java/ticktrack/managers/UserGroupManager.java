@@ -2,8 +2,6 @@ package ticktrack.managers;
 
 import ticktrack.entities.UserGroup;
 import ticktrack.interfaces.IUserGroupManager;
-import ticktrack.proto.Msg;
-import ticktrack.proto.Msg.UserGroupOp.UserGroupOpGetAllResponse.GroupInfo;
 import ticktrack.repositories.GroupRepository;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
@@ -11,11 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ticktrack.util.ResponseHandler;
-
 import static ticktrack.proto.Msg.*;
 import static ticktrack.util.ResponseHandler.*;
-
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -157,7 +152,7 @@ public class UserGroupManager implements IUserGroupManager {
         return UserGroupOp.UserGroupOpGetAllResponse.newBuilder()
                 .addAllGroupInfo(
                         Streams.stream(groupRepository.findAll())
-                                .map(userGroup -> GroupInfo.newBuilder()
+                                .map(userGroup -> UserGroupOp.UserGroupOpGetAllResponse.GroupInfo.newBuilder()
                                         .setGroupName(userGroup.getName())
                                         .setIsDeactivated(userGroup.isDeactivated())
                                         .build())

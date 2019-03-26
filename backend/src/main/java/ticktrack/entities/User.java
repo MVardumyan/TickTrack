@@ -5,6 +5,7 @@ import common.enums.UserRole;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -40,10 +41,10 @@ public class User{
    private UserGroup group;
 
    @OneToMany(mappedBy = "creator")
-   private Set<Ticket> createdTicketList;
+   private List<Ticket> createdTicketList;
 
    @OneToMany(mappedBy = "assignee")
-   private Set<Ticket> assignedTicketList;
+   private List<Ticket> assignedTicketList;
 
    public User(String username,String firstName,String lastName,String password,UserRole role){
       this.username = username;
@@ -153,11 +154,11 @@ public class User{
       return passwordLink;
    }
 
-   public Set<Ticket> getCreatedTicketList() {
+   public List<Ticket> getCreatedTicketList() {
       return createdTicketList;
    }
 
-   public Set<Ticket> getAssignedTicketList() {
+   public List<Ticket> getAssignedTicketList() {
       return assignedTicketList;
    }
 }

@@ -63,6 +63,7 @@ public class TicketInfoController {
         if (response.code() == 200) {
             Msg msg = jsonToProtobuf(response.body().string());
             if (msg != null) {
+                //SOME CHECKS FOR VIEWS BUTTONS
                 if (!msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Closed )
                         && !msg.getTicketInfo().getStatus().equals(Msg.TicketStatus.Canceled )) {
                     model.put("notClosedAndCanceled", true);
@@ -85,6 +86,7 @@ public class TicketInfoController {
                 }
                 model.put("info", msg.getTicketInfo());
                 model.put("id", id);
+                //SORTING COMMENTS BY TIME
                 List<Msg.Comment> commentList = new ArrayList<Msg.Comment>(msg.getTicketInfo().getCommentList());
                 commentList.sort((Comparator<Msg.Comment>) (o1, o2) -> {
                     if (o1.getTime() == null || o2.getTime() == null)
@@ -117,8 +119,8 @@ public class TicketInfoController {
         ).execute()) {
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to add comment", e);
+            model.put("error", "Internal error, unable to add comment");
         }
 
         return "redirect:/ticketInfo/" + id;
@@ -152,8 +154,8 @@ public class TicketInfoController {
             }
             modelPutTicketInfo(model, id, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to get ticket", e);
+            model.put("error", "Internal error, unable to get ticket");
         }
 
         return "updateTicketInfo";
@@ -223,8 +225,8 @@ public class TicketInfoController {
         ).execute()) {
             modelPutTicketInfo(model, id, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to update ticket", e);
+            model.put("error", "Internal error, unable to update ticket");
         }
 
         return "redirect:/ticketInfo/" + id;
@@ -309,8 +311,8 @@ public class TicketInfoController {
             model.put("cancel", false);
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to update ticket", e);
+            model.put("error", "Internal error, unable to update ticket");
         }
 
         return "redirect:/ticketInfo/" + id;
@@ -336,8 +338,8 @@ public class TicketInfoController {
             model.put("notClosedAndCanceled",false);
             displayTicketConfig(model, id, user, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to update ticket", e);
+            model.put("error", "Internal error, unable to update ticket");
         }
 
         return "redirect:/ticketInfo/" + id;
@@ -372,8 +374,8 @@ public class TicketInfoController {
                 model.put("error", "Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to update ticket", e);
+            model.put("error", "Internal error, unable to update ticket");
         }
 
         return "redirect:/ticketInfo/" + id;

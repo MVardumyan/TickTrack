@@ -5,6 +5,7 @@ import ticktrack.enums.TicketStatus;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -44,7 +45,7 @@ public class Ticket{
    private Category category;
 
    @OneToMany(mappedBy = "ticket", fetch = FetchType.LAZY)
-   private Set<Comment> commentList;
+   private List<Comment> commentList;
 
    public Ticket(String summary,String description,TicketPriority priority,User creator,Category category){
       this.summary = summary;
@@ -156,7 +157,7 @@ public class Ticket{
       return category;
    }
 
-   public Set<Comment> getCommentList() {
+   public List<Comment> getCommentList() {
       return commentList;
    }
 
