@@ -210,12 +210,19 @@
         <tbody>
         <c:forEach items="${groups}" var="group">
             <tr>
-                <td>${group}</td>
-                <td>
-                    <button onclick="location.href='/admin/deleteGroup/${group}'"
-                            type="button" class="btn btn-info">Delete
-                    </button>
-                </td>
+                <td>${group.groupName}</td>
+                <c:choose>
+                    <c:when test="${group.isDeactivated}">
+                        <td>Deactivated</td>
+                    </c:when>
+                    <c:otherwise>
+                        <td>
+                            <button onclick="location.href='/admin/deactivateGroup/${group.groupName}'"
+                                    type="button" class="deactivate btn btn-info">Deactivate
+                            </button>
+                        </td>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </c:forEach>
         </tbody>

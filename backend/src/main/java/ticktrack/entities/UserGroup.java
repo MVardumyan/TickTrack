@@ -14,6 +14,9 @@ public class UserGroup {
     @Column(nullable = false, unique = true)
     private String name;
 
+    @Column(nullable = false)
+    private boolean deactivated;
+
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
     private Set<User> members;
 
@@ -32,11 +35,23 @@ public class UserGroup {
         this.name = name;
     }
 
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
+    }
+
     public String getName() {
         return name;
     }
 
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
     public Set<User> getMembers() {
         return members;
+    }
+
+    public Set<Ticket> getTickets() {
+        return tickets;
     }
 }

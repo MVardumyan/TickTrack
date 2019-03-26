@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import ticktrack.frontend.attributes.User;
 import ticktrack.proto.Msg;
 import ticktrack.proto.Msg.CategoryOp.CategoryOpGetAllResponse.CategoryInfo;
+import ticktrack.proto.Msg.UserGroupOp.UserGroupOpGetAllResponse.GroupInfo;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -75,7 +76,10 @@ public class SearchController {
             Msg result = jsonToProtobuf(groupResponse.body().string());
 
             if (result != null) {
-                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+                model.put("groupList", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupInfoList()
+                        .stream()
+                        .map(GroupInfo::getGroupName)
+                        .collect(Collectors.toList()));
             }
         } else {
             logger.warn("Error received from backend, unable to get group list: {}", groupResponse.message());

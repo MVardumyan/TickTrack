@@ -251,7 +251,12 @@ message Msg {
         }
 
         message UserGroupOpGetAllResponse {
-            repeated string groupName = 1;
+            repeated GroupInfo groupInfo = 1;
+
+            message GroupInfo {
+                required string groupName = 1;
+                required bool isDeactivated = 2;
+            }
         }
     }
     //USER GROUP OPERATIONS END

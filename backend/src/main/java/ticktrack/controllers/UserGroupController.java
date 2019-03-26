@@ -31,10 +31,10 @@ public class UserGroupController {
         return processManagerResponse(result);
     }
 
-    @RequestMapping(path = "/delete/{groupName}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(path = "/deactivate/{groupName}", method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     ResponseEntity deleteUserGroup(@PathVariable("groupName") String groupName) {
-        Msg.CommonResponse result = userGroupManager.deleteUserGroup(groupName);
+        Msg.CommonResponse result = userGroupManager.deactivateUserGroup(groupName);
         return processManagerResponse(result);
     }
 
