@@ -151,7 +151,7 @@
         <label>Summary</label>
         <div class="form-group">
             <input type="text" class="form-control" name="summary"
-                   value=${info.summary}>
+                   value="${info.summary}">
         </div>
         <label>Description</label>
         <div class="form-group">
@@ -167,7 +167,8 @@
 
         <label>Group</label>
         <div class="form-group">
-            <select id="group" name="group" multiple class="form-control">
+            <select id="group" name="group" class="form-control">
+                <option selected disabled>Group</option>
                 <c:forEach var="group" items="${groupList}">
                     <option value="${group}">
                             ${group}
