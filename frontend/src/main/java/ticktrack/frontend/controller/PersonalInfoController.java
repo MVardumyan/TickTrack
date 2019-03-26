@@ -135,8 +135,8 @@ public class PersonalInfoController {
             }
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable to update users info", e);
+            model.put("error", "Internal error, unable to update users info");
         }
         return "redirect:/personalInfo/" + username;
     }
@@ -149,8 +149,8 @@ public class PersonalInfoController {
         ).execute()) {
             configurePersonalInfo(model, username, user, response);
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error", "Internal error, unable to get users list");
+            logger.error("Internal error, unable deactivate user", e);
+            model.put("error", "Internal error, unable to deactivate user");
         }
         return "personalInfo";
     }

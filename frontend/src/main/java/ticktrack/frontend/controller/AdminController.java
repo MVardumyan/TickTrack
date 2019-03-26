@@ -98,7 +98,6 @@ public class AdminController {
     }
 
     //  CATEGORIES
-
     @RequestMapping(value = "/categoryManagement", method = RequestMethod.GET)
     String displayCategoryManagementPage(ModelMap model) {
         Request categoriesRequest = buildRequestWithoutBody(backendURL + "categories/getAll");
@@ -147,7 +146,6 @@ public class AdminController {
     }
 
     // GROUPS
-
     @RequestMapping(value = "/groupManagement", method = RequestMethod.GET)
     String displayGroupManagementPage(ModelMap model) {
         Request request = buildRequestWithoutBody(backendURL + "userGroups/getAll");

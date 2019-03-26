@@ -129,15 +129,15 @@ public class NewTicketController {
                     }else if(!user.getRole().equals(UserRole.RegularUser)){
                         model.put("notRegularUser",true);
                     }
+                    return "redirect:/ticketInfo/" + msg.getTicketInfo().getTicketID();
                 }
-                return "redirect:/ticketInfo/" + msg.getTicketInfo().getTicketID();
             } else {
                 logger.warn("Error received from backend, unable to get search result: {}", response.message());
                 model.put("error","Error received from backend, unable to get search result");
             }
         } catch (IOException e) {
-            logger.error("Internal error, unable to get users list", e);
-            model.put("error","Internal error, unable to get users list");
+            logger.error("Internal error, unable to add ticket", e);
+            model.put("error","Internal error, unable to add new ticket");
         }
 
         return "error" ;
