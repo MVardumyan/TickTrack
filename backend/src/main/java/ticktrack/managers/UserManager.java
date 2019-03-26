@@ -448,13 +448,16 @@ public class UserManager implements IUserManager {
 
         if (result.isPresent()) {
             User user = result.get();
-            if (user.isActive()) {
-                if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
+            if (PasswordHandler.verifyPassword(user.getPassword(), request.getPassword())) {
+
+                if (user.isActive()) {
                     return buildSuccessResponse("Password is valid");
                 }
-                return buildFailureResponse("Password is invalid");
+
+                return buildFailureResponse("User is deactivated");
             }
-            return buildFailureResponse("User is deactivated");
+            return buildFailureResponse("Password is invalid");
+
         }
         responseText = "User " + request.getUsername() + " not found";
         logger.debug(responseText);

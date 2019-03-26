@@ -3,6 +3,7 @@ package ticktrack.managers;
 import ticktrack.entities.UserGroup;
 import ticktrack.interfaces.IUserGroupManager;
 import ticktrack.proto.Msg;
+import ticktrack.proto.Msg.UserGroupOp.UserGroupOpGetAllResponse.GroupInfo;
 import ticktrack.repositories.GroupRepository;
 import com.google.common.collect.Streams;
 import org.slf4j.Logger;
@@ -63,13 +64,13 @@ public class UserGroupManager implements IUserGroupManager {
     }
 
     /**
-     * Method for deleting UserGroup from db.
+     * Method for deactivating UserGroup from db.
      * @param groupName corresponding group name
-     * @return protobuf type CommonResponse with responseType: 1) success if group deleted; 2) failure if group not found/contains users/given name is null
+     * @return protobuf type CommonResponse with responseType: 1) success if group deactivated; 2) failure if group not found/contains users/given name is null
      */
     @Transactional
     @Override
-    public CommonResponse deleteUserGroup(String groupName) {
+    public CommonResponse deactivateUserGroup(String groupName) {
         String responseText;
         if (groupName == null) {
             responseText = "Group name is null";
@@ -81,14 +82,15 @@ public class UserGroupManager implements IUserGroupManager {
                 logger.warn(responseText);
             } else {
                 if (group.getMembers().size() == 0) {
-                    groupRepository.delete(group);
+                    group.setDeactivated(true);
+                    groupRepository.save(group);
 
-                    responseText = "Group" + groupName + " deleted";
+                    responseText = "Group " + groupName + " deactivated";
                     logger.debug(responseText);
 
                     return buildSuccessResponse(responseText);
                 } else {
-                    responseText = "Group" + groupName + " cannot be deleted : group contains users";
+                    responseText = "Group " + groupName + " cannot be deactivated : group contains users";
                     logger.warn(responseText);
                 }
             }
@@ -153,8 +155,13 @@ public class UserGroupManager implements IUserGroupManager {
     @Override
     public UserGroupOp.UserGroupOpGetAllResponse getAll() {
         return UserGroupOp.UserGroupOpGetAllResponse.newBuilder()
-                .addAllGroupName(
-                        Streams.stream(groupRepository.findAll()).map(UserGroup::getName).collect(Collectors.toList())
+                .addAllGroupInfo(
+                        Streams.stream(groupRepository.findAll())
+                                .map(userGroup -> GroupInfo.newBuilder()
+                                        .setGroupName(userGroup.getName())
+                                        .setIsDeactivated(userGroup.isDeactivated())
+                                        .build())
+                                .collect(Collectors.toList())
                 )
                 .build();
     }
