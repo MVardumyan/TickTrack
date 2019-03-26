@@ -157,7 +157,7 @@ public class AdminController {
                 Msg result = jsonToProtobuf(response.body().string());
 
                 if (result != null && result.hasUserGroupOperation() && result.getUserGroupOperation().hasUserGroupOpGetAllResponse()) {
-                    model.put("groups", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupNameList());
+                    model.put("groups", result.getUserGroupOperation().getUserGroupOpGetAllResponse().getGroupInfoList());
                     return "groupManagement";
                 }
             }
@@ -178,9 +178,9 @@ public class AdminController {
         return processGroupRequest(request);
     }
 
-    @RequestMapping(value = "/deleteGroup/{groupName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/deactivateGroup/{groupName}", method = RequestMethod.GET)
     String deleteGroup(@PathVariable("groupName") String groupName) {
-        Request request = buildRequestWithoutBody(backendURL + "userGroups/delete/" + groupName);
+        Request request = buildRequestWithoutBody(backendURL + "userGroups/deactivate/" + groupName);
 
         return processGroupRequest(request);
     }

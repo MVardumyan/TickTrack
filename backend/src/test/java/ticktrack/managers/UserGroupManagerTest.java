@@ -69,18 +69,19 @@ class UserGroupManagerTest {
     }
 
     @Test
-    void deleteUserGroup() {
-        CommonResponse commonResponse = groupManager.deleteUserGroup("group1");
+    void deactivateUserGroup() {
+        CommonResponse commonResponse = groupManager.deactivateUserGroup("group1");
 
         assertEquals(Success, commonResponse.getResponseType());
 
         Optional<UserGroup> result = groupRepository.findByName("group1");
 
-        assertFalse(result.isPresent());
+        assertTrue(result.isPresent());
+        assertTrue(result.get().isDeactivated());
     }
 
     @Test
-    void deleteGroupWithUsers() {
+    void deactivateGroupWithUsers() {
         User testUser = new User();
         testUser.setUsername("john");
         testUser.setActiveStatus(true);
@@ -97,14 +98,14 @@ class UserGroupManagerTest {
         );
         userRepository.save(testUser);
 
-        CommonResponse commonResponse = groupManager.deleteUserGroup("group1");
+        CommonResponse commonResponse = groupManager.deactivateUserGroup("group1");
 
         assertEquals(Failure, commonResponse.getResponseType());
     }
 
     @Test
-    void deleteGroupWithNullRequest() {
-        CommonResponse commonResponse = groupManager.deleteUserGroup(null);
+    void deactivateGroupWithNullRequest() {
+        CommonResponse commonResponse = groupManager.deactivateUserGroup(null);
 
         assertEquals(Failure, commonResponse.getResponseType());
     }
@@ -161,7 +162,7 @@ class UserGroupManagerTest {
     void getAllGroups() {
         UserGroupOp.UserGroupOpGetAllResponse result = groupManager.getAll();
 
-        assertEquals(1, result.getGroupNameCount());
+        assertEquals(1, result.getGroupInfoCount());
     }
 
     @AfterEach
