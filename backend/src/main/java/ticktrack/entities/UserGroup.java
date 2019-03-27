@@ -2,6 +2,7 @@ package ticktrack.entities;
 
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,12 +19,12 @@ public class UserGroup {
     private boolean deactivated;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private Set<User> members;
+    private List<User> members;
 
     @OneToMany(mappedBy = "group", fetch = FetchType.LAZY)
-    private Set<Ticket> tickets;
+    private List<Ticket> tickets;
 
-    public UserGroup(String name, Set<User> members) {
+    public UserGroup(String name, List<User> members) {
         this.name = name;
         this.members = members;
     }
@@ -47,11 +48,11 @@ public class UserGroup {
         return deactivated;
     }
 
-    public Set<User> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 
-    public Set<Ticket> getTickets() {
+    public List<Ticket> getTickets() {
         return tickets;
     }
 }

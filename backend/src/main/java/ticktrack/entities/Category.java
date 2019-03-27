@@ -1,6 +1,7 @@
 package ticktrack.entities;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -15,7 +16,7 @@ public class Category{
    private boolean deactivated;
 
    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-   private Set<Ticket> ticketList;
+   private List<Ticket> ticketList;
 
    public Category() {}
 
@@ -43,7 +44,7 @@ public class Category{
       return deactivated;
    }
 
-   public Set<Ticket> getTicketList() {
+   public List<Ticket> getTicketList() {
       return ticketList;
    }
 }

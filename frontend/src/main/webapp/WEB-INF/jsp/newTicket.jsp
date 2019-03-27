@@ -155,8 +155,8 @@
         <label>Summary</label>
         <span class="required">*</span>
         <div class="form-group">
-            <input type="text" class="form-control" name="summary"
-                   placeholder="Summary" required>
+            <textarea type="text" class="form-control" name="summary"
+                      placeholder="Summary" required></textarea>
         </div>
         <label>Description</label>
         <span class="required">*</span>
